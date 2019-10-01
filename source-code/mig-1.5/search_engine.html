@@ -1,0 +1,182 @@
+<script language="php">
+ require_once "php/config.php"; 
+ ## security enabler
+ $auth_file = "php/" . AUTHENTICATION_SYSTEM_TYPE . "_authenticate.php";
+ require_once $auth_file;
+</script>
+
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta http-equiv="expires" content="1 Jan 2000">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title><script language="php">if (isset($mig_pagetitle)) echo $mig_pagetitle; else echo "Search pages - Search the Directory";</script></title>
+<script language="JavaScript" type="text/javascript" src="js/global.js">
+</script>
+<meta name="Microsoft Border" content="b, default">
+</head>
+
+<body><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><!--msnavigation--><td valign="top">
+<h2><script language="php">if (isset($mig_pagetitle)) echo $mig_pagetitle; else echo "Search pages - Search the Directory";</script></h2>
+<script language="php">
+   	// the class variable is transmitted by the page herself (HTTP POST)
+
+	$core_file = "php/" . INFORMATION_SYSTEM_TYPE . "_core.php"; 
+	require_once $core_file;
+
+	$core = new core();
+	if (($conn_id = $core->connect()) == false)
+		die($core->error_msg);
+
+	include_once "php/search_class_option_box.php";
+	include_once "php/search_engine.php";
+	
+	if (isset($selected_class))
+	{
+		$search_engine = new search_engine($conn_id, $data_conn_id, $selected_class->migclassname, $selected_class->migdatabasedn, "");
+		if (!isset($showCriteria) || (isset($showCriteria) && ($showCriteria != "no")))
+		{
+</script>
+
+		<center>
+        <table border="0" cellpadding="2" width="98%">
+		<tr>
+			<td valign="top" width="24%">
+			<form method="GET" action="<?php echo $SCRIPT_NAME ?>" name="form1">
+			<p align="center">
+			<select name="criteria[]" multiple>
+	  			<script language="php">
+	 		if (isset($criteria))
+	 		{
+	 			if (!$search_engine->show_criteria($criteria)) die($search_engine->error_msg);
+	  		}
+	  		elseif (!$search_engine->show_criteria()) die($search_engine->error_msg);
+
+				</script>
+			</select>
+			<br>
+				<input type="hidden" name="usercustomizes" value="yes">
+				<input type="Submit" type="Submit" value="Update search fields">
+			</p>
+			</form>
+            </td>
+			<td valign="top" width="91%">
+			<form method="GET" action="<?php echo $SCRIPT_NAME ?>">
+              <table border="1" width="100%" cellspacing="0">
+   					<tr>
+   					<td width="29%" align="center"><b>attributes</b></td>
+   					<td width="28%" align="center"><b>match criteria</b></td>
+ 					<td width="29%" align="center"><b>your input</b></td>
+					<td width="14%" align="center"><b>sort by</b></td>
+   					</tr>
+   					<script language="php">
+   			if (isset($sortattribute))
+   			{
+   				if (!$search_engine->show_input($sortattribute)) die($search_engine->error_msg);
+   			}
+   			elseif (!$search_engine->show_input()) die($search_engine->error_msg);
+	   		
+			</script>
+					</table>
+				<p align="center"><input type="submit" value="Submit"><input type="reset" value="Reset"></p>
+				<input type="hidden" name="searchorder" value="go">
+    		  </form>
+            </td>
+            
+		</tr>
+ 		
+		</table>
+		</center>
+
+		<script>
+		function setoptionBoxSize()
+		{
+		 	document.form1['criteria[]'].size = <?php echo $search_engine->total_displayed ?>;
+		}	
+		window.onload = setoptionBoxSize;
+		</script>
+
+
+		<script language="php">
+		}
+		else 
+		{
+			if (!$search_engine->set_internal_criteria($criteria)) die($search_engine->error_msg);
+			if (($str = $search_engine->show_input_as_text($criteria, $sortattribute)) === false) die($search_engine->error_msg);
+
+			</script>
+			<p><?php echo $str ?><br><a href="search_engine.html">Click here to perform a new search</a></p>
+			<script language="php">
+		}
+		
+			if (isset($searchorder) && ($searchorder == "go"))
+			{
+				if (!$search_engine->build_filter($selected_class)) die($search_engine->error_msg);			
+
+				$data_core = new core();
+
+				// remote classes syntax : CLASSNAME|HOSTNAME|PARAM; CLASSNAME2, HOSTNAME2
+				$remote_classes = explode (";", REMOTE_SEARCHCLASSES);
+
+				for ($i = 0; $i < sizeof($remote_classes); $i++)
+				{
+					$remote_class = explode ("|", $remote_classes[$i]);
+					if (strcasecmp ($class, trim ($remote_class[0])) == 0)
+					{
+						define ("REMOTE_HOSTNAME", trim ($remote_class[1]));
+						if (isset($remote_class[2])) define ("REMOTE_MANAGER_UID", trim ($remote_class[2]));
+						if (isset($remote_class[3])) define ("REMOTE_MANAGER_PW", trim ($remote_class[3]));
+						break;
+					}
+				}		
+
+				if (($data_conn_id = $data_core->connect_to_datastore()) == false)
+					die($data_core->error_msg);
+					
+				$search_engine->data_conn_id = $data_conn_id;
+				
+				if (isset($returnattributes) && is_array($returnattributes))
+					if (!$search_engine->build_returnAttributesArray($returnattributes)) die($search_engine->error_msg);
+								
+				if (isset($sortattribute))
+				{
+					if (!isset($sortorder)) $sortorder = "asc";
+					if (!$search_engine->find_results($sortattribute, $sortorder)) die($search_engine->error_msg);
+				}
+				elseif (!$search_engine->find_results()) die($search_engine->error_msg);
+ 				
+ 				if (isset($page))
+ 				{
+ 					if (!$search_engine->display_results_pages($page)) die($search_engine->error_msg);
+ 					if (!$search_engine->display_results($selected_class->migdataicon, $selected_class->migpointedwebpage, $page)) die($search_engine->error_msg);
+ 				}
+ 				else
+ 				{
+ 					if (!$search_engine->display_results_pages()) die($search_engine->error_msg);
+ 					if (!$search_engine->display_results($selected_class->migdataicon, $selected_class->migpointedwebpage)) die($search_engine->error_msg);
+				}
+				
+				if (isset($page))
+ 				{
+ 					if (!$search_engine->display_results_pages($page)) die($search_engine->error_msg);
+ 				} 
+ 				else
+ 				{
+ 					if (!$search_engine->display_results_pages()) die($search_engine->error_msg);
+ 				}
+				
+			}
+			</script>
+
+<script language="php">
+	}
+$core->disconnect();
+</script>
+<p>&nbsp;<!--msnavigation--></td></tr><!--msnavigation--></table><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td>
+
+
+
+</td></tr><!--msnavigation--></table></body>
+</html>

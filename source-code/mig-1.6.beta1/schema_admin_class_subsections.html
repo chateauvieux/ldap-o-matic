@@ -1,0 +1,374 @@
+<script language="php">
+ require_once "php/config.php";
+ ## security enabler
+ $auth_file = "php/" . AUTHENTICATION_SYSTEM_TYPE . "_authenticate_manager.php";
+ require_once $auth_file;
+</script>
+
+
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta http-equiv="expires" content="1 Jan 2000">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title><script language="php">if (isset($mig_pagetitle)) echo $mig_pagetitle; else echo "Administration pages - Subsections";</script></title>
+<script language="JavaScript" type="text/javascript" src="js/global.js">
+</script>
+<meta name="Microsoft Border" content="b">
+</head>
+
+<body><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><!--msnavigation--><td valign="top">
+<h2><script language="php">if (isset($mig_pagetitle)) echo $mig_pagetitle; else echo "Administration pages - Subsections";</script></h2>
+
+<script language="php"> 
+
+$core_file = "php/" . INFORMATION_SYSTEM_TYPE . "_core.php"; 
+require_once $core_file;
+require_once "php/attribute.php";
+require_once "php/search_class.php";
+require_once "php/subsection.php";
+
+$core = new core();
+if (($conn_id = $core->connect()) == false)
+	die($core->error_msg);
+
+// Security enhancement for PHP 4.1 and higher
+// Compatibility with systems having register_globals turned off (default in PHP 4.2 and higher)
+// Compatibility for systems having variables_order equal to EGPCS and EPGCS
+
+/*
+$variable_orders = ini_get("variables_order");
+if ((strpos ($variable_orders, "G") !== false) && (strpos ($variable_orders, "P") !== false) && (strpos ($variable_orders, "G") < strpos ($variable_orders, "P")))
+{
+	// xxGPxxx
+	if (intval(str_replace(".", "", phpversion())) >= 410)
+	{
+		$glob[0] = "_GET";
+		$glob[1] = "_POST";
+	}
+	else
+	{
+		$glob[0] = "HTTP_GET_VARS";
+		$glob[1] = "HTTP_POST_VARS";
+	}
+}
+else
+{
+	// assumed xxPGxxx
+	if (intval(str_replace(".", "", phpversion())) >= 410)
+	{
+		$glob[0] = "_POST";
+		$glob[1] = "_GET";
+	}
+	else
+	{
+		$glob[0] = "HTTP_POST_VARS";
+		$glob[1] = "HTTP_GET_VARS";
+	}
+}
+*/
+unset ($class); if (isset ($_POST["class"])) $class = $_POST["class"]; else if (isset($_GET["class"])) $class = $_GET["class"];
+unset ($order); if (isset ($_POST["order"])) $order = $_POST["order"]; else if (isset($_GET["order"])) $order = $_GET["order"];
+unset ($subsection); if (isset ($_POST["subsection"])) $subsection = $_POST["subsection"]; else if (isset($_GET["subsection"])) $subsection = $_GET["subsection"];
+unset ($migsubsectionname); if (isset ($_POST["migsubsectionname"])) $migsubsectionname = $_POST["migsubsectionname"]; else if (isset($_GET["migsubsectionname"])) $migsubsectionname = $_GET["migsubsectionname"];
+unset ($migsubsectiondisplayname); if (isset ($_POST["migsubsectiondisplayname"])) $migsubsectiondisplayname = $_POST["migsubsectiondisplayname"]; else if (isset($_GET["migsubsectiondisplayname"])) $migsubsectiondisplayname = $_GET["migsubsectiondisplayname"];
+unset ($migposition); if (isset ($_POST["migposition"])) $migposition = $_POST["migposition"]; else if (isset($_GET["migposition"])) $migposition = $_GET["migposition"];
+unset ($migincludedattribute); if (isset ($_POST["migincludedattribute"])) $migincludedattribute = $_POST["migincludedattribute"]; else if (isset($_GET["migincludedattribute"])) $migincludedattribute = $_GET["migincludedattribute"];
+unset ($newattr); if (isset ($_POST["newattr"])) $newattr = $_POST["newattr"]; else if (isset($_GET["newattr"])) $newattr = $_GET["newattr"];
+
+if (isset($class))
+{
+	$selected_class = new search_class($conn_id);
+	if (!$selected_class->read($class, array("migclassname", "migrelevantattribute"))) 
+		die($selected_class->error_msg);
+		
+//	include "php/subsection_option_box.php";
+
+	if (isset($order))
+	{
+		if ($order == "prepare_add")
+		{
+</script>
+
+ <center>
+ <form action="<?php echo $_SERVER["SCRIPT_NAME"] ?>" method="POST" onsubmit="return Form_Validator(this)">
+  <table border="1" width="100%" cellspacing="0" cellpadding="0">
+    <tr>
+     <td width="33%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Subsection
+      Display name</b></font></td>
+      <td width="67%" bgcolor="#000066" align="center"><input type="text" name="migsubsectiondisplayname" size="20"></td>
+    </tr>
+    <tr>
+      <td width="33%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Subsection
+        LDAP name</b></font></td>
+      <td width="67%" bgcolor="#000066" align="center"><input type="text" name="migsubsectionname" size="20"></td>
+    </tr>
+    <tr>
+      <td width="33%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Subsection
+        Position</b></font></td>
+      <td width="67%" bgcolor="#000066" align="center"><input type="text" name="migposition" size="2"></td>
+    </tr>
+
+  </table>
+  <p>
+  <input type="submit" value="Submit"> 
+  <input type="hidden" name="order" value="go_add">
+  <input type="hidden" name="class" value="<?php echo $selected_class->migclassname ?>">
+  </p>
+
+  </form>
+  </center>
+<script language="php">  
+		}
+		if ($order == "go_add")
+		{	
+			$newsubsection = new subsection($conn_id);
+			$newsubsection->migincludingclass = $selected_class->migclassname;
+			$newsubsection->migsubsectionname = trim($migsubsectionname);
+			$newsubsection->migsubsectiondisplayname = $migsubsectiondisplayname;
+			$newsubsection->migposition = $migposition;
+		 	
+			if (!$newsubsection->add()) die($newsubsection->error_msg);	
+		}
+	}		
+
+	if (isset($subsection))
+	{
+		$selected_subsection = new subsection($conn_id);
+		if (!$selected_subsection->read($subsection)) die($selected_subsection->error_msg);
+		// warning! All subsection properties must be retrieved because of the mod_replace() call
+
+		if (isset($order))
+		{
+
+			if ($order == "go_edit")
+			{
+				$updmod["migsubsectionname"] = trim($migsubsectionname);		
+				$updmod["migsubsectiondisplayname"] = $migsubsectiondisplayname;	
+				$updmod["migposition"] = $migposition;				
+				if (isset($migincludedattribute))
+					for ($j = 0; $j < sizeof($migincludedattribute); $j++)
+						if ($migincludedattribute[$j] != "") $updmod["migincludedattribute"][] = $migincludedattribute[$j];
+
+			 	if (isset($newattr) && ($newattr != "")) $updmod["migincludedattribute"][] = $newattr;
+			 		
+			 	if (!isset($updmod["migincludedattribute"]))
+			 	{
+				 	// delete if no value
+				 	for ($j = 0; $j < $selected_subsection->count("migincludedattribute"); $j++)
+				 		$upddel["migincludedattribute"][] = $selected_subsection->migincludedattribute[$j];
+				 	if (isset($upddel))
+					 	if (!$selected_subsection->mod_del($upddel)) die($selected_subsection->error_msg);
+				 }
+		 			
+				if (!$selected_subsection->mod_replace($updmod)) die($selected_subsection->error_msg);
+
+	 		
+			 	$subsection = $updmod["migsubsectionname"];  // point to the new subsection if migsubsectionname modified
+		 		$order = "prepare_edit";	
+
+		 		//refresh
+		 		if (!$selected_subsection->read($subsection)) die($selected_subsection->error_msg);
+
+			}	
+			if ($order == "prepare_edit")
+			{
+				if (($info = $core->read_attribute_list("system",array("migattributename", "migattributedisplayname"), $selected_subsection->migincludingclass)) == false) die($core->error_msg);	
+				include_once "php/quicksort.php";
+				quicksort($info, 0, $core->attribute_count -1, "migattributedisplayname");	
+		
+				$migsubsectiondisplayname = $selected_subsection->migsubsectiondisplayname;
+				$migsubsectionname = $selected_subsection->migsubsectionname;			
+				$migposition = $selected_subsection->migposition;			
+
+			
+</script>
+
+<form method="post" action="<?php echo $_SERVER["SCRIPT_NAME"] ?>" onsubmit="return Form_Validator(this)">
+
+  <div align="center">
+    <center>
+  <table border="1" width="100%" cellspacing="0" cellpadding="0" height="131">
+    <tr>
+     <td width="33%" bgcolor="#000066" align="center" height="36"><font color="#FFFFFF"><b>Subsection
+        Display name</b></font></td>
+      <td width="67%" bgcolor="#000066" align="center" height="36"><input type="text" name="migsubsectiondisplayname" 
+                 value="<?php echo $migsubsectiondisplayname ?>"></td>
+    </tr>
+    <tr>
+      <td width="33%" bgcolor="#000066" align="center" height="21"><font color="#FFFFFF"><b>Subsection LDAP name</b></font></td>
+      <td width="67%" bgcolor="#000066" align="center" height="21"><input type="text" name="migsubsectionname"
+        			value="<?php echo $migsubsectionname ?>" size="20"></td>
+    </tr>
+     <tr>
+      <td width="33%" bgcolor="#000066" align="center" height="21"><font color="#FFFFFF"><b>Subsection position</b></font></td>
+      <td width="67%" bgcolor="#000066" align="center" height="21"><input type="text" name="migposition"
+        			value="<?php echo $migposition ?>" size="2"></td>
+    </tr>
+
+    <tr>
+      <td width="100%" bgcolor="#000066" align="center" height="18" colspan="2"><font color="#FFFFFF"><b>Attributes</b></font></td>
+    </tr>
+    
+        <script language="php"> 
+				for ($a = 0; $a < $selected_subsection->count("migincludedattribute"); $a++)  // look all possible attributes	
+   				{
+					$currattr = $selected_subsection->migincludedattribute[$a];
+		</script>	
+		<tr <?php if (($a % 2) == 0) echo "class=lightgrey"; ?>>
+			<td width="50%"><b><?php echo "#" . ($a +1)  ?></b></td>
+			<td width="12%" align="center">
+			<select size="1" name="migincludedattribute[]">
+			 <option value="">Remove attribute</option>
+			<script language="php"> 
+			
+
+					for ($i = 0; $i < $core->attribute_count; $i++)  // look all possible attributes	
+   					{
+						$attr = new attribute($conn_id);
+   						if (!$attr->read_from_list($info, $i)) die($attr->error_msg);
+			
+						if ($selected_class->is_relevant($attr->migattributename))
+						{
+						
+			</script>
+		   	<option value="<?php echo $attr->migattributename ?>" <?php if ($attr->migattributename == $currattr) echo "selected" ?>><?php echo $attr->migattributedisplayname ?></option>
+			
+          <script language="php"> 
+						}
+					}
+			</script>
+			</select>
+            </td>
+       </tr>
+       <script language="php"> 
+				}
+       </script>
+       <tr><td><b>New attribute</b></td><td>
+          <p align="center">
+          <select name="newattr">
+          <option value="">Select new attribute</option>
+       <script language="php"> 
+		
+					for ($i = 0; $i < $core->attribute_count; $i++)  // look all possible attributes	
+   					{
+						$attr = new attribute($conn_id);
+   						if (!$attr->read_from_list($info, $i)) die($attr->error_msg);
+			
+						if ($selected_class->is_relevant($attr->migattributename))
+						{
+						
+			</script>
+		   	<option value="<?php echo $attr->migattributename ?>"><?php echo $attr->migattributedisplayname ?></option>
+			
+          <script language="php"> 
+						}
+					}
+			</script>
+		
+       </select>
+  </table>
+
+    
+  </div>
+
+  <input type="hidden" value="go_edit" name="order"> 
+  <input type="submit" value="Submit"> 
+  <input type="hidden" name="class" value="<?php echo $selected_class->migclassname ?>">
+  <input type="hidden" name="subsection" value="<?php echo $subsection ?>">
+  <script language="php"> 
+  		
+  </script>
+
+</center>
+
+</form>
+
+<script language="php"> 
+			}	
+			elseif ($order == "go_remove")
+			{
+			 	if (!$selected_subsection->delete())
+				die($selected_subsection->error_msg);
+
+		 		unset($subsection);	
+			}
+		}
+		else
+		{		
+</script>
+	<h3> Selected subsection : <?php echo $subsection ?></h3>
+
+<form method="POST">
+<center>
+<input type="button" value="Remove the subsection" onclick="confirm_removal()">
+<input type="button" value="Edit the subsection"
+	onclick="page = '<?php echo $_SERVER["SCRIPT_NAME"] ?>?class=<?php echo urlencode($class) ?>&subsection=<?php echo urlencode($subsection) ?>&order=prepare_edit&<?php echo SID ?>' ;	window.open(page,'_self')">
+or <input type="button" value="Add a subsection"
+	onclick="page = '<?php echo $_SERVER["SCRIPT_NAME"] ?>?class=<?php echo urlencode($class) ?>?order=prepare_add&<?php echo SID ?>' ;	window.open(page,'_self')">
+</center> 
+</form>
+
+<script>
+function confirm_removal()
+{
+	var txt = 'Confirm removal of subsection <?php echo $selected_subsection->migsubsectiondisplayname ?>';
+	if (confirm(txt)) 
+		document.location = '<?php echo $_SERVER["SCRIPT_NAME"] ?>?class=<?php echo $class ?>&subsection=<?php echo $subsection ?>&order=go_remove&<?php echo SID ?>';
+	else document.location = '<?php echo $_SERVER["SCRIPT_NAME"] ?>?<?php echo SID ?>';
+}
+</script>
+
+
+<script language="php"> 
+		}
+	}
+	else
+	{
+		include_once "php/subsection_option_box.php";
+</script>
+	
+<center> or <form><input type="button" value="Add a subsection"
+					onclick="page = '<?php echo $_SERVER["SCRIPT_NAME"] ?>?order=prepare_add&class=<?php echo urlencode($class) ?>&<?php echo SID ?>' ;	window.open(page,'_self')"></form>
+</center>
+<script language="php"> 
+	}
+</script>
+<script language="javascript">
+function Form_Validator(theForm)
+{
+	if (theForm.migsubsectiondisplayname.value == "")
+	{
+		alert("Please enter a value for the \"Display Name\" field.");
+		theForm.migsubsectiondisplayname.focus();
+		return (false);
+	}
+	
+	if (theForm.migsubsectionname.value == "")
+	{
+		alert("Please enter a value for the \"Subsection Name\" field.");
+		theForm.migsubsectionname.focus();
+		return (false);
+	}
+	
+	return (true);
+}
+</script>
+
+<script language="php"> 
+}
+else
+{
+	include_once "php/search_class_option_box.php";
+}
+$core->disconnect();
+</script>
+
+
+<p>&nbsp;<!--msnavigation--></td></tr><!--msnavigation--></table><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td>
+
+
+
+</td></tr><!--msnavigation--></table></body>

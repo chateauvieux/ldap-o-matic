@@ -1,0 +1,268 @@
+<script language="php">
+ require_once "php/config.php"; 
+ ## security enabler
+ $auth_file = "php/" . AUTHENTICATION_SYSTEM_TYPE . "_authenticate.php";
+ require_once $auth_file;
+</script>
+
+<html>
+
+<head>
+<meta http-equiv="expires" content="1 Jan 2000">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title><script language="php">if (isset($mig_pagetitle)) echo $mig_pagetitle; else echo "Search pages - Your search preferences";</script></title>
+<script language="JavaScript" type="text/javascript" src="js/global.js">
+</script>
+<meta name="Microsoft Border" content="b, default">
+</head>
+
+<body><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><!--msnavigation--><td valign="top">
+<h2><script language="php">if (isset($mig_pagetitle)) echo $mig_pagetitle; else echo "Search pages - Your search preferences";</script></h2>
+<script language="php">
+$core_file = "php/" . INFORMATION_SYSTEM_TYPE . "_core.php"; 
+require_once $core_file;
+require_once "php/attribute.php";
+require_once "php/search_class.php";
+
+
+
+$core = new core();
+if (($conn_id = $core->connect()) == false)
+	die($core->error_msg);
+
+if (isset($class))
+{
+    $selected_class = new search_class($conn_id);
+	if (!$selected_class->read($class)) die ($selected_class->error_msg);
+	include_once "php/quicksort.php";
+	// What is searchable about the class
+	// ie, for people : Name, country...
+
+	$result_array = array("migattributename", "migattributedisplayname",
+						     "migdefaultcriteriaclass","migsearchcriteriaclass","migsearchresultclass");   	
+
+	// ATTRIBUTES TO LOOK AFTER
+	if (($info = $core->read_attribute_list("system", $result_array, $selected_class->migclassname)) == false) die($core->error_msg);
+	$total_system = $core->attribute_count;
+
+	if (($info_user = $core->read_attribute_list("user", $result_array, $selected_class->migclassname)) == false) die($core->error_msg);
+	$total_user = $core->attribute_count;
+	
+	$optionboxes = array("migsearchcriteriaclass","migsearchresultclass","migdefaultcriteriaclass");
+	// override with user config, if any
+	if (!$core->override_config($info, $info_user, $optionboxes)) die($core->error_msg);
+	quicksort($info, 0, $total_system -1, "migattributedisplayname"); 
+	</script>
+ When satisfied, <a href="search_engine.html?class=<?php echo urlencode($selected_class->migclassname) ?>">click here to search.</a>
+	<script language="php">
+	
+	$refresh = false;
+	if (isset($order))
+	{
+		if ($order == "go_edit")   // QuickEdit
+		{
+			//this is here only to avoid a Warning.... that appears rarely
+			if (($allprefs = $core->read_attribute_list("user", array("migattributename","migcustomizedclass"))) == false) die($core->error_msg);
+			$total_all_user =  $core->attribute_count;	 		
+			// end of warning avoidance
+			
+			for ($i = 0; $i < $total_system; $i++)
+			{
+				$migsearchcriteriaclass = "migsearchcriteriaclass" . $i; //construct a variable variable.
+				$migdefaultcriteriaclass = "migdefaultcriteriaclass" . $i; //construct a variable variable.
+				$migsearchresultclass = "migsearchresultclass" . $i;
+									
+				$attr = new attribute($conn_id);
+				if (!$attr->read_from_list($info, $i)) die($attr->error_msg);
+				
+				for ($j = 0; $j < sizeof($optionboxes); $j++)
+ 				{
+ 					$func = "is_" . $optionboxes[$j];
+ 					if (isset($$$optionboxes[$j]) && ($$$optionboxes[$j] == "ON"))  // wow... this is just, for instance, "$migsearchcriteriaclass2"
+ 					{
+						if (!$attr->$func($selected_class->migclassname))  // ex : $attr->is_migsearchcriteriaclass(class)
+							$updadd[$optionboxes[$j]][] = $selected_class->migclassname;
+					}
+					else
+					{	
+									
+						if ($attr->$func($selected_class->migclassname))  // ex : $attr->is_migsearchcriteriaclass(class)
+							$upddel[$optionboxes[$j]][] = $selected_class->migclassname;
+					}
+				}
+				if ((isset($upddel))||(isset($updadd))) 
+				{
+					// here we may add an entry to USER CONFIG
+					$addentry = true;
+					// if it's the first time, add an entry in LDAP, else modify ENTRY			
+
+					for ($j = 0; $j < $total_user; $j++)
+					{
+						$user_attr = new attribute($conn_id);
+						if (!$user_attr->read_from_list($info_user, $j)) die($user_attr->error_msg);
+						if ($user_attr->migattributename == $attr->migattributename)
+						{
+							$addentry = false;
+							$dn = $user_attr->dn;
+							break;
+						}
+					}
+					if ($addentry)
+					{
+						// here we must create a complete entry... if not exists !!!
+						$exists = false;
+						
+						for ($j = 0; $j < $total_all_user; $j++)
+						{
+							$other_user_attr = new attribute($conn_id);
+							if (!$other_user_attr->read_from_list($allprefs, $j)) die($other_user_attr->error_msg);
+							if ($other_user_attr->migattributename == $attr->migattributename)
+							{
+								$exists = true;
+								$dn = $other_user_attr->dn;
+								$updadd["migcustomizedclass"][] = $selected_class->migclassname;
+								if (!$other_user_attr->mod_add($updadd)) die($other_user_attr->error_msg);					
+								break;
+							}
+						}
+
+						if ($exists == false)
+						{
+							$add_attr = new attribute($conn_id);
+							$add_attr->migattributename = $attr->migattributename;
+							$add_attr->migcustomizedclass[0] = $selected_class->migclassname;
+	
+							for ($j = 0; $j < sizeof($optionboxes); $j++)
+	 							if (isset($$$optionboxes[$j]) && ($$$optionboxes[$j] == "ON")) $add_attr->{$optionboxes[$j]}[] = $selected_class->migclassname;		
+							if (!$add_attr->add("user")) die($add_attr->error_msg);
+						}
+					}
+					else
+					{
+						// cannot remove things in a non-existing entry
+						// the add operation have been done before
+						if (isset($upddel)) if (!$core->mod_del($dn,$upddel)) die("F" . $core->error_msg);
+						if (isset($updadd)) if (!$core->mod_add($dn,$updadd)) die("L" . $core->error_msg);
+					}
+					unset($upddel);
+					unset($updadd);
+					// refresh screen 
+					$refresh = true;
+				}
+			}
+		}
+		elseif ($order == "reset_single")
+		{
+			$del_attr = new attribute($conn_id);
+			if (!$del_attr->read($name, "user", array())) die($del_attr->error_msg);
+			if (!$del_attr->delete("user")) die($del_attr->error_msg);
+			$refresh = true;
+		}
+		
+		if ($refresh)
+		{
+			if (($info_user = $core->read_attribute_list("user", $result_array, $selected_class->migclassname)) == false) die($core->error_msg);
+			$total_user = $core->attribute_count;
+			
+			if (($info = $core->read_attribute_list("system", $result_array, $selected_class->migclassname)) == false) die($core->error_msg);
+			$total_system = $core->attribute_count;
+	
+			// override with user config, if any 
+			if (!$core->override_config($info, $info_user, $optionboxes)) die($core->error_msg);	
+			quicksort($info, 0, $total_system -1, "migattributedisplayname"); 
+	
+		}
+	}	
+</script>
+
+<form action="<?php echo $SCRIPT_NAME ?>" method="POST">
+<center>
+<table border="1" width="100%" cellspacing="0" cellpadding="0">
+  <tr>
+    <td width="30%" bgcolor="#000066" align="center"><b><font color="#FFFFFF">Display
+      Name</font></b></td>
+    <td width="20%" bgcolor="#000066" align="center"><b><font color="#FFFFFF">Search
+      on</font></b></td>
+    <td width="20%" bgcolor="#000066" align="center"><b><font color="#FFFFFF">Show</font></b></td>
+    <td width="20%" bgcolor="#000066" align="center"><b><font color="#FFFFFF">Standard
+      choice(s)</font></b></td>
+    <td width="20%" bgcolor="#000066" align="center">&nbsp;</td>
+
+    </tr>
+  <script language="php">  
+	for ($i = 0; $i < $total_system; $i++)
+	{
+		$migsearchcriteriaclass = "migsearchcriteriaclass" . $i; //construct a variable variable.
+		$migdefaultcriteriaclass = "migdefaultcriteriaclass" . $i; //construct a variable variable.
+		$migsearchresultclass = "migsearchresultclass" . $i;
+	
+		$attr = new attribute($conn_id);
+		if (!$attr->read_from_list($info, $i)) die($attr->error_msg);
+		</script>				
+	<tr <?php if (($i % 2) == 0) echo "class=lightgrey"; ?>>
+   		<td width="30%"><?php echo $attr->migattributedisplayname ?></td>
+  	<script language="php">  
+
+		for ($j = 0; $j < sizeof($optionboxes); $j++)
+		{
+			$func = "is_" . $optionboxes[$j];
+	</script>				
+		<td width="20%" align="center"><input type="checkbox" name="<?php echo $$optionboxes[$j] ?>" value="ON" <?php if ($attr->$func($selected_class->migclassname)) echo "checked" ?>></td>
+  	<script language="php">  
+		}
+		
+		for ($j = 0; $j < $total_user; $j++)
+		{
+			$user_attr = new attribute($conn_id);
+			if (!$user_attr->read_from_list($info_user, $j)) die ($user_attr->error_msg);
+			if ($user_attr->migattributename == $attr->migattributename)
+			{
+			</script>	
+				<td align="center" width="10%"><input type="button" value="To default" onclick="confirm_removal('<?php echo $user_attr->migattributename ?>')"></td>
+		  	<script language="php">  
+		  		break;
+			}
+		}
+		</script>	
+
+		</tr>
+	  	<script language="php">  
+
+		
+   	}
+  	
+</script>
+</table>
+<p>
+<input type="hidden" name="order" value="go_edit">
+<input type="submit" value="Submit">
+<input type="reset" value="Reset">
+<input type="hidden" name="class" value="<?php echo $selected_class->migclassname ?>">
+</p>
+</center>
+</form>
+
+<script language="javascript">
+	function confirm_removal(attr)
+	{
+		var txt = 'This will erase ' + attr + ' attribute configuration of all classes. Confirm ? ';
+		if (confirm(txt)) 
+			document.location = '<?php echo $SCRIPT_NAME ?>?<?php echo SID ?>&class=<?php echo $selected_class->migclassname ?>&order=reset_single&name=' + attr;
+	}
+</script>	
+<script language="php">
+}
+else
+{
+	include_once "php/search_class_option_box.php";
+}
+$core->disconnect();
+</script>
+
+<p>&nbsp;<!--msnavigation--></td></tr><!--msnavigation--></table><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td>
+
+
+
+</td></tr><!--msnavigation--></table></body>

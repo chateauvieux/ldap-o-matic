@@ -1,0 +1,181 @@
+<script language="php">
+ require_once "php/config.php"; 
+ ## security enabler
+ $auth_file = "php/" . AUTHENTICATION_SYSTEM_TYPE . "_authenticate_manager.php";
+ require_once $auth_file;
+</script>
+
+<html>
+
+<head>
+<meta http-equiv="expires" content="1 Jan 2000">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title><script language="php">if (isset($mig_pagetitle)) echo $mig_pagetitle; else echo "Administration pages - System search preferences";</script></title>
+<script language="JavaScript" type="text/javascript" src="js/global.js">
+</script>
+<meta name="Microsoft Border" content="b, default">
+</head>
+
+<body><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><!--msnavigation--><td valign="top">
+<h2><script language="php">if (isset($mig_pagetitle)) echo $mig_pagetitle; else echo "Administration pages - System search preferences";</script></h2>
+
+<script language="php">
+// Security enhancement for PHP 4.1 and higher
+// Compatibility with systems having register_globals turned off (default in PHP 4.2 and higher)
+// Compatibility for systems having variables_order equal to EGPCS and EPGCS
+
+unset ($editorder); if (isset ($_POST["editorder"])) $editorder = $_POST["editorder"]; else if (isset($_GET["editorder"])) $editorder = $_GET["editorder"];
+
+$core_file = "php/" . INFORMATION_SYSTEM_TYPE . "_core.php"; 
+require_once $core_file;
+require_once "php/attribute.php";
+
+$core = new core();
+
+if (($conn_id = $core->connect()) == false)
+	die($core->error_msg);
+
+
+
+</script>	
+
+<script language="php">
+// the class variable is transmitted by the page herself (HTTP POST)
+include_once "php/search_class_option_box.php";
+
+if (isset($selected_class))
+{
+	include_once "php/quicksort.php";
+	// What is searchable about the class
+	// ie, for people : Name, country...
+   $result_array = array("migattributename", "migattributedisplayname",
+						     "migdefaultcriteriaclass","migsearchcriteriaclass","migsearchresultclass");
+ 	if (($info = $core->read_attribute_list("system", $result_array, $selected_class->migclassname)) == false) die($core->error_msg);
+	quicksort($info, 0, $core->attribute_count -1, "migattributedisplayname");	
+
+	$optionboxes = array("migsearchcriteriaclass","migsearchresultclass","migdefaultcriteriaclass");
+	
+	if (isset($editorder) && ($editorder == "go"))   // QuickEdit
+	{
+		for ($i = 0; $i < $core->attribute_count; $i++)
+		{	
+			$curr_attr = new attribute($conn_id);
+			if (!$curr_attr->read_from_list($info, $i)) die($curr_attr->error_msg);
+
+			$migsearchcriteriaclass = "migsearchcriteriaclass" . $i; //construct a variable variable.
+			$migdefaultcriteriaclass = "migdefaultcriteriaclass" . $i; //construct a variable variable.
+			$migsearchresultclass = "migsearchresultclass" . $i;
+			$migattributedisplayname = "migattributedisplayname" . $i;
+
+			unset ($$migattributedisplayname); if (isset ($_POST[$migattributedisplayname])) $$migattributedisplayname = $_POST[$migattributedisplayname]; else if (isset($_GET[$migattributedisplayname])) $$migattributedisplayname = $_GET[$migattributedisplayname];
+			unset ($$migsearchresultclass); if (isset ($_POST[$migsearchresultclass])) $$migsearchresultclass = $_POST[$migsearchresultclass]; else if (isset($_GET[$migsearchresultclass])) $$migsearchresultclass = $_GET[$migsearchresultclass];
+			unset ($$migdefaultcriteriaclass); if (isset ($_POST[$migdefaultcriteriaclass])) $$migdefaultcriteriaclass = $_POST[$migdefaultcriteriaclass]; else if (isset($_GET[$migdefaultcriteriaclass])) $$migdefaultcriteriaclass = $_GET[$migdefaultcriteriaclass];
+			unset ($$migsearchcriteriaclass); if (isset ($_POST[$migsearchcriteriaclass])) $$migsearchcriteriaclass = $_POST[$migsearchcriteriaclass]; else if (isset($_GET[$migsearchcriteriaclass])) $$migsearchcriteriaclass = $_GET[$migsearchcriteriaclass];
+
+
+
+			if (strcmp($$migattributedisplayname, $curr_attr->migattributedisplayname) != 0)
+			{
+				$updmod["migattributedisplayname"] = $$migattributedisplayname;
+				$updmod["migattributename"] = $curr_attr->migattributename;
+			}
+					
+			for ($j = 0; $j < sizeof($optionboxes); $j++)
+			{
+				unset ($$$optionboxes[$j]); if (isset ($_POST[$$optionboxes[$j]])) $$$optionboxes[$j] = $_POST[$$optionboxes[$j]]; else if (isset($_GET[$$optionboxes[$j]])) $$$optionboxes[$j] = $_GET[$$optionboxes[$j]];
+
+				$func = "is_" . $optionboxes[$j];
+				if (isset($$$optionboxes[$j]) && ($$$optionboxes[$j] == "ON"))
+ 				{
+					if (!$curr_attr->$func($selected_class->migclassname))
+						$updadd[$optionboxes[$j]] = $selected_class->migclassname;
+				}
+				else
+				{
+					if ($curr_attr->$func($selected_class->migclassname))
+						$upddel[$optionboxes[$j]] = $selected_class->migclassname;
+				}
+			}
+					
+			// always modify before adding
+			if (isset($updmod)) if (!$curr_attr->mod_replace($updmod)) die($curr_attr->error_msg);
+			if (isset($upddel)) if (!$curr_attr->mod_del($upddel)) die($curr_attr->error_msg);
+			if (isset($updadd)) if (!$curr_attr->mod_add($updadd)) die($curr_attr->error_msg);
+			unset($upddel);
+			unset($updadd);
+			unset($updmod);
+		}	
+	
+		
+		// refresh screen 
+	 	if (($info = $core->read_attribute_list("system", $result_array, $selected_class->migclassname)) == false) die($core->error_msg);
+		quicksort($info, 0, $core->attribute_count -1, "migattributedisplayname");	
+	}
+	
+	
+</script>
+
+<p>&nbsp;</p>
+<form action="<?php echo $_SERVER["SCRIPT_NAME"] ?>" method="POST">
+<center>
+<table border="1" width="100%" cellspacing="0" cellpadding="0">
+  <tr>
+    <td width="19%" bgcolor="#000066" align="center"><b><font color="#FFFFFF">Attribute
+      name</font></b></td>
+    <td width="20%" bgcolor="#000066" align="center"><b><font color="#FFFFFF">Display
+      Name</font></b></td>
+    <td width="20%" bgcolor="#000066" align="center"><b><font color="#FFFFFF">Search
+      on</font></b></td>
+    <td width="20%" bgcolor="#000066" align="center"><b><font color="#FFFFFF">Show</font></b></td>
+    <td width="20%" bgcolor="#000066" align="center"><b><font color="#FFFFFF">Standard
+      choice(s)</font></b></td>
+    </tr>
+  <script language="php">  
+	for ($i = 0; $i < $core->attribute_count; $i++)
+	{
+		$curr_attr = new attribute($conn_id);
+		if ($curr_attr->read_from_list($info, $i))
+		{			
+			$migattributedisplayname = "migattributedisplayname" . $i; //construct a variable variable.
+			$migsearchcriteriaclass = "migsearchcriteriaclass" . $i; //construct a variable variable.
+			$migdefaultcriteriaclass = "migdefaultcriteriaclass" . $i; //construct a variable variable.
+			$migsearchresultclass = "migsearchresultclass" . $i;
+			</script>
+   			<tr <?php if (($i % 2) == 0) echo "class=lightgrey"; ?>>
+				<td width="19%"><?php echo $curr_attr->migattributename ?></td>
+				<td width="20%"><input type="text" name="<?php echo $migattributedisplayname ?>" value="<?php echo $curr_attr->migattributedisplayname ?>"></td>
+		  <script language="php">  
+  			for ($j = 0; $j < sizeof($optionboxes); $j++)
+  			{
+  				</script>
+				<td width="20%" align="center"><input type="checkbox" name="<?php echo $$optionboxes[$j] ?>" value="ON" <?php $func = "is_" . $optionboxes[$j]; if ($curr_attr->$func($selected_class->migclassname)) echo "checked" ?>></td>
+		       <script language="php">  
+			}
+   		}
+   	
+   	}
+</script>
+</table>
+<p>
+<input type="hidden" name="editorder" value="go">
+<input type="submit" value="Submit">
+<input type="reset" value="Reset">
+<input type="hidden" name="class" value="<?php echo $selected_class->migclassname ?>">
+</p>
+</center>
+</form>
+
+
+
+<script language="php">
+}
+$core->disconnect();
+</script>
+
+<p>&nbsp;<!--msnavigation--></td></tr><!--msnavigation--></table><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td>
+
+
+
+</td></tr><!--msnavigation--></table></body>

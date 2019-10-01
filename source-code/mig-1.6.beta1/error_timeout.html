@@ -1,0 +1,33 @@
+<script language="php">
+free_security_cookie();
+
+session_unset();
+session_destroy();
+</script>
+
+<html>
+
+<head>
+<meta http-equiv="Content-Language" content="no-bok">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title><script language="php">if (isset($mig_pagetitle)) echo $mig_pagetitle; else echo "Session timeout";</script></title>
+<script language="JavaScript" type="text/javascript" src="js/global.js">
+</script>
+<meta name="Microsoft Border" content="b, default">
+</head>
+
+<body><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><!--msnavigation--><td valign="top">
+
+
+<h2><script language="php">if (isset($mig_pagetitle)) echo $mig_pagetitle; else echo "Session timeout";</script></h2>
+<p>Your session have time out due to <?php echo MIG_SESSION_TIMEOUT?> seconds of inactivity. Please
+<a href="index.html"> login again.</a>
+
+<!--msnavigation--></td></tr><!--msnavigation--></table><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td>
+
+
+
+</td></tr><!--msnavigation--></table></body>
+</html>

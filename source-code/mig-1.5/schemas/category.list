@@ -1,0 +1,14 @@
+<?
+$category = array(
+	"Unfiled",
+	"Work",
+	"Babes",
+	"Friends WA",
+	"Friends Maui",
+	"Other Friends",
+	"Family",
+	"Music",
+	"Net",
+	"Randoms"
+);
+?> 

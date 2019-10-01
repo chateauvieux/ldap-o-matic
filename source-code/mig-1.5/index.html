@@ -1,0 +1,44 @@
+<script language="php">
+ require_once "php/config.php";
+ ## security enabler
+ $auth_file = "php/" . AUTHENTICATION_SYSTEM_TYPE . "_authenticate.php";
+ require_once $auth_file;
+ </script>
+
+<html>
+
+<head>
+<title><script language="php">if (isset($mig_pagetitle)) echo $mig_pagetitle; else echo MIG_INSTALLATION_NAME;</script></title>
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+
+<script language="JavaScript" type="text/javascript" src="js/global.js">
+</script>
+<meta name="Microsoft Border" content="b, default">
+</head>
+
+<script language="php">
+	if (isset($target) && ($target != $SCRIPT_NAME)) 
+		$src = $target;
+	else $src = "welcome.html?";
+</script>
+
+
+<frameset framespacing="0" border="0" rows="64,*" frameborder="0">
+  <frame name="top" scrolling="no" noresize target="contents" src="top.html">
+  <frameset cols="245,*">
+    <frame name="contents" src="left.html?p=0&menu=">
+    <frame name="main" src="<?php echo $src ?>" scrolling="auto" target="_blank">
+  </frameset> 
+  <noframes>
+  <body><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><!--msnavigation--><td valign="top">
+
+  <p>This page uses frames, but your browser doesn't support them.<!--msnavigation--></td></tr><!--msnavigation--></table><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td>
+
+
+
+</td></tr><!--msnavigation--></table></body>
+  </noframes>
+</frameset>
+
+</html>

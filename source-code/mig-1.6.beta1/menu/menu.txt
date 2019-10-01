@@ -1,0 +1,93 @@
+<?php
+//...Directory|javascript: openSearchWindow('search_engine.html','"; if (isset($selected_class)) $treemenu .= "class=" . $selected_class->migclassname; $treemenu .= "')
+//...Preferences|javascript: openSearchWindow('schema_admin.html','"; if (isset($selected_class)) $treemenu .= "class=" . $selected_class->migclassname; $treemenu .= "');
+//			$treemenu .= "\n..." . $curr_group->miggroupdisplayname . "|javascript: openSearchWindow('group_management.html','group=" . $curr_group->miggroupname . "')";
+$treemenu = 
+".Menu
+..<b>Search</b>
+...Directory&nbsp;search|search_engine.html"; if (isset($selected_class)) $treemenu .= "?class=" . $selected_class->migclassname; $treemenu .= "|main
+...Your&nbsp;search&nbsp;preferences|schema_admin.html"; if (isset($selected_class)) $treemenu .= "?class=" . $selected_class->migclassname; $treemenu .= "|main
+...Web&nbsp;search|search_web.html|main
+..<b>User&nbsp;Area</b>
+...View/edit&nbsp;profile|account_management.html|main";
+
+if (MIG_ACTIVATE_EMAIL == "yes")
+{
+	$treemenu .= "
+...Email&nbsp;account&nbsp;settings|account_management_email.html|main";
+}
+
+$treemenu .= "
+...Your&nbsp;password|account_management_passwd.html|main"; 
+
+// find the groups the user is able to manage
+// and modify the style sheet accordingely
+require_once "php/group.php";
+if (($groups = $core->read_group_list("auto")) == false) die($core->error_msg);
+
+if (((defined("ADMIN") && (ADMIN == true)) || ($core->group_count > 0)))
+{
+	$treemenu .= "\n..<b>Groups</b>
+...Add&nbsp;record|record_add.html"; if (isset($selected_class)) $treemenu .= "?class=" . $selected_class->migclassname; $treemenu .= "|main";
+	
+	for ($i = 0; $i < $core->group_count; $i++)
+	{
+		$curr_group = new group($conn_id);
+		if (!$curr_group->read_from_list($groups, $i)) die($curr_group->error_msg);
+		if (isset($selected_class))
+		{
+			if ($curr_group->migusingclass == $selected_class->migclassname)
+				$treemenu .= "\n..." . str_replace(" ", "&nbsp;", $curr_group->miggroupdisplayname) . "|group_management.html?group=" . $curr_group->miggroupname . "|main";
+		}
+		else $treemenu .= "\n..." . str_replace(" ", "&nbsp;", $curr_group->miggroupdisplayname) . "|group_management.html?group=" . $curr_group->miggroupname . "|main";
+	}
+	echo "\n";
+}
+
+if (defined("ADMIN") && (ADMIN == true)) 
+{
+	$treemenu .= "
+..<b>Management</b>
+...Users|viewusers.html|main
+...Add&nbsp;record|record_add.html"; if (isset($selected_class)) $treemenu .= "?class=" . $selected_class->migclassname; $treemenu .= "|main";
+
+$treemenu .= "
+...<b>Attributes</b>
+....Name&nbsp;and&nbsp;values|schema_admin_attributes.html|main
+....Display&nbsp;types|schema_admin_attributes_types.html|main
+....Descriptions|schema_admin_attributes_description.html|main
+...<b>Classes</b>
+....Settings|schema_admin_class.html";
+
+if (isset($selected_class)) $treemenu .= "?class=" . $selected_class->migclassname; 
+$treemenu .= "|main";
+
+$treemenu .= "
+....Searching&nbsp;defaults</b>|global_schema_admin.html";
+
+if (isset($selected_class)) $treemenu .= "?class=" . $selected_class->migclassname;
+$treemenu .= "|main";
+
+$treemenu .= "
+....Subsections|schema_admin_class_subsections.html";
+
+if (isset($selected_class)) $treemenu .= "?class=" . $selected_class->migclassname; 
+$treemenu .= "|main";
+
+$treemenu .= "
+...Groups|schema_admin_group.html"; 
+
+if (isset($selected_class)) $treemenu .= "?class=" . $selected_class->migclassname;
+$treemenu .= "|main";
+
+$treemenu .= "
+...Schema|schema.html|main
+...Server&nbsp;restart|schema_admin_server_restart.html|main";
+}
+
+
+$treemenu .= "
+..Logout|logout.html|_top";
+
+
+?>

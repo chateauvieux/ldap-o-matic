@@ -1,0 +1,49 @@
+<script language="php">
+ require_once "php/config.php"; 
+ ## security enabler
+ $auth_file = "php/" . AUTHENTICATION_SYSTEM_TYPE . "_authenticate_manager.php";
+ require_once $auth_file;
+</script>
+
+<html>
+
+<head>
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title><script language="php">if (isset($mig_pagetitle)) echo $mig_pagetitle; else echo "Administration pages - Directory server restart";</script></title>
+<script language="JavaScript" type="text/javascript" src="js/global.js">
+</script>
+<meta name="Microsoft Border" content="b, default">
+</head>
+
+<body><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><!--msnavigation--><td valign="top">
+<h2><script language="php">if (isset($mig_pagetitle)) echo $mig_pagetitle; else echo "Administration pages - Directory server restart";</script></h2>
+<script language="php">
+unset ($order); if (isset ($_POST["order"])) $order = $_POST["order"]; else if (isset($_GET["order"])) $order = $_GET["order"];
+
+if (isset($order) && ($order == "go_restart"))
+{
+</script>
+<h4> The system returned the following message:</h4>
+<textarea cols="80" rows="5">
+<script language="php">
+ system("sudo /etc/rc.d/init.d/ldap restart 2>&1");
+</script>
+</textarea>
+<script language="php">
+}
+else
+{
+</script>
+	<p>Click <a href="schema_admin_server_restart.html?order=go_restart"> here</a> to restart the server.&nbsp;
+<script language="php">
+}	
+</script>
+
+<!--msnavigation--></td></tr><!--msnavigation--></table><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td>
+
+
+
+</td></tr><!--msnavigation--></table></body>
+
+</html>

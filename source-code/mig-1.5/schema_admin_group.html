@@ -1,0 +1,609 @@
+<script language="php">
+ require_once "php/config.php";
+ ## security enabler
+ $auth_file = "php/" . AUTHENTICATION_SYSTEM_TYPE . "_authenticate_manager.php";
+ require_once $auth_file;
+ </script>
+
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta http-equiv="expires" content="1 Jan 2000">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title><script language="php">if (isset($mig_pagetitle)) echo $mig_pagetitle; else echo "Administration pages - Groups";</script></title>
+<script language="JavaScript" type="text/javascript" src="js/global.js">
+</script>
+<meta name="Microsoft Border" content="b">
+</head>
+<script language="php">
+
+$core_file = "php/" . INFORMATION_SYSTEM_TYPE . "_core.php"; 
+require_once $core_file;
+require_once "php/search_class.php";
+require_once "php/group.php";
+
+$core = new core();
+if (($conn_id = $core->connect()) == false)
+	die($core->error_msg);
+
+if (($gp = $core->read_group_list("auto")) == false) die($core->error_msg);
+
+</script>
+
+<body><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><!--msnavigation--><td valign="top">
+<h2><script language="php">if (isset($mig_pagetitle)) echo $mig_pagetitle; else echo "Administration pages - Groups";</script></h2>
+
+<script language="php">
+if (isset($order))
+{
+	if ($order == "prepare_add")
+	{
+</script>
+
+ <center>
+ <form action="<?php echo $SCRIPT_NAME ?>" method="POST" onsubmit="return Form_Validator(this)">
+  <table border="1" width="80%" cellspacing="0" cellpadding="0">
+    <tr>
+     <td width="33%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Group
+        Display name</b></font></td>
+      <td width="67%" bgcolor="#000066" align="center"><input type="text" name="miggroupdisplayname" size="20"></td>
+    </tr>
+    <tr>
+      <td width="33%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Group LDAP name</b></font></td>
+      <td width="67%" bgcolor="#000066" align="center"><input type="text" name="miggroupname" size="20"></td>
+    </tr>
+    <tr>
+      <td width="33%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Group Search class</b></font></td>
+      <td width="67%" bgcolor="#000066" align="center">
+      
+      <select size="1" name="class"> <option selected value="">Select your search class</option>
+<script language="php">
+		if (($dm = $core->read_search_class_list("auto")) == false) die ($core->error_msg);
+	
+		for ($i = 0; $i < $core->search_class_count; $i++) 
+		{
+			$cur_class = new search_class($conn_id);	
+			if (!$cur_class->read_from_list($dm, $i)) die($cur_class->error_msg);
+			echo "<option value=\"" . $cur_class->migclassname . "\">" . $cur_class->migclassdisplayname . "</option>";
+		}
+</script>
+	  </select>
+	  </tr>
+   </table>
+  <p>
+  <input type="submit" value="Submit"> 
+  <input type="hidden" name="order" value="go_add">
+  </p>
+ </form>
+ </center>
+
+<script language="php">
+	}
+	elseif ($order == "go_add")
+	{
+		$newusergroup = new group($conn_id);
+		$newusergroup->miggroupname = trim($miggroupname);
+		$newusergroup->miggroupdisplayname = $miggroupdisplayname;
+		$newusergroup->migusingclass = $class;
+		$newusergroup->migdatarefresh = "static";
+
+	 	
+		if (!$newusergroup->add()) die($newusergroup->error_msg);	
+	}
+}
+
+// the group variable is transmitted by the page herself (HTTP GET)
+if (isset($group))
+{
+	$selected_group = new group($conn_id);
+	if (!$selected_group->read($group)) 
+		die($selected_group->error_msg);
+	
+	if (isset($order))
+	{
+		if ($order == "go_edit")
+		{
+			$updmod["miggroupname"] = trim($miggroupname);
+			$updmod["miggroupdisplayname"] = $miggroupdisplayname;
+			$updmod["migusingclass"] = $class;
+			$updmod["migdatarefresh"] = $dynamic;
+		
+			if (isset($save_filter)) $updmod["migdatasearchfilter"] = $migdatasearchfilter;
+		
+			if (isset($search_res_dn)) // search_engine returned something
+			{
+				if (isset($add_migmodifyinguser))
+				{
+					if (!isset($selected_group->migmodifyinguser))
+						$selected_group->migmodifyinguser = array();
+					$updmodmigmodifyinguser["migmodifyinguser"] = array_diff($search_res_dn, $selected_group->migmodifyinguser);
+					if (sizeof($updmodmigmodifyinguser["migmodifyinguser"]) > 0)
+						if (!$selected_group->mod_add($updmodmigmodifyinguser)) die($selected_group->error_msg);
+				}
+			}			
+		
+			if (isset($selected_group->migmodifyinguser)) // there are some migmodifyingusers to remove
+			{
+				if ((isset($remove_migmodifyinguser))&&((isset($cur_migmodifyinguser_selection)) ||  (isset($search_res_dn))))
+				{
+					if (!isset($cur_migmodifyinguser_selection))
+						$cur_migmodifyinguser_selection = array();
+					if (!isset($search_res_dn))
+						$search_res_dn = array();
+			
+					$updmodmigmodifyinguser["migmodifyinguser"] = array_merge($cur_migmodifyinguser_selection, 
+							array_diff(array_intersect($selected_group->migmodifyinguser, $search_res_dn),
+							$cur_migmodifyinguser_selection));
+					if (sizeof($updmodmigmodifyinguser["migmodifyinguser"]) > 0)
+						if (!$selected_group->mod_del($updmodmigmodifyinguser)) die($selected_group->error_msg);
+				}
+			}
+
+			if ($selected_group->is_migdatarefresh_static())
+			{
+				if (isset($search_res_dn)) // search_engine returned something
+				{
+					if (isset($add_migmodifieddata))
+					{
+						if (!isset($selected_group->migmodifieddata))
+							$selected_group->migmodifieddata = array();
+						$updmodmigmodifieddata["migmodifieddata"] = array_diff($search_res_dn, $selected_group->migmodifieddata);
+						if (sizeof($updmodmigmodifieddata["migmodifieddata"]) > 0)
+							if (!$selected_group->mod_add($updmodmigmodifieddata)) die($selected_group->error_msg);
+					}
+				}	
+				if (isset($selected_group->migmodifieddata)) // there are some members to remove
+				{
+					if ((isset($remove_migmodifieddata))&&((isset($cur_migmodifieddata_selection)) ||  (isset($search_res_dn))))
+					{
+						if (!isset($cur_migmodifieddata_selection))
+							$cur_migmodifieddata_selection = array();
+						if (!isset($search_res_dn))
+							$search_res_dn = array();
+						
+						$updmodmigmodifieddata["migmodifieddata"] = array_merge($cur_migmodifieddata_selection, 
+								array_diff(array_intersect($selected_group->migmodifieddata, $search_res_dn),
+								$cur_migmodifieddata_selection));		
+						if (sizeof($updmodmigmodifieddata["migmodifieddata"]) > 0)
+							if (!$selected_group->mod_del($updmodmigmodifieddata)) die($selected_group->error_msg);
+					}
+				}
+			}
+			
+			if (!$selected_group->mod_replace($updmod))
+				die($selected_group->error_msg);
+			
+			$group = $updmod["miggroupname"];
+			$order = "prepare_edit";
+	
+			// refresh !!
+			if (!$selected_group->read($group)) 
+				die($selected_group->error_msg);
+	
+		}
+		if ($order == "prepare_edit")
+		{
+			$miggroupdisplayname = $selected_group->miggroupdisplayname;
+			$miggroupname = $selected_group->miggroupname;
+			$migmodifyinguser = $selected_group->migmodifyinguser;
+			$migmodifieddata = $selected_group->migmodifieddata;
+			$class = $selected_group->migusingclass;
+			$dynamic = $selected_group->migdatarefresh;	
+	
+</script>
+
+ <center>
+ <form action="<?php echo $SCRIPT_NAME ?>" method="POST" onsubmit="return Form_Validator(this)">
+  <table border="1" width="80%" cellspacing="0" cellpadding="0">
+    <tr>
+     <td width="33%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Group
+        Display name</b></font></td>
+      <td width="67%" bgcolor="#000066" align="center"><input type="text" name="miggroupdisplayname" value="<?php echo $miggroupdisplayname ?>" size="20"></td>
+    </tr>
+    <tr>
+      <td width="33%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Group LDAP name</b></font></td>
+      <td width="67%" bgcolor="#000066" align="center"><input type="text" name="miggroupname" value="<?php echo $miggroupname ?>" size="20"></td>
+    </tr>
+    <tr>
+      <td width="33%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Group Search class</b></font></td>
+      <td width="67%" bgcolor="#000066" align="center">
+      
+      <select size="1" name="class">
+      <script language="php">
+			if (($dm = $core->read_search_class_list("auto")) == false) die ($core->error_msg);
+	
+	  </script>
+	<option selected value="">Select your search class</option>
+	  <script language="php">
+			for ($i = 0; $i < $core->search_class_count; $i++) 
+			{
+				$cur_class = new search_class($conn_id);	
+				if (!$cur_class->read_from_list($dm, $i)) die($cur_class->error_msg);
+				if ($class == $cur_class->migclassname) 
+				{
+					echo "<option selected value=\"$class\">" . $cur_class->migclassdisplayname . "</option>";
+					$selected_class = $cur_class;
+				}	
+				else 
+					echo "<option value=\"" . $cur_class->migclassname . "\">" . $cur_class->migclassdisplayname . "</option>";
+			}
+</script>
+	  </select>
+	  </tr>
+	  <tr>
+ 	   <td width="33%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Dynamically updated targets</b></font></td>
+      <td width="67%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Yes</b></font>
+      <input type="radio" value="dynamic" name="dynamic" <?php if ($selected_group->is_migdatarefresh_dynamic()) echo "checked" ?>><input type="radio" value="static" <?php if ($selected_group->is_migdatarefresh_static()) echo "checked" ?> name="dynamic"><font color="#FFFFFF"><b>No</b></font>
+     </tr>
+     <script language="php">
+			if ($selected_group->is_migdatarefresh_dynamic())
+			{
+   		</script> 
+     <tr>
+ 	   <td width="33%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Current search filter</b></font></td>
+      <td width="67%" bgcolor="#000066" align="center"><font color="#FFFFFF"> <?php echo $selected_group->migdatasearchfilter?></font>
+     </tr> 
+		<script language="php">
+   			}
+  	   </script> 
+
+
+  </table>  
+    <p>
+  <input type="submit" value="Apply changes">
+  <input type="hidden" name="order" value="go_edit">
+  <input type="hidden" name="group" value="<?php echo $selected_group->miggroupname ?>">
+  
+
+ </form>
+<script language="php">
+			include_once "php/search_engine.php";
+			// call the search module 
+			if ($selected_group->is_migdatarefresh_dynamic())
+			{
+				if (isset($migdatasearchfilter))
+					$search_engine = new search_engine($conn_id, $data_conn_id, $selected_class->migclassname, $selected_class->migdatabasedn, "?group=$selected_group->miggroupname&order=prepare_edit", $migdatasearchfilter);
+				else $search_engine = new search_engine($conn_id, $data_conn_id, $selected_class->migclassname, $selected_class->migdatabasedn, "?group=$selected_group->miggroupname&order=prepare_edit");
+			}
+			else
+				$search_engine = new search_engine($conn_id, $data_conn_id, $selected_class->migclassname, $selected_class->migdatabasedn, "?group=$selected_group->miggroupname&order=prepare_edit");
+
+			if ($class != "")
+			{
+</script>
+<div align="center">
+		<div align="center">
+        <table border="0" cellpadding="0" width="75%">
+		<tr>
+			<td valign="top" width="24%">
+			<form method="GET" action="<?php echo $SCRIPT_NAME ?>" name="form1">
+			<p align="center">
+			<select name="criteria[]" multiple>
+	  			<script language="php">
+	  			if (isset($criteria))
+	  			{
+	  				if (!$search_engine->show_criteria($criteria)) die($search_engine->error_msg);
+	  			}
+	  			elseif (!$search_engine->show_criteria()) die($search_engine->error_msg);
+
+				</script>
+			</select>	
+			<br>
+			<input type="hidden" name="group" value="<?php echo $selected_group->miggroupname ?>">		
+			<input type="hidden" name="order" value="prepare_edit">		
+			<input type="Submit" value="Update search fields">		
+			</p>
+			</form>
+            </td>
+			<td valign="top" width="91%">
+			<form method="GET" action="<?php echo $SCRIPT_NAME ?>">
+			<input type="hidden" name="group" value="<?php echo $selected_group->miggroupname ?>">		
+			<input type="hidden" name="order" value="prepare_edit">		
+
+
+				<div align="center">
+                    <table border="1" width="100%" cellspacing="0">
+   					<tr>
+   					<td width="29%" align="center"><b>attributes</b></td>
+   					<td width="28%" align="center"><b>match criteria</b></td>
+ 					<td width="29%" align="center"><b>your input</b></td>
+   					<td width="14%" align="center"><b>sort by</b></td>
+  					</tr>
+					<script language="php">
+				if (isset($sortattribute))
+				{
+					if (!$search_engine->show_input($sortattribute)) die($search_engine->error_msg);
+				}
+				elseif (!$search_engine->show_input()) die($search_engine->error_msg);
+
+				if (!$search_engine->build_filter($selected_class)) die($search_engine->error_msg);
+					</script>
+					</table>
+				</div>
+				<p align="center">
+				<input type="submit" value="Submit">
+				<input type="reset" value="Reset">
+				<input type="hidden" name="searchorder" value="go">
+    			</p>
+			</form>
+            </td>
+		</tr>
+		<tr>
+		<td valign="top" width="100%" colspan="2">
+  			<script language="php">
+				if (isset($searchorder) && ($searchorder == "go"))
+				{
+					$data_core = new core();
+					
+					// remote classes syntax : CLASSNAME|HOSTNAME|PARAM; CLASSNAME2, HOSTNAME2
+					$remote_classes = explode (";", REMOTE_SEARCHCLASSES);
+	
+					for ($i = 0; $i < sizeof($remote_classes); $i++)
+					{
+						$remote_class = explode ("|", $remote_classes[$i]);
+						if (strcasecmp ($class, trim ($remote_class[0])) == 0)
+						{
+							define ("REMOTE_HOSTNAME", trim ($remote_class[1]));
+							if (isset($remote_class[2])) define ("REMOTE_MANAGER_UID", trim ($remote_class[2]));
+							if (isset($remote_class[3])) define ("REMOTE_MANAGER_PW", trim ($remote_class[3]));
+							break;
+						}
+					}		
+
+					
+					if (($data_conn_id = $data_core->connect_to_datastore()) == false)
+						die($data_core->error_msg);
+					
+					$search_engine->data_conn_id = $data_conn_id;
+
+					if (isset($sortattribute))
+					{
+						if (!isset($sortorder)) $sortorder = "asc";
+						if (!$search_engine->find_results($sortattribute, $sortorder)) die($search_engine->error_msg);
+					}
+					elseif (!$search_engine->find_results()) die($search_engine->error_msg);
+			
+					if (isset($page))
+ 					{
+ 						if (!$search_engine->display_results_pages($page)) die($search_engine->error_msg);
+		 				if (!$search_engine->display_results($selected_class->migdataicon, $selected_class->migpointedwebpage, $page)) die($search_engine->error_msg);
+ 					}
+ 					else
+ 					{
+ 						if (!$search_engine->display_results_pages()) die($search_engine->error_msg);
+ 						if (!$search_engine->display_results($selected_class->migdataicon, $selected_class->migpointedwebpage)) die($search_engine->error_msg);
+					}
+					
+					if (isset($page))
+ 					{
+ 						if (!$search_engine->display_results_pages($page)) die($search_engine->error_msg);
+		 			}
+ 					else
+ 					{
+ 						if (!$search_engine->display_results_pages()) die($search_engine->error_msg);
+ 					}
+				}
+			</script>
+		
+        </td>
+   		</tr>
+		</table>
+		</div>
+
+		</div>
+
+  <script>
+function setoptionBoxSize()
+{
+ 	document.form1['criteria[]'].size = <?php echo $search_engine->total_displayed ?>;
+}	
+window.onload = setoptionBoxSize;
+  </script>
+  <script language="php">
+
+			} // class not null
+</script>
+
+ <form action="<?php echo $SCRIPT_NAME ?>" method="POST">
+ <script language="php">
+ 			if (isset($search_engine->result))
+ 				for ($i = 0; $i < $search_engine->result["count"]; $i++)  // search result
+					echo "<input type=\"hidden\" name=\"search_res_dn[]\" value=\"" . $core->get_dn($search_engine->result[$i]) . "\">";
+</script>
+
+  		
+ <table width="100%" cellspacing="0" cellpadding="0" border="1" bgcolor="#000066">
+  <tr>
+   <td>
+      <p align="center"><font color="#FFFFFF"><b>Members</b></font> 
+   </td>
+  </tr>  
+  <tr>
+   <td>
+      <p align="center"><input type="submit" name="remove_migmodifyinguser" value="Remove member"><input type="submit" name="add_migmodifyinguser" value="Add member">
+   </td>
+  </tr>
+  <tr>
+   <td>
+      <p align="center"><select size="<?php echo $selected_group->count(" migmodifyinguser")?>" name="cur_migmodifyinguser_selection[]" multiple>
+      <script language="php">
+   		   	for ($i = 0; $i < $selected_group->count("migmodifyinguser"); $i++)  
+				echo "<option value=\"" . $selected_group->migmodifyinguser[$i] . "\">" . $selected_group->migmodifyinguser[$i] . "</option>";
+	   </script>      	
+      </select></p>
+   </td>
+  </tr> 
+  </table>
+  <br>
+  
+ <table width="100%" cellspacing="0" cellpadding="0" border="1" bgcolor="#000066">
+  <tr>
+   <td>
+      <p align="center"><font color="#FFFFFF"><b>Modified &quot;things&quot;</b></font> 
+   </td>
+  </tr>
+  <tr>
+   <td>
+
+   <script language="php">
+	  	 	if ($selected_group->is_migdatarefresh_static())
+  	 		{
+   </script> 
+      <p align="center"><input type="submit" name="remove_migmodifieddata" value="Remove modified"><input type="submit" name="add_migmodifieddata" value="Add modified">
+  <script language="php">
+   			}
+   			else
+   			{
+   </script> 
+      <p align="center"><font color="#FFFFFF"><b>Current targets</b></font> 
+   <script language="php">
+   				if ($selected_group->migdatasearchfilter != $search_engine->searchfilter)
+   				{
+   </script>    		
+  		<input type="submit" name="save_filter" value="Save search filter">
+   <script language="php">
+				}   
+   			}
+   </script> 
+   </td>
+
+  </tr>
+  <tr>
+  <td>
+      <p align="center"><select size="<?php echo $selected_group->count(" migmodifieddata")?>" name="cur_migmodifieddata_selection[]" multiple>
+      <script language="php">
+      		if ($selected_group->is_migdatarefresh_static())
+      		{
+      			for ($i = 0; $i < $selected_group->count("migmodifieddata"); $i++)  // search result
+					echo "<option value=\"" . $selected_group->migmodifieddata[$i] . "\">" . $selected_group->migmodifieddata[$i] . "</option>";
+			}
+			else
+			{
+				if ($selected_group->migdatasearchfilter != "")
+				{
+					$temp_result = $core->search($selected_class->migdatabasedn, $selected_group->migdatasearchfilter, array());
+					for ($i = 0; $i < $temp_result["count"]; $i++)  // search result
+						echo "<option value=\"" . $core->get_dn($temp_result[$i]) . "\">" . $core->get_dn($temp_result[$i]) . "</option>";
+				}
+			}
+
+	   </script>      	
+      </select></p>
+  </td>
+  </tr> 
+  </table>
+  <input type="hidden" name="group" value="<?php echo $selected_group->miggroupname ?>">
+  <input type="hidden" name="miggroupname" value="<?php echo $miggroupname ?>">
+  <input type="hidden" name="miggroupdisplayname" value="<?php echo $miggroupdisplayname ?>">
+  <input type="hidden" name="dynamic" value="<?php echo $dynamic ?>">
+  <input type="hidden" name="class" value="<?php echo $class ?>">	
+  <input type="hidden" name="migdatasearchfilter" value="<?php echo $search_engine->searchfilter ?>">
+
+  
+  <script language="php">
+  		
+
+  			if (isset($criteria))
+  			{
+  				for ($i = 0; $i < sizeof($criteria); $i++) 
+  				{
+					$input = "input" . $i; //construct a variable variable.
+					$current = $input . "[]";
+					$choice = "choice" . $i; //construct a variable variable.
+					
+					if (isset($$input))
+						for ($j = 0; $j < sizeof($$input); $j++) 
+							echo "<input type=\"hidden\" name=\"$current\" value=\"" . ${$input}[$j] . "\">";
+										
+					echo "<input type=\"hidden\" name=\"$choice\" value=\"" . ${$choice} . "\">";
+					echo "<input type=\"hidden\" name=\"criteria[]\" value=\"$criteria[$i]\">";					
+				}
+			}
+  				
+			
+			
+					
+  </script>
+  <input type="hidden" name="order" value="go_edit">
+  </form>
+  </center>
+  
+<script language="php"> 		
+		}
+		elseif ($order == "go_remove")
+		{
+		 	if (!$selected_group->delete())	die($selected_group->error_msg);
+
+	 		unset($group);
+		}
+	}
+	else
+	{		
+</script>
+	<h3> Selected group : <?php echo $selected_group->miggroupname ?></h3>
+
+<form method="POST">
+<center>
+<input type="button" value="Remove the group" onclick="confirm_removal()">
+<input type="button" value="Edit the group"
+	onclick="page = '<?php echo $SCRIPT_NAME ?>?group=<?php echo urlencode($selected_group->miggroupname) ?>&order=prepare_edit&<?php echo SID ?>' ;	window.open(page,'_self')">
+</center> 
+</form>
+<script>
+function confirm_removal()
+{
+	var txt = 'Confirm removal of group <?php echo $selected_group->miggroupdisplayname ?>';
+	if (confirm(txt)) 
+		document.location = '<?php echo $SCRIPT_NAME ?>?group=<?php echo $selected_group->miggroupname?>&order=go_remove&<?php echo SID ?>';
+	else document.location = '<?php echo $SCRIPT_NAME ?>?<?php echo SID ?>';
+}
+</script>
+		
+<script language="php">
+	}
+}
+if (!isset($group))     // WARNING do not replace by ELSE because group is unset dynamically
+{
+	include_once "php/group_option_box.php";
+</script>
+<center> or <form><input type="button" value="Add a group"
+					onclick="page = '<?php echo $SCRIPT_NAME ?>?order=prepare_add&<?php echo SID ?>' ;	window.open(page,'_self')"></form>
+</center>
+<script language="php">
+}
+
+$core->disconnect();
+</script>
+
+
+<script language="javascript">
+function Form_Validator(theForm)
+{
+	if (theForm.miggroupdisplayname.value == "")
+	{
+		alert("Please enter a value for the \"Display Name\" field.");
+		theForm.miggroupdisplayname.focus();
+		return (false);
+	}
+	
+	if (theForm.miggroupname.value == "")
+	{
+		alert("Please enter a value for the \"Group Name\" field.");
+		theForm.miggroupname.focus();
+		return (false);
+	}
+	
+	return (true);
+}
+
+</script>
+
+
+<p>&nbsp;<!--msnavigation--></td></tr><!--msnavigation--></table><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td>
+
+
+
+</td></tr><!--msnavigation--></table></body>
+</html>

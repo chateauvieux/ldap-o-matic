@@ -1,0 +1,53 @@
+<script language="php">
+ require_once "php/config.php"; 
+ ## security enabler
+ $auth_file = "php/" . AUTHENTICATION_SYSTEM_TYPE . "_authenticate.php";
+ require_once $auth_file;
+</script>
+
+<html>
+
+<head>
+<title><script language="php">if (isset($mig_pagetitle)) echo $mig_pagetitle; else echo "Help";</script></title>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<script language="JavaScript" type="text/javascript" src="js/global.js">
+</script>
+<meta name="Microsoft Border" content="b, default">
+</head>
+<body><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><!--msnavigation--><td valign="top">
+<h2><script language="php">if (isset($mig_pagetitle)) echo $mig_pagetitle; else echo "Help";</script></h2>
+
+<script language="php">
+$core_file = "php/" . INFORMATION_SYSTEM_TYPE . "_core.php"; 
+require_once $core_file;
+require_once "php/attribute.php";
+require_once "php/search_class.php";
+include_once "php/quicksort.php";
+
+$core = new core();
+
+if (($conn_id = $core->connect()) == false)	die($core->error_msg);
+if (($info = $core->read_attribute_list("system", array("migattributename", "migattributedisplayname", "migexamplevalue", "migdescription") )) == false) die($core->error_msg);
+quickSort($info, 0, $core->attribute_count -1, "migattributedisplayname");	
+
+for ($i = 0; $i < $core->attribute_count; $i++)
+{	
+	$curr_attr = new attribute($conn_id);
+	if (!$curr_attr->read_from_list($info, $i)) die($curr_attr->error_msg);
+	
+	</script><b><a name="<?php echo urlencode($curr_attr->migattributename) ?>"><?php echo $curr_attr->migattributedisplayname ?></a></b><br>
+	<font size="-1">
+<p><?php echo $curr_attr->migdescription ?>
+	<br><i>e.g., <?php echo $curr_attr->migexamplevalue ?></i></p><p align="right"><a href="javascript:window.close();">close window</a></p></font>
+	<script language="php">
+}
+$core->disconnect();
+</script>
+<p>&nbsp;<!--msnavigation--></td></tr><!--msnavigation--></table><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td>
+
+
+
+</td></tr><!--msnavigation--></table></body>
+</html>

@@ -1,0 +1,181 @@
+<script language="php">
+ require_once "php/config.php"; 
+ ## security enabler
+ $auth_file = "php/" . AUTHENTICATION_SYSTEM_TYPE . "_authenticate_manager.php";
+ require_once $auth_file;
+</script>
+
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta http-equiv="expires" content="1 Jan 2000">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title><script language="php">if (isset($mig_pagetitle)) echo $mig_pagetitle; else echo "Administration pages - Attribute types";</script></title>
+<script language="JavaScript" type="text/javascript" src="js/global.js">
+</script>
+<meta name="Microsoft Border" content="b, default">
+</head>
+<script language="php">
+
+$core_file = "php/" . INFORMATION_SYSTEM_TYPE . "_core.php"; 
+require_once $core_file;
+require_once "php/attribute.php";
+
+// Security enhancement for PHP 4.1 and higher
+// Compatibility with systems having register_globals turned off (default in PHP 4.2 and higher)
+// Compatibility for systems having variables_order equal to EGPCS and EPGCS
+
+unset ($order); if (isset ($_POST["order"])) $order = $_POST["order"]; else if (isset($_GET["order"])) $order = $_GET["order"];
+unset ($migattributename); if (isset ($_POST["migattributename"])) $migattributename = $_POST["migattributename"]; else if (isset($_GET["migattributename"])) $migattributename = $_GET["migattributename"];
+unset ($migdisplaytype); if (isset ($_POST["migdisplaytype"])) $migdisplaytype = $_POST["migdisplaytype"]; else if (isset($_GET["migdisplaytype"])) $migdisplaytype = $_GET["migdisplaytype"];
+unset ($migsearchtype); if (isset ($_POST["migsearchtype"])) $migsearchtype = $_POST["migsearchtype"]; else if (isset($_GET["migsearchtype"])) $migsearchtype = $_GET["migsearchtype"];
+unset ($migedittype); if (isset ($_POST["migedittype"])) $migedittype = $_POST["migedittype"]; else if (isset($_GET["migedittype"])) $migedittype = $_GET["migedittype"];
+
+
+$core = new core();
+
+if (($conn_id = $core->connect()) == false)
+	die($core->error_msg);
+
+include_once "php/quicksort.php";
+include_once "php/attribute_types.php";
+</script>
+
+<body><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><!--msnavigation--><td valign="top">
+<h2><script language="php">if (isset($mig_pagetitle)) echo $mig_pagetitle; else echo "Administration pages - Attribute types";</script>
+
+<script language="php">
+if (isset($order) && ($order == "go_edit") && (isset($migattributename)))
+{
+	// working on system defaults	
+	if (($attr = $core->read_attribute_list("system", array("migattributename", "migsearchtype", "migedittype", "migdisplaytype"))) == false) die($core->error_msg);	
+
+	$curr_attr = new attribute($conn_id);
+	if (!$curr_attr->read_from_list($attr, $migattributename)) die($curr_attr->error_msg);	
+
+	$updmod["migsearchtype"] = $migsearchtype;
+	$updmod["migedittype"] = $migedittype;
+	$updmod["migdisplaytype"] = $migdisplaytype;
+				
+	if (!$curr_attr->mod_replace($updmod))
+		die($curr_attr->error_msg);	
+	
+}
+	
+if (($info = $core->read_attribute_list("system", array("migattributename", "migattributedisplayname", "migdisplaytype", "migsearchtype", "migedittype"))) == false) die($core->error_msg);
+quickSort($info, 0, $core->attribute_count -1, "migattributedisplayname");	
+
+if (isset($migattributename))
+{
+</script>
+<script>
+function myFocus()
+{
+	document.edit_form.migdisplaytype.focus();
+}
+
+window.onload = myFocus;
+</script>
+<script language="php">
+}
+</script>
+</script>
+
+ 
+</h2>
+
+ 
+ <form name="edit_form" action="<?php echo $_SERVER["SCRIPT_NAME"] ?>" method="POST">
+ <center>
+  <table border="1" width="100%" cellspacing="0" cellpadding="0">
+    <tr>
+     <td width="25%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Attribute
+      Display name</b></font></td>
+      <td width="25%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Attribute
+        Display type</b></font></td>
+      <td width="25%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Attribute
+        Edit type</b></font></td>
+      <td width="25%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Attribute
+        Search type</b></font></td>
+    </tr>
+    <script language="php">
+for ($i = 0; $i < $core->attribute_count; $i++)
+{	
+	$curr_attr = new attribute($conn_id);
+	if (!$curr_attr->read_from_list($info, $i)) die($curr_attr->error_msg);
+
+	</script> 
+	<tr <?php if (($i % 2) == 0) echo "class=lightgrey"; ?>>
+    <script language="php">
+
+	if (isset($migattributename) && ($migattributename == $curr_attr->migattributename))
+	{
+	</script>
+	<td width="25%" align="center"><?php echo $curr_attr->migattributedisplayname ?></td>
+	<input type="hidden" name="migattributename" value="<?php echo $curr_attr->migattributename ?>">
+   <script language="php">
+ 	
+	   	$arr = array ("migdisplaytype", "migedittype", "migsearchtype");
+   		for ($j = 0; $j < sizeof ($arr); $j++)
+		{
+   		</script>
+   		<td width="25%" align="center"><select name="<?php echo $arr[$j] ?>">
+   		<script language="php">
+
+			for (reset($types); $k = key($types); next($types))
+			{	
+  	    	    if ($curr_attr->$arr[$j] == $k)
+					echo "<option selected value=\"$k\">$types[$k]</option>";
+				else 
+					echo "<option value=\"$k\">$types[$k]</option>";
+			}
+		</script>
+		</select></td>
+		<script language="php">
+
+		}
+	}
+	else
+	{
+	</script>
+	<td width="25%" align="center"><a href="<?php echo $_SERVER["SCRIPT_NAME"] ?>?order=prepare_edit&migattributename=<?php echo $curr_attr->migattributename ?>"><?php echo $curr_attr->migattributedisplayname ?></a></td>
+   <script language="php">
+ 	
+	   	$arr = array ("migdisplaytype", "migedittype", "migsearchtype");
+   		for ($j = 0; $j < sizeof ($arr); $j++)
+		{
+   		</script>
+   		<td width="25%" align="center">
+   		<script language="php">
+			echo $types[$curr_attr->$arr[$j]];
+		</script>
+    </td>
+		<script language="php">
+
+		}
+	}
+	</script>
+
+   </tr>
+   <script language="php">
+}
+</script>
+</table>
+  <p>
+  <input type="submit" value="Submit"> 
+  <input type="reset" value="Reset"> 
+  <input type="hidden" name="order" value="go_edit">
+  </p>
+  </center>
+  </form>
+<script language="php"> 
+$core->disconnect();
+</script>
+<p>&nbsp;<!--msnavigation--></td></tr><!--msnavigation--></table><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td>
+
+
+
+</td></tr><!--msnavigation--></table></body>
+</html>

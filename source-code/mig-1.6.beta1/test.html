@@ -1,0 +1,29 @@
+<script language="php">
+ require_once "php/config.php";
+ ## security enabler
+ $auth_file = "php/" . AUTHENTICATION_SYSTEM_TYPE . "_authenticate.php";
+ require_once $auth_file;
+
+ require_once "../WebX/forumrpc.php";
+if (FORUM_checkUWCUser(USER_LOGINNAME, USER_PW))
+{
+	if (!FORUM_loginUser(USER_LOGINNAME, "")) echo "something went wrong";
+}
+</script>
+
+
+
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta http-equiv="expires" content="1 Jan 2000">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title><script language="php">if (isset($mig_pagetitle)) echo $mig_pagetitle; else echo "Administration pages - Groups";</script></title>
+<meta name="Microsoft Border" content="b">
+</head>
+<script language="php">
+</script>
+<p>&nbsp;
+</html>

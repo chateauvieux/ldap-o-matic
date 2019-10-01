@@ -1,0 +1,215 @@
+<script language="php">
+ require_once "php/config.php"; 
+ ## security enabler
+ $auth_file = "php/" . AUTHENTICATION_SYSTEM_TYPE . "_authenticate.php";
+ require_once $auth_file;
+</script>
+
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta http-equiv="expires" content="1 Jan 2000">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title><script language="php">if (isset($mig_pagetitle)) echo $mig_pagetitle; else echo "User pages - Your profile";</script></title>
+<script language="JavaScript" type="text/javascript" src="js/global.js">
+</script>
+<script>
+nbquery = 0;
+function control() 
+{
+	// control of  non re-submition
+	if (nbquery > 0)
+	{
+		alert("Processing... please wait or re-fresh the page");
+		return false;
+	}
+	nbquery ++;                                                                                                                                                      
+	return true;                                                                                                                                          
+}            
+</script>  
+
+
+<meta name="Microsoft Border" content="b, default">
+</head>
+
+<body><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><!--msnavigation--><td valign="top">
+<h2><script language="php">if (isset($mig_pagetitle)) echo $mig_pagetitle; else echo "User pages - Your profile";</script></h2>
+
+<script language="php">
+// Security enhancement for PHP 4.1 and higher
+// Compatibility with systems having register_globals turned off (default in PHP 4.2 and higher)
+// Compatibility for systems having variables_order equal to EGPCS and EPGCS
+
+unset ($order); if (isset ($_POST["order"])) $order = $_POST["order"]; else if (isset($_GET["order"])) $order = $_GET["order"];
+unset ($mode); if (isset ($_POST["mode"])) $mode = $_POST["mode"]; else if (isset($_GET["mode"])) $mode = $_GET["mode"];
+
+$core_file = "php/" . INFORMATION_SYSTEM_TYPE . "_core.php"; 
+require_once $core_file;
+
+$core = new core();
+if (($conn_id = $core->connect()) == false)
+	die($core->error_msg);
+
+$data_core = new core();
+
+require_once "php/search_class.php";
+$class = new search_class($conn_id);
+if (!$class->read(USERS_MIG_SEARCHCLASS, array("migrelevantattribute", "migrequiredattribute", "migtimestamp", "migintegrationport"))) die($class->error_msg);
+
+// remote classes syntax : CLASSNAME|HOSTNAME|PARAM; CLASSNAME2, HOSTNAME2
+$remote_classes = explode (";", REMOTE_SEARCHCLASSES);
+
+for ($i = 0; $i < sizeof($remote_classes); $i++)
+{
+	$remote_class = explode ("|", $remote_classes[$i]);
+	if (strcasecmp (USERS_MIG_SEARCHCLASS, trim ($remote_class[0])) == 0)
+	{
+		define ("REMOTE_HOSTNAME", trim ($remote_class[1]));
+		if (isset($remote_class[2])) define ("REMOTE_MANAGER_UID", trim ($remote_class[2]));
+		if (isset($remote_class[3])) define ("REMOTE_MANAGER_PW", trim ($remote_class[3]));
+		break;
+	}
+}		
+
+if (($data_conn_id = $data_core->connect_to_datastore()) == false)
+	die($data_core->error_msg);
+
+if ($class->migintegrationport != "")
+{
+	include_once "php/integrator.php";
+	$as = new integrator($class->migintegrationport);
+}
+else
+{
+	include_once "php/integrator_emulator.php";
+	$as = new integrator_emulator($data_conn_id);
+}
+
+$dn = USER_UID;
+
+if (($data = $data_core->read($dn, USERS_SEARCHFILTER)) == false) die($data_core->error_msg);
+
+if (isset($mode) && ($mode != "readonly"))
+{
+	include_once "php/account_management.php";
+	if (isset($order) && ($order == "go_edit"))
+	{
+		
+		# Update data from previous screen
+		include_once "php/ldap_attribute_specific.php";
+		ldap_attribute_formatting($_POST);
+		ldap_specific_attribute_formatting($_POST);
+
+		if (!$as->update($_POST)) die("<h3>Update Error</h3><b>" . $as->geterrmsg() . "</b>");
+		if ($as->getAttribute("exitStatus") != "OK") 
+		{
+			</script>
+			<h3>Error while updating data with Metamerge Integration Server</h3><b>'<?php echo $as->getAttribute("exitStatus") ?>'</b>
+			<script language="php">
+		}
+		$as->clearAttribute ("exitStatus");
+
+		//refresh !!
+		if (($data = $data_core->read($dn, USERS_SEARCHFILTER)) == false) die($data_core->error_msg);
+	}
+	
+	if (!$as->read($dn)) die ("<h3>Error reading $dn </h3><b>" . $as->geterrmsg() . "</b>");
+	if ($as->getAttribute("exitStatus") != "OK") die ("<h3>Error while reading data from Metamerge Integration Server</h3><b>'" . $as->getAttribute("exitStatus") . "'</b>");	
+	
+</script>
+
+<p>Please check the info on this page, edit whatever is incorrect and add what is missing. Fields displayed in red are required.</p>
+<p><a href=<?php echo $_SERVER["SCRIPT_NAME"] . "?mode=readonly" ?>>Switch to Read-only mode</a></p>
+
+<script language="php">
+		if ($class->migtimestamp == "on")
+		{
+			$print_date = substr($as->getAttribute("migLastModifiedDate"),6,2) . "/" . substr($as->getAttribute("migLastModifiedDate"),4,2) . "/" 
+								. substr($as->getAttribute("migLastModifiedDate"),0,4) . " " . substr($as->getAttribute("migLastModifiedDate"),8,2) . ":" 
+								. substr($as->getAttribute("migLastModifiedDate"),10,2) . ":" . substr($as->getAttribute("migLastModifiedDate"),12,2) . " " 
+								. substr($as->getAttribute("migLastModifiedDate"),14);
+
+		</script>
+			Last modified on <?php echo $print_date ?> by <?php echo $as->getAttribute("migLastModifiedBy")?>
+		<script language="php">
+		}
+		</script>
+
+<form name="account_management" method="post" action="<?php echo $_SERVER["SCRIPT_NAME"] ?>" onsubmit="if (Form_Validator(this)) return control(); else return false">
+<input type="hidden" name="order" value="go_edit">
+
+ 
+<div align="center">
+  <center><table name="account_management_table" border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td colspan="2" align="left">Label</td>
+      <td align="left">Content</td>
+      <td align="left"><?php if ($class->migintegrationport != "") echo "Shared field" ?></td>
+    </tr>
+
+<input type="hidden" name="dn" value="<?php echo $dn ?>">
+<input type="hidden" name="mode" value="edit">
+    <tr>
+    <td>
+<script language="php">
+    
+if ($class->migtimestamp == "on")
+{
+	$date = date ("YmdHisT");
+	</script>
+		<input type="hidden" name="miglastmodifiedby" value="<?php echo USER_LOGINNAME ?>">
+		<input type="hidden" name="miglastmodifieddate" value="<?php echo $date ?>">
+	<script language="php">
+}
+	
+$script = print_Form($as, $data, USERS_MIG_SEARCHCLASS);
+</script>
+
+  </table>
+ </center>
+</div>
+<center>
+ <B><input type="submit" value="Submit"></B>  
+  <input type="reset" value="Reset">
+  
+</center>
+</form>
+
+<script>
+// dynamically generate JavaScript
+<?php echo $script?>
+</script>
+<script language="php">
+}
+else
+{
+	include_once "php/account_management_readonly.php";
+</script>
+	<p><a href=<?php echo $_SERVER["SCRIPT_NAME"] . "?mode=edit" ?>>Switch to Edit mode</a></p>
+ 
+ <center>	
+  <div align="center">
+    <table border="0" cellspacing="0" cellpadding="0">
+	    <tr>
+	      <td colspan="2" align="left">Label</td>
+	      <td align="left">Content</td>
+	    </tr>
+<script language="php">
+	print_result($data, USERS_MIG_SEARCHCLASS);
+</script>
+	   </table>
+    </div>
+  </center>
+<script language="php">
+}
+$core->disconnect();
+</script>
+  
+&nbsp;<!--msnavigation--></td></tr><!--msnavigation--></table><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td>
+
+
+
+</td></tr><!--msnavigation--></table></body>
+</html>

@@ -1,0 +1,123 @@
+<script language="php">
+ require_once "php/config.php"; 
+ ## security enabler
+ $auth_file = "php/" . AUTHENTICATION_SYSTEM_TYPE . "_authenticate_manager.php";
+ require_once $auth_file;
+</script>
+
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta http-equiv="expires" content="1 Jan 2000">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title><script language="php">if (isset($mig_pagetitle)) echo $mig_pagetitle; else echo "Administration pages - Attribute descriptions";</script></title>
+<script language="JavaScript" type="text/javascript" src="js/global.js">
+</script>
+<meta name="Microsoft Border" content="b, default">
+</head>
+<script language="php">
+
+$core_file = "php/" . INFORMATION_SYSTEM_TYPE . "_core.php"; 
+require_once $core_file;
+require_once "php/attribute.php";
+
+$core = new core();
+
+if (($conn_id = $core->connect()) == false)
+	die($core->error_msg);
+include_once "php/quicksort.php";
+require_once "php/search_class.php";
+
+</script>
+
+<body><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><!--msnavigation--><td valign="top">
+<h2><script language="php">if (isset($mig_pagetitle)) echo $mig_pagetitle; else echo "Administration pages - Attribute descriptions";</script>
+
+<script language="php">
+if (isset($order) && ($order == "go_edit"))
+{
+	// working on system defaults
+	if (($attr = $core->read_attribute_list("system", array("migattributename", "migdescription", "migexamplevalue"))) == false) die($core->error_msg);
+	
+	for ($a = 0; $a < sizeof($migattributename); $a++) 
+	{
+		$curr_attr = new attribute($conn_id);
+		if (!$curr_attr->read_from_list($attr, $migattributename[$a])) die($curr_attr->error_msg);	
+
+		unset($updmod);
+		unset($upddel);
+		
+		if ($migdescription[$a] != "") $updmod["migdescription"] = $migdescription[$a];
+		if ($migexamplevalue[$a] != "") $updmod["migexamplevalue"] = $migexamplevalue[$a];
+		
+		// delete if no value
+		if (!isset($updmod["migdescription"]))
+		 	$upddel["migdescription"] = $curr_attr->migdescription;
+		if (!isset($updmod["migexamplevalue"]))
+		 	$upddel["migexamplevalue"] = $curr_attr->migexamplevalue;
+		
+		if (isset($upddel))
+			if (!$curr_attr->mod_del($upddel)) die($curr_attr->error_msg);
+		
+		if (isset($updmod))
+			if (!$curr_attr->mod_replace($updmod)) die($curr_attr->error_msg);	
+	}		
+}
+
+if (($info = $core->read_attribute_list("system", array("migattributename", "migattributedisplayname", "migdescription", "migexamplevalue"))) == false) die($core->error_msg);
+quickSort($info, 0, $core->attribute_count -1, "migattributedisplayname");	
+</script>
+
+ 
+</h2>
+
+ 
+ <form action="<?php echo $SCRIPT_NAME ?>" method="POST">
+ <center>
+  <table border="1" width="100%" cellspacing="0" cellpadding="0">
+    <tr>
+     <td width="20%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Attribute
+      Display name</b></font></td>
+      <td width="40%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Attribute
+        Description</b></font></td>
+     <td width="40%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Attribute
+      example value</b></font></td>
+  
+    </tr>
+    <script language="php">
+    for ($i = 0; $i < $core->attribute_count; $i++)
+	{	
+		$curr_attr = new attribute($conn_id);
+		if (!$curr_attr->read_from_list($info, $i)) die($curr_attr->error_msg);
+	</script>
+				 
+	<tr <?php if (($i % 2) == 0) echo "class=lightgrey"; ?>>
+	 <input type="hidden" name="migattributename[]" value="<?php echo $curr_attr->migattributename ?>">
+    <td width="20%" align="center"><?php echo $curr_attr->migattributedisplayname ?></td>
+    <td width="40%" align="center"><textarea rows="2" name="migdescription[]" cols="25"><?php echo $curr_attr->migdescription ?></textarea></td>
+    <td width="40%" align="center"><textarea rows="2" name="migexamplevalue[]" cols="25"><?php echo $curr_attr->migexamplevalue ?></textarea></td>
+	</tr>
+	<script language="php">
+    }
+	</script>
+  </table>
+  <p>
+  <input type="submit" value="Submit"> 
+  <input type="reset" value="Reset"> 
+  <input type="hidden" name="order" value="go_edit">
+  </p>
+  </center>
+
+  </form>
+   
+<script language="php"> 
+$core->disconnect();
+</script>
+<p>&nbsp;<!--msnavigation--></td></tr><!--msnavigation--></table><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td>
+
+
+
+</td></tr><!--msnavigation--></table></body>
+</html>

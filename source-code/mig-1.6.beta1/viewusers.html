@@ -1,0 +1,366 @@
+<script language="php">
+ require_once "php/config.php"; 
+ ## security enabler
+ $auth_file = "php/" . AUTHENTICATION_SYSTEM_TYPE . "_authenticate_manager.php";
+ require_once $auth_file; 
+</script>
+
+<html>
+
+<head>
+<meta http-equiv="Content-Language" content="en-gb">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta http-equiv="expires" content="1 Jan 2000">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title><script language="php">if (isset($mig_pagetitle)) echo $mig_pagetitle; else echo "Administration pages - Users";</script></title>
+<script language="JavaScript" type="text/javascript" src="js/global.js">
+</script>
+<meta name="Microsoft Border" content="b, default">
+</head>
+
+<body><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><!--msnavigation--><td valign="top">
+<h2><script language="php">if (isset($mig_pagetitle)) echo $mig_pagetitle; else echo "Administration pages - Users";</script></h2>
+
+<script language="php">
+// Security enhancement for PHP 4.1 and higher
+// Compatibility with systems having register_globals turned off (default in PHP 4.2 and higher)
+// Compatibility for systems having variables_order equal to EGPCS and EPGCS
+
+unset ($order); if (isset ($_POST["order"])) $order = $_POST["order"]; else if (isset($_GET["order"])) $order = $_GET["order"];
+unset ($uid); if (isset ($_POST["uid"])) $uid = $_POST["uid"]; else if (isset($_GET["uid"])) $uid = $_GET["uid"];
+unset ($type); if (isset ($_POST["type"])) $type = $_POST["type"]; else if (isset($_GET["type"])) $type = $_GET["type"];
+unset ($givenname); if (isset ($_POST["givenname"])) $givenname = $_POST["givenname"]; else if (isset($_GET["givenname"])) $givenname = $_GET["givenname"];
+unset ($sn); if (isset ($_POST["sn"])) $sn = $_POST["sn"]; else if (isset($_GET["sn"])) $sn = $_GET["sn"];
+unset ($privilege); if (isset ($_POST["privilege"])) $privilege = $_POST["privilege"]; else if (isset($_GET["privilege"])) $privilege = $_GET["privilege"];
+unset ($comments); if (isset ($_POST["comments"])) $comments = $_POST["comments"]; else if (isset($_GET["comments"])) $comments = $_GET["comments"];
+unset ($userpassword); if (isset ($_POST["userpassword"])) $userpassword = $_POST["userpassword"]; else if (isset($_GET["userpassword"])) $userpassword = $_GET["userpassword"];
+unset ($password_encrypt); if (isset ($_POST["password_encrypt"])) $password_encrypt = $_POST["password_encrypt"]; else if (isset($_GET["password_encrypt"])) $password_encrypt = $_GET["password_encrypt"];
+
+
+$core_file = "php/" . INFORMATION_SYSTEM_TYPE . "_core.php"; 
+require_once $core_file;
+require_once "php/search_class.php";
+
+require_once "php/user.php";
+
+$core = new core();
+if (($conn_id = $core->connect()) == false)
+	die($core->error_msg);
+
+if (($auth_conn_id = connect_to_authentication_system()) == false)
+	die("Unable to connect to authenticaion system");
+$auth_core = new core($auth_conn_id);
+
+
+
+if (isset($uid))
+{
+	$curr_user = new user($auth_conn_id);
+	if (!$curr_user->read($uid)) die($curr_user->error_msg);
+		
+	// retrieve also class info
+	$result = array("migclassname","migclassdisplayname","migauthorizeduser");
+	if (($info = $core->read_search_class_list("auto", $result)) == false) die($core->error_msg);
+
+	if ($order=="prepare_edit")
+	{
+
+</script>
+
+<form method="post" action="<?php echo $_SERVER["SCRIPT_NAME"] ?>">
+<div align="center">
+  <center>
+<table border="1" cellspacing="0" cellpadding="0" width="50%">
+<tr><td><b>UID</b></td><td><?php echo $uid ?></td></tr>
+<script language="php">
+		
+		$refarray = array(
+			"First" => "givenname",
+			"Surname" => "sn",
+			"Comments" => "comments"
+			);
+
+		for (reset($refarray); $key = key($refarray); next ($refarray)) 
+		{
+			</script>
+			<tr><td><b><?php echo $key ?></b></td>
+			<td align="center"><input name="<?php echo $refarray[$key] ?>" size="25" value="<?php echo $curr_user->$refarray[$key] ?>"></td></tr>
+			<script language="php">
+		}
+		
+		$refbox = array(
+			"Set as user" => "MIGuser",
+			"Set as admin." => "MIGadmin"
+			);
+
+		for (reset($refbox); $key = key($refbox); next ($refbox)) 
+		{
+			</script>
+			<tr><td><b><?php echo $key ?></b></td>
+			<td align="center"><input type="radio" name="privilege" value="<?php echo $refbox[$key] ?>" <?php if ($curr_user->migcategory == $refbox[$key]) echo "checked" ?>></td></tr>
+			<script language="php">
+		}
+		</script>
+		<tr><td><b>Neither</b></td>
+		<td align="center"><input type="radio" name="privilege" value="Neither" <?php if ($type == "inactive") "checked" ?>></td></tr>
+		
+<tr><td><b>New Password</b></td>
+<td align="center">
+<input type="password" name="userpassword">
+  </td>
+</tr>
+	<tr><td>Password encryption</td><td align="center"><select size="1" name="password_encrypt">
+          <option value="crypt">CRYPT</option>
+          <option value="none">None</option>
+        </select></td></tr>
+
+</table><table border="1" cellspacing="0" cellpadding="0" width="50%">
+<tr><td>Class</td>
+<script language="php">
+
+		for ($i = 0; $i < $core->search_class_count; $i++)
+		{
+			$valid_class = new search_class($conn_id);
+			if (!$valid_class->read_from_list($info, $i))
+					die($valid_class->error_msg);
+			</script>		
+			<td align="center"><?php echo $valid_class->migclassdisplayname ?></td>
+			<script language="php">
+		}
+		</script>		
+		</tr>
+		<tr><td>Membership</td>
+		
+		<script language="php">
+		for ($i = 0; $i < $core->search_class_count; $i++)
+		{
+			$valid_class = new search_class($conn_id);
+			if (!$valid_class->read_from_list($info, $i))
+					die($valid_class->error_msg);
+			</script>
+			<td align="center"><input type="checkbox" name="<?php echo $valid_class->migclassname ?>" value="ON" <?php if ($valid_class->is_migauthorizeduser($uid)) echo "checked" ?>></td>
+			<script language="php">
+		}
+		</script>
+		</tr>
+</table>
+
+
+
+</div>
+
+<p>
+<input type="hidden" name="order" value="go_edit">
+<input type="submit" value="Update">
+<input type="reset" value="Reset">
+<input type="hidden" name="uid" value="<?php echo $uid ?>">
+<input type="hidden" name="type" value="<?php echo $type ?>">
+<script language="php">
+		
+</script>
+
+</p>
+</center>
+
+</form>
+
+
+
+<script language="php">
+	}
+	elseif ($order == "go_edit")
+	{
+		$refarray = array("givenname", "sn", "comments");
+		
+		for ($i = 0; $i < sizeof($refarray); $i++) 
+			if (strcmp ($curr_user->$refarray[$i], ${$refarray[$i]}) != 0)
+				$updmod[$refarray[$i]] = ${$refarray[$i]};
+			
+		if ($privilege != "Neither")
+		{
+			$addorder = true;
+			if	($curr_user->migcategory == $privilege)
+				$addorder = false;
+		
+			if ($addorder == true)
+			{
+				$updadd["migcategory"] = $privilege;
+				if ($type == "active")
+				{
+					if ($privilege == "MIGuser") $upddel["migcategory"] = "MIGadmin";
+					if ($privilege == "MIGadmin") $upddel["migcategory"] = "MIGuser";
+				}				
+			}		
+		}
+		else
+		{
+			$removeorder = false;
+			if ($type == "active")
+			{
+				if	(($curr_user->migcategory == "MIGadmin") || ($curr_user->migcategory == "MIGuser"))
+					$removeorder = true;
+					
+					
+				if ($removeorder == true) 
+				{
+					$upddel["migcategory"] = $curr_user->migcategory;
+
+					//erase user config
+					$curr_user->delete_user();
+				}
+			}
+		}
+		if ($userpassword != "")
+		{
+			if (MIG_ENCRYPTS_PASSWORDS == "yes")
+			{
+				srand((double)microtime()*1000000);
+				$unique_str = md5(rand(0,9999999));
+
+				if ($password_encrypt == "md5")
+				{		
+					$salt = mhash_keygen_s2k(MHASH_MD5, $password, substr(pack("h*",md5(mt_rand())),0,8),4);
+					$userpassw  = "{MD5}" . base64_encode(mhash(MHASH_MD5, $password.$salt) . $salt);
+				}
+				elseif ($password_encrypt == "crypt")
+					$userpassw = "{crypt}" . crypt($userpassword);
+				elseif ($password_encrypt == "sha")
+				{		
+					$salt = mhash_keygen_s2k(MHASH_SHA1, $password, substr(pack("h*",md5(mt_rand())),0,8),4);
+					$userpassw  = "{SSHA}" . base64_encode(mhash(MHASH_SHA1, $password.$salt) . $salt);
+				}
+				else $userpassw = $userpassword;
+			}
+			else $userpassw = $userpassword;
+
+			if (PASSW_SYNC_USES_INTEGRATOR != "yes")
+			{
+				if (!set_password($conn_id, $curr_user->uid, $userpassw)) die("Unable to set password");
+			}
+			else
+			{
+				$curr_class = new search_class($conn_id);
+				if (!$curr_class->read(USERS_MIG_SEARCHCLASS, array("migintegrationport"))) die($curr_class->error_msg);
+			
+				include_once "php/integrator.php";
+				$as = new integrator($curr_class->migintegrationport);
+				
+				if (MIG_ENCRYPTS_PASSWORDS != "yes") 
+					$re_hash = false;
+				else
+					$re_hash = true;
+
+				if (!$as->sync_password($curr_user->dn, $userpassword, $re_hash, "", $userpassw)) die("<h3>Password update Error</h3><b>" . $as->geterrmsg() . "</b>");
+				if ($as->getAttribute("exitStatus") != "OK") 
+				{
+					</script>
+					<h3>Error while updating password with Metamerge Integrator</h3><b>'<?php echo $as->getAttribute("exitStatus") ?>'</b>
+					<script language="php">
+				}
+			}
+		}	
+				
+		if (isset($updmod)) if (!$curr_user->mod_replace_user($updmod)) die($curr_user->error_msg);
+		if (isset($upddel)) if (!$curr_user->mod_del_user($upddel)) die($curr_user->error_msg);
+		if (isset($updadd)) if (!$curr_user->mod_add_user($updadd)) die($curr_user->error_msg);
+
+		unset($updmod);		
+		unset($upddel);
+		unset($updadd);
+
+		if ($type == "inactive")
+		{
+			// allow user to customize its search config
+			$curr_user->add_user();
+		}
+		
+		for ($j = 0; $j < $core->search_class_count; $j++)
+		{
+			$curr_class = new search_class($conn_id);
+			if (!$curr_class->read_from_list($info, $j)) 
+				die($curr_class->error_msg);
+
+			unset (${$curr_class->migclassname}); if (isset ($_POST[$curr_class->migclassname])) ${$curr_class->migclassname} = $_POST[$curr_class->migclassname]; else if (isset($_GET[$curr_class->migclassname])) ${$curr_class->migclassname} = $_GET[$curr_class->migclassname];
+
+			if (isset(${$curr_class->migclassname}) && (${$curr_class->migclassname} == "ON"))
+			{
+				if	(!$curr_class->is_migauthorizeduser($uid))
+					$updadd["migauthorizeduser"] = $uid;
+			}
+			else
+			{
+				if	($curr_class->is_migauthorizeduser($uid))
+					$upddel["migauthorizeduser"] = $uid;
+			}
+			if (isset($upddel)) if (!$curr_class->mod_del($upddel)) die($curr_class->error_msg);
+			if (isset($updadd)) if (!$curr_class->mod_add($updadd)) die($curr_class->error_msg);						
+			unset($upddel);
+			unset($updadd);
+
+		}
+		</script>
+		Modifications performed. Click <a href="<?php echo $_SERVER["SCRIPT_NAME"] ?>">here</a> to refresh page.
+		<script language="php">
+	}		
+	
+}
+else
+{
+						
+</script>
+<script language="php">
+	
+	$allusers = array("active", "inactive");
+	$result = array("sn", "uid", "migcategory");
+	
+	include_once "php/quicksort.php";
+	$sortattribute = "sn";
+	if (isset($sortkey))	$sortattribute = $sortkey;
+
+	for ($a = 0; $a < sizeof($allusers); $a++) 
+	{
+		</script>
+		Please note that only users having <?php echo USERS_SEARCHFILTER ?> and MIGCategory set to either MIGuser or MIGadmin will be able to login. Edit MIG's configuration file to change this.
+		<form><table border="1" width="100%" cellspacing="0" cellpadding="0">
+		<tr>
+			<td width="9%">&nbsp;</td>
+			<td bgcolor="#FFFFFF" align="center" width="6%"><b><a href="<?php echo $_SERVER["SCRIPT_NAME"] ?>?sortkey=uid">UID</a></b></td>
+			<td bgcolor="#FFFFFF" align="center" width="18%"><b><a href="<?php echo $_SERVER["SCRIPT_NAME"] ?>?sortkey=sn">Surname</a></b></td>
+			<td bgcolor="#FFFFFF" align="center" width="7%"><b>User</b></td>
+			<td bgcolor="#FFFFFF" align="center" width="7%"><b>Admin</b></td>
+		</tr>
+		<script language="php">
+		if (($info = $auth_core->read_user_list($allusers[$a], $result)) == false) die($auth_core->error_msg);
+		quicksort($info, 0, $auth_core->user_count -1, strtolower($sortattribute));
+		
+		for ($i = 0; $i < $auth_core->user_count; $i++)
+		{
+			$curr_user = new user($conn_id);
+			if (!$curr_user->read_from_list($info, $i)) die($curr_user->error_msg);
+			$uid = $curr_user->uid;
+			</script>
+			<tr <?php if (($i % 2) == 0) echo "class=lightgrey"; ?>> 
+			<td align="center" width="9%"><input type="button" value="Edit" onclick="page = '<?php echo $_SERVER["SCRIPT_NAME"] ?>?order=prepare_edit&uid=<?php echo urlencode($uid) ?>&type=<?php echo $allusers[$a] ?>&<?php echo SID?>' ;	window.open(page,'_self')"></td>
+			<td align="center"><?php echo $uid ?></td>
+			<td align="center"><?php echo $curr_user->sn ?></td>
+			<td align="center"><?php if ($curr_user->migcategory == "MIGuser") echo "<b><font color=\"#008000\">YES</font></b>"; else echo "<b><font color=\"#FF0000\">NO</font></b>"?></td>
+			<td align="center"><?php if ($curr_user->migcategory == "MIGadmin") 	echo "<b><font color=\"#008000\">YES</font></b>"; else echo "<b><font color=\"#FF0000\">NO</font></b>"?></td>
+			</tr>
+			<script language="php">
+		}
+		</script>
+		</table></form>
+		<address><?php echo "$i $allusers[$a] users" ?></address>
+<hr>
+		<script language="php">
+	}	
+}
+$core->disconnect();		
+</script>
+<p>&nbsp;<!--msnavigation--></td></tr><!--msnavigation--></table><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td>
+
+
+
+</td></tr><!--msnavigation--></table></body>
+	

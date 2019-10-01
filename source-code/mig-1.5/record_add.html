@@ -1,0 +1,241 @@
+<script language="php">
+ require_once "php/config.php"; 
+ ## security enabler
+ $auth_file = "php/" . AUTHENTICATION_SYSTEM_TYPE . "_authenticate.php";
+ require_once $auth_file;
+</script>
+
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta http-equiv="expires" content="1 Jan 2000">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title><script language="php">if (isset($mig_pagetitle)) echo $mig_pagetitle; else echo "Administration pages - Add a record";</script></title>
+<script language="JavaScript" type="text/javascript" src="js/global.js">
+</script>
+<script>
+nbquery = 0;
+function control() 
+{
+	// control of  non re-submition
+	if (nbquery > 0)
+	{
+		alert("Processing... please wait or refresh the page");
+		return false;
+	}
+	nbquery ++;                                                                                                                                                      
+	return true;                                                                                                                                          
+}            
+</script> 
+<meta name="Microsoft Border" content="b, default">
+</head>
+<body><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><!--msnavigation--><td valign="top">
+<h2><script language="php">if (isset($mig_pagetitle)) echo $mig_pagetitle; else echo "Administration pages - Add a record";</script>
+
+<script language="php">
+
+$core_file = "php/" . INFORMATION_SYSTEM_TYPE . "_core.php"; 
+require_once $core_file;
+
+$core = new core();
+if (($conn_id = $core->connect()) == false)
+	die($core->error_msg);
+	
+$data_core = new core();
+
+// remote classes syntax : CLASSNAME|HOSTNAME|PARAM; CLASSNAME2, HOSTNAME2
+$remote_classes = explode (";", REMOTE_SEARCHCLASSES);
+
+for ($i = 0; $i < sizeof($remote_classes); $i++)
+{
+	$remote_class = explode ("|", $remote_classes[$i]);
+	if (strcasecmp ($class, trim ($remote_class[0])) == 0)
+	{
+		define ("REMOTE_HOSTNAME", trim ($remote_class[1]));
+		if (isset($remote_class[2])) define ("REMOTE_MANAGER_UID", trim ($remote_class[2]));
+		if (isset($remote_class[3])) define ("REMOTE_MANAGER_PW", trim ($remote_class[3]));
+		break;
+	}
+}		
+
+
+// find the groups the user is able to manage
+require_once "php/group.php";
+require_once "php/search_class.php";
+require_once "php/search_engine.php";
+include_once "php/search_class_option_box.php";
+
+if (isset($selected_class))
+{
+	
+	$editor = false;
+
+	if (defined("ADMIN") && (ADMIN == "true"))
+	{
+		$editor = true;
+		if (($data_conn_id = $data_core->connect_to_datastore()) == false) die($data_core->error_msg);
+	}
+	
+	if (!$editor)
+	{
+		if (defined ("REMOTE_HOSTNAME") && defined ("REMOTE_MANAGER_UID") && defined ("REMOTE_MANAGER_PW"))
+		{
+			if (($data_conn_id = $data_core->connect_to_datastore(REMOTE_MANAGER_UID, REMOTE_MANAGER_PW)) == false) die($data_core->error_msg);
+		}
+		else if (($data_conn_id = $data_core->connect_to_datastore(MANAGER_UID, MANAGER_PW)) == false)	die($data_core->error_msg);
+
+		if (($groups = $core->read_group_list("auto")) == false) die($core->error_msg);
+		for ($i = 0; $i < $core->group_count; $i++)
+		{
+			$curr_group = new group($conn_id);
+			if (!$curr_group->read_from_list($groups, $i)) die($curr_group->error_msg);
+			
+			if ($curr_group->migusingclass == $selected_class->migclassname)
+			{
+				$editor = true;
+			}
+		}
+		if (INFORMATION_SYSTEM_COMPUTES_SETS == "yes")
+		{
+			if (!$data_core->rebind()) die($data_core->error_msg);
+		}
+	}
+
+	$curr_class = new search_class($conn_id);
+	if (!$curr_class->read($selected_class->migclassname, array("migclassname", "migdatabasedn", "migdatafilter", "migclassdisplayname", "migtimestamp", "migdataobjectclass", "migdataauxobjectclass", "migdatasupobjectclass", "migdatanamingattribute", "migintegrationport"))) die($curr_class->error_msg);
+
+</script>
+
+</h2>
+
+<h3>Add <?php echo $curr_class->migclassdisplayname ?> record</h3>	
+
+<script language="php">
+	if ($editor)
+	{	
+
+		if (isset($order) && ($order == "go_add"))
+		{
+	
+			if ($curr_class->migintegrationport != "")
+			{
+				include_once "php/integrator.php";
+				$as = new integrator($curr_class->migintegrationport);
+			}
+			else
+			{
+				include_once "php/integrator_emulator.php";
+				$as = new integrator_emulator($data_conn_id);
+			}
+
+			# Update data from previous screen
+			include_once "php/ldap_attribute_specific.php";
+			ldap_specific_attribute_formatting($HTTP_POST_VARS);
+		
+			// Objectclass
+			unset ($HTTP_POST_VARS["objectclass"]);
+
+			$HTTP_POST_VARS["objectclass"][] = $curr_class->migdataobjectclass;
+			$HTTP_POST_VARS["objectclass"][] = $curr_class->migdatasupobjectclass;
+		
+			$objectclasses = explode (",", $curr_class->migdataauxobjectclass);
+			for ($i = 0; $i < sizeof ($objectclasses); $i++)
+				$HTTP_POST_VARS["objectclass"][] = trim($objectclasses[$i]);
+			
+			if ($curr_class->migtimestamp == "on")
+				if (!in_array ("MIGitem", $HTTP_POST_VARS["objectclass"])) $HTTP_POST_VARS["objectclass"][] = "MIGitem";
+		
+			// DN
+			$HTTP_POST_VARS["dn"] = $curr_class->migdatanamingattribute . "=" . $HTTP_POST_VARS[$curr_class->migdatanamingattribute] . "," . $curr_class->migdatabasedn;
+
+
+			if (!$as->add($HTTP_POST_VARS)) die("<h3>Add Error</h3><b>" . $as->geterrmsg() . "</b>");
+			if ($as->getAttribute("exitStatus") != "OK") 
+			{
+			</script>
+				<h3>Error while adding data with Metamerge Integrator</h3><b>'<?php echo $as->getAttribute("exitStatus") ?>'</b>	
+			<script language="php">
+			}
+			else
+			{
+			</script>
+				<h3>Entry added succesfully</h3>
+			<script language="php">			
+			}
+		
+		}
+		else
+		{
+			include_once "php/account_add.php";
+		</script>
+
+		<form method="post" action="<?php echo $SCRIPT_NAME ?>" onsubmit="if (Form_Validator(this)) return control(); else return false">
+	
+		<input type="hidden" name="order" value="go_edit">
+
+   		 <div align="center">
+	      <center>
+
+        <table border="0" cellspacing="0" cellpadding="0">
+		    <tr>
+		      <td colspan="2" align="left">Label</td>
+		      <td align="left">Content</td>
+		      <script language="php">
+			if ($curr_class->migintegrationport != "")
+			{
+				</script>
+		      <td align="left">Shared field</td>
+		      <script language="php">
+			}
+				</script>
+		    </tr>
+		<input type="hidden" name="order" value="go_add">
+		<input type="hidden" name="class" value="<?php echo $class ?>">
+		<script language="php">
+			if ($curr_class->migtimestamp == "on")
+			{
+				$date = date ("YmdHisT");
+		</script>
+			<input type="hidden" name="miglastmodifiedby" value="<?php echo USER_LOGINNAME ?>">
+			<input type="hidden" name="miglastmodifieddate" value="<?php echo $date ?>">
+		<script language="php">
+			}
+		
+			$script = print_Form($selected_class->migclassname);
+		</script>
+	
+		  </table>
+	      </center>
+	    </div>
+		<center>		  
+		   <B><input type="submit" value="Submit"></B>
+		    <input type="reset" value="Reset">
+		   		 
+		</center>
+		</form>
+
+<script>
+			// dynamically generate JavaScript
+			<?php echo $script?>
+</script>
+<script language="php">
+		}
+	}
+
+	else
+	{
+	</script>
+		<h3>You are not allowed to add entries in the current search class.</h3>
+	<script language="php">
+	}
+}
+$core->disconnect();
+</script>
+&nbsp;<!--msnavigation--></td></tr><!--msnavigation--></table><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td>
+
+
+
+</td></tr><!--msnavigation--></table></body>
+</html>

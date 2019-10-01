@@ -1,0 +1,67 @@
+<script language="php">
+ require_once "php/config.php"; 
+ ## security enabler
+ $auth_file = "php/" . AUTHENTICATION_SYSTEM_TYPE . "_authenticate.php";
+ require_once $auth_file;
+</script>
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title><script language="php">if (isset($mig_pagetitle)) echo $mig_pagetitle; else echo "Search Pages - Search the web";</script></title>
+<script language="JavaScript" type="text/javascript" src="js/global.js">
+</script>
+<meta name="Microsoft Border" content="b, default">
+</head>
+
+<body><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><!--msnavigation--><td valign="top">
+
+
+<form action="http://search.metacrawler.com/crawler" method="get">
+  <div align="center">
+    <center><table cellpadding="3" cellspacing="0" border="0" width="420">
+<tr bgcolor="#FFCC33">
+<td width="222" rowspan="3" align="center">
+<a href="http://www.metacrawler.com/"><img src="http://images.go2net.com/metacrawler/images/new2_mc.gif" width="202" height="39" border="0" alt="[ MetaCrawler&reg; ]"></a></td>
+<td>&nbsp;</td>
+<td>
+<font size="1" face="geneva, arial, helvetica"><a href="http://www.metacrawler.com/help/faq/">Search Tips</a></font>
+</td></tr>
+<tr bgcolor="#FFCC33">
+<td valign="top"><input type="text" name="general" value="" size="27"></td>
+<td valign="top"><input value="Search" type="submit"></td>
+</tr>
+<tr bgcolor="#FFCC33">
+<td valign="top">
+<font size="2" face="geneva, arial, helvetica">
+<input type="radio" name="method" value="1"> any
+&nbsp;<input type="radio" name="method" value="0" checked> all
+&nbsp;<input type="radio" name="method" value="2"> phrase
+</font><br></td>
+<td valign="top">
+<select name="redirect">
+<option value="web">The Web
+<option value="opendir">Directory
+<option value="audio">Audio/MP3
+<option value="images">Images
+<option value="dejanews">Newsgroups
+<option value="auctions">Auctions
+</select></td></tr>
+<tr bgcolor="#FFCC33">
+<td colspan="3" height="10">
+<input type="hidden" name="refer" value="mc-box">
+</td>
+</tr>
+</table></center>
+  </div>
+</form>
+
+&nbsp;<!--msnavigation--></td></tr><!--msnavigation--></table><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td>
+
+
+
+</td></tr><!--msnavigation--></table></body>
+
+</html>

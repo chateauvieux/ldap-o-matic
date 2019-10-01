@@ -1,0 +1,22 @@
+3.0.0.507
+1028
+1000,welcome.html,0,UWC IS Home,0,971710499,1
+vti_globalpage:BW|true
+1018,administrator.html,0,Administrator,0,982891553,1
+vti_globalpage:BW|true
+1001,search_engine.html,0,Search engine,1000,966005847,0
+1002,data_administration_tool.html,0,Add/modify data,1000,966003451,0
+1008,schema_admin.html,0,Customize search,1000,966005910,0
+1012,account_management.html,0,Manage your account,1000,970677311,0
+1013,account_management_passwd.html,0,Your password,1000,975413441,0
+1015,group_management.html,0,Group Management,1000,976800124,0
+1017,logout.html,0,Logout,1000,980258866,0
+1019,viewusers.html,0,Users administration,1018,982891553,0
+1020,schema_admin_attributes.html,0,Attributes administration,1018,982937810,0
+1021,schema_admin_attributes_types.html,0,Attributes types administration,1018,982891553,0
+1026,schema_admin_attributes_description.html,0,Attributes description,1018,983047045,0
+1024,schema_admin_class.html,0,Class admin,1018,982937837,0
+1025,schema_admin_group.html,0,Groups admin,1018,982937837,0
+1023,global_schema_admin.html,0,Searching defaults,1018,982891599,0
+1016,record_management.html,0,Data management,1015,1011631791,0
+1027,schema_admin_class_subsections.html,0,Subsections admin,1024,988246133,0

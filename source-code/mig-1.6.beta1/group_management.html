@@ -1,0 +1,271 @@
+<script language="php">
+ require_once "php/config.php"; 
+ ## security enabler
+ $auth_file = "php/" . AUTHENTICATION_SYSTEM_TYPE . "_authenticate.php";
+ require_once $auth_file;
+</script>
+
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta http-equiv="expires" content="1 Jan 2000">
+<meta http-equiv="Content-Language" content="en-us">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title><script language="php">if (isset($mig_pagetitle)) echo $mig_pagetitle; else echo "Administration pages - Groups";</script></title>
+<script language="JavaScript" type="text/javascript" src="js/global.js">
+</script>
+<meta name="Microsoft Border" content="b, default">
+</head>
+
+<body><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><!--msnavigation--><td valign="top">
+	<h2><script language="php">if (isset($mig_pagetitle)) echo $mig_pagetitle; else echo "Administration pages - Groups";</script></h2>
+   <p>Click on the symbol to access to targets records.</p>
+   <script language="php">
+   
+   	// Security enhancement for PHP 4.1 and higher
+	// Compatibility with systems having register_globals turned off (default in PHP 4.2 and higher)
+	// Compatibility for systems having variables_order equal to EGPCS and EPGCS
+
+	unset ($group); if (isset ($_POST["group"])) $group = $_POST["group"]; else if (isset($_GET["group"])) $group = $_GET["group"];
+	unset ($sortattribute); if (isset ($_POST["sortattribute"])) $sortattribute = $_POST["sortattribute"]; else if (isset($_GET["sortattribute"])) $sortattribute = $_GET["sortattribute"];
+	unset ($sortorder); if (isset ($_POST["sortorder"])) $sortorder = $_POST["sortorder"]; else if (isset($_GET["sortorder"])) $sortorder= $_GET["sortorder"];
+	unset ($page); if (isset ($_POST["page"])) $page = $_POST["page"]; else if (isset($_GET["page"])) $page = $_GET["page"];
+
+	$core_file = "php/" . INFORMATION_SYSTEM_TYPE . "_core.php"; 
+	require_once $core_file;
+	require_once "php/attribute.php";
+	require_once "php/search_class.php";
+	
+	$core = new core();
+	if (($conn_id = $core->connect()) == false)
+		die($core->error_msg);
+	
+	$data_core = new core();
+ 	// connect as an admin to bypass server size limit
+ 	
+ 	// remote classes syntax : CLASSNAME|HOSTNAME|PARAM; CLASSNAME2, HOSTNAME2
+	$remote_classes = explode (";", REMOTE_SEARCHCLASSES);
+
+	for ($i = 0; $i < sizeof($remote_classes); $i++)
+	{
+		$remote_class = explode ("|", $remote_classes[$i]);
+		if (strcasecmp ($class, trim ($remote_class[0])) == 0)
+		{
+			define ("REMOTE_HOSTNAME", trim ($remote_class[1]));
+			if (isset($remote_class[2])) define ("REMOTE_MANAGER_UID", trim ($remote_class[2]));
+			if (isset($remote_class[3])) define ("remote_manager_pw", trim ($remote_class[3]));
+			break;
+		}
+	}		
+
+	if (($data_conn_id = $data_core->connect_to_datastore(MANAGER_UID, MANAGER_PW)) == false)
+		die($data_core->error_msg);
+
+	include_once "php/group_option_box.php";
+	
+	if (isset($selected_group) && ($selected_group->migusingclass != ""))
+	{
+		if ($selected_group->is_migdatarefresh_static())
+		{
+			include_once "php/quicksort.php";
+			## ATTRIBUTES TO LOOK AFTER
+			$result_array = array("migattributename", "migattributedisplayname", "migsearchresultclass",
+								"migauthorizedvalue", "migedittype", "migdisplaytype");
+		
+			if (($info = $core->read_attribute_list("system", $result_array, $selected_group->migusingclass)) == false) die($core->error_msg);
+			$total_system = $core->attribute_count;
+					
+			if (($info_user = $core->read_attribute_list("user", $result_array, $selected_group->migusingclass)) == false) die($core->error_msg);
+			$total_user = $core->attribute_count;
+			
+			## override with user config, if any
+			$optionboxes = array("migsearchresultclass");
+			if (!$core->override_config($info, $info_user, $optionboxes)) die($core->error_msg);
+			quicksort($info, 0, $total_system -1, "migattributedisplayname"); 
+			
+			//  build the result array
+			$result_to_display = array();
+			$result_array = array();
+			for ($i = 0; $i < $total_system; $i++) // look all possible attributes
+			{
+				$attr = new attribute($conn_id);
+				if (!$attr->read_from_list($info, $i)) die ($attr->error_msg);
+				if ($attr->is_migsearchresultclass($selected_group->migusingclass)) 
+				{
+					$result_to_display[] = $attr->migattributename;
+					if ($attr->migdisplaytype == "combination")
+					{
+						if (!$attr->get_combination_set()) die ($attr->error_msg);
+						for ($j = 0; $j < $attr->count("combination_set"); $j++)
+							$result_array[] = $attr->combination_set[$j];
+					}
+					else $result_array[] = $attr->migattributename;				
+				}
+			}	
+
+
+			if ($selected_group->count("migmodifieddata") > 0)
+			{
+				if ($selected_group->count("migmodifieddata") == 1)
+				{
+				</script>
+				 1 result available in this group.
+				<script language="php"> 
+				} 
+				else
+				{
+				</script>
+				<?php echo $selected_group->count("migmodifieddata") ?> results available in this group.
+				<script language="php"> 
+				}
+				</script>
+<table border="0" width="100%" cellspacing="0">
+				<tr>
+				<td></td>
+				<script language="php"> 
+				// give a human name to search result attributes
+
+				for ($i = 0; $i < sizeof($result_to_display); $i++) 
+				{			
+	 					$attr = new attribute($conn_id);
+	 					if ($attr->read_from_list($info, $result_to_display[$i]))
+	 					{
+	 			</script>
+							<td bgcolor="#000066" align="center"><font color="#FFFFFF"><b><?php echo $attr->migattributedisplayname ?></b></font></td>
+				<script language="php"> 
+						}
+				}
+				</script>
+				</tr>
+				<script language="php"> 
+				$class = new search_class($conn_id);
+				if (!$class->read($selected_group->migusingclass, array("migdatafilter","migdataicon","migpointedwebpage"))) die ($class->error_msg);
+				$datafilter = $class->migdatafilter;
+				$icon_path = $class->migdataicon;
+				$icon_link = $class->migpointedwebpage;
+
+				function recognize_result_type($type, $attr, $val, $array)
+				{
+					global $conn_id;					
+
+					if ($type == "combination") 
+					{						
+						for ($k = 0; $k < $attr->count("migauthorizedvalue"); $k++) 
+						{
+							if ($attr->migauthorizedvalue_couple[$k]["value"] == $attr->migauthorizedvalue[$k])
+							{
+								$newattr = new attribute($conn_id);
+								if (!$newattr->read($attr->migauthorizedvalue[$k], "system", array("migattributename", "migdisplaytype", "migauthorizedvalue"))) die($newattr->error_msg);
+								if (!$newattr->process_migauthorizedvalues()) die ($newattr->error_msg);
+								$bcc = recognize_result_type($newattr->migdisplaytype, $newattr, $array[strtolower($newattr->migattributename)], $array);
+							}
+							else echo $attr->migauthorizedvalue_couple[$k]["value"];
+						}		
+					}
+					else $bcc = $attr->attribute_output($type, $val);
+					return $bcc;
+				}
+					
+				for ($i = 0; $i < $selected_group->count("migmodifieddata"); $i++)
+				{
+					if (($data = $core->read($selected_group->migmodifieddata[$i], $datafilter, $result_array)) == false) die($core->error_msg);
+					</script>
+					<tr>
+					<td><a href="<?php echo $icon_link ?>?dn=<?php echo urlencode($data[dn])?>&class=<?php echo urlencode($selected_group->migusingclass) ?>" target="main"><img border="0" src="<?php echo urlencode($icon_path)?>"></a></td>
+	   				<script language="php"> 
+
+					for ($j = 0; $j <  sizeof($result_to_display); $j++)
+					{
+						</script>
+						<td valign="top" align="left" <?php if (($i % 2) == 0) echo "bgcolor=\"#FFCC99\"" ?>>
+						<script language="php"> 
+						$attr = new attribute($conn_id);					
+						if (!$attr->read_from_list($info, $result_to_display[$j])) die ($attr->error_msg);
+						if (!$attr->process_migauthorizedvalues()) die ($attr->error_msg);
+
+						$val = $data[strtolower($result_to_display[$j])];
+						$newbcc = recognize_result_type($attr->migdisplaytype, $attr, $val, $data);
+					
+						if (strlen ($newbcc) > 0 ) 
+							if (strlen ($bcc) > 0)
+								$bcc = $bcc . "," . $newbcc;
+							else $bcc .= $newbcc;
+
+						unset($val);
+						</script>						
+                    </td>
+						<script language="php"> 
+
+					}	
+					</script>						
+					</tr>
+					<script language="php"> 
+				}
+				</script>						
+				</table><p>
+				<script language="php"> 
+				if (strlen ($bcc) > 0) 
+				{
+					</script>						
+					<a href="mailto:?bcc=<?php echo urlencode($bcc) ?>">Send an e-mail to the whole group</a>
+					<script language="php"> 
+				}
+				
+			}
+			else 
+			{
+				</script>						
+   				<img src="images/warning.gif" width="40" height="40">
+				No target available in the group.
+				<script language="php"> 
+  			}	  				
+		}
+		
+		if (($selected_group->is_migdatarefresh_dynamic())&&($selected_group->migdatasearchfilter != ""))
+		{
+			include_once "php/search_engine.php";
+			$search_class = new search_class($conn_id);
+			if (!$search_class->read($selected_group->migusingclass)) die($search_class->error_msg);
+			
+			$search_engine = new search_engine($conn_id, $data_conn_id, $search_class->migclassname, $search_class->migdatabasedn, "?group=$group", $selected_group->migdatasearchfilter);
+			
+			if (isset($sortattribute))
+			{
+				if (!isset($sortorder)) $sortorder = "asc";
+				if (!$search_engine->find_results($sortattribute, $sortorder)) die($search_engine->error_msg);
+			}
+			elseif (!$search_engine->find_results()) die($search_engine->error_msg);
+			
+			if (isset($page))
+ 			{
+ 				if (!$search_engine->display_results_pages($page)) die($search_engine->error_msg);
+ 				if (!$search_engine->display_results($search_class->migdataicon, $search_class->migpointedwebpage, $page)) die($search_engine->error_msg);
+ 			}
+ 			else
+ 			{
+ 				if (!$search_engine->display_results_pages()) die($search_engine->error_msg);
+ 				if (!$search_engine->display_results($search_class->migdataicon, $search_class->migpointedwebpage)) die($search_engine->error_msg);
+			}
+
+			if (isset($page))
+ 			{
+ 				if (!$search_engine->display_results_pages($page)) die($search_engine->error_msg);
+ 			}
+ 			else
+ 			{
+ 				if (!$search_engine->display_results_pages()) die($search_engine->error_msg);
+ 			}
+
+		}
+
+	}
+	
+	$core->disconnect();
+</script>
+<!--msnavigation--></td></tr><!--msnavigation--></table><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td>
+
+
+
+</td></tr><!--msnavigation--></table></body>

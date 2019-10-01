@@ -1,0 +1,64 @@
+vti_encoding:SR|utf8-nl
+vti_timelastmodified:TR|21 Jul 2000 08:33:02 -0000
+vti_extenderversion:SR|4.0.2.4426
+vti_nexttolasttimemodified:TR|07 Aug 2000 12:43:33 -0000
+vti_author:SR|Krist
+vti_syncwith_lab.architech.no\:21/%2fweb/as/krist:TR|11 Aug 2000 05:52:00 -0000
+vti_syncwith_localhost\\c\:\\atelier\\web\\as\\krist/c\:/atelier/web/as/krist:TR|21 Jul 2000 08:33:02 -0000
+vti_syncofs_lab.architech.no\:21/%2fweb/as/krist:TW|05 Sep 1999 10:13:00 -0000
+vti_modifiedby:SR|Krist
+vti_timecreated:TR|08 Aug 2000 08:40:00 -0000
+vti_backlinkinfo:VX|
+vti_syncwith_freedom.uwc.net\:21/~krist/tmp:TR|12 Oct 2000 15:35:58 -0000
+vti_syncofs_freedom.uwc.net\:21/~krist/tmp:TW|14 Oct 1999 12:20:00 -0000
+vti_syncwith_localhost\\c\:\\my documents\\my webs/c\:/my documents/my webs:TR|21 Jul 2000 08:33:02 -0000
+vti_syncwith_freedom.uwc.net\:21/~krist/tmp_oo:TR|12 Oct 2000 16:35:58 -0000
+vti_syncofs_freedom.uwc.net\:21/~krist/tmp_oo:TW|31 Oct 1999 14:01:00 -0000
+vti_syncofs_freedom.uwc.net\:21/~krist/tmp_pp:TW|27 Oct 1999 16:28:00 -0000
+vti_syncwith_freedom.uwc.net\:21/~krist/tmp_pp:TR|12 Oct 2000 15:35:58 -0000
+vti_syncwith_lab.architech.no\:21/%2fweb/as/krist_oo:TR|12 Oct 2000 16:35:58 -0000
+vti_syncofs_lab.architech.no\:21/%2fweb/as/krist_oo:TW|02 Nov 1999 14:55:00 -0000
+vti_syncwith_freedom.uwc.net\:21/%2fhome/uwcnet/html/ais_oo:TR|12 Oct 2000 16:35:58 -0000
+vti_syncofs_freedom.uwc.net\:21/%2fhome/uwcnet/html/ais_oo:TW|02 Nov 1999 18:41:00 -0000
+vti_syncwith_ftp.etud.insa-tlse.fr\:21/%2fhome/98/1/chateau/public_html/ais_oo:TR|12 Oct 2000 16:35:58 -0000
+vti_syncofs_ftp.etud.insa-tlse.fr\:21/%2fhome/98/1/chateau/public_html/ais_oo:TW|05 Nov 1999 19:10:00 -0000
+vti_syncwith_freedom.uwc.net\:21/%2fhome/uwcnet/html/ais:TR|12 Oct 2000 16:35:58 -0000
+vti_syncofs_freedom.uwc.net\:21/%2fhome/uwcnet/html/ais:TW|28 Nov 1999 20:56:00 -0000
+vti_syncwith_freedom.uwc.net\:21/%2fhome/uwcnet/html/ais_beta:TR|12 Oct 2000 16:35:58 -0000
+vti_syncofs_freedom.uwc.net\:21/%2fhome/uwcnet/html/ais_beta:TW|18 Dec 1999 16:12:00 -0000
+vti_syncwith_freedom.uwc.net\:21/%2fhome/uwcnet/html/mig:TR|12 Oct 2000 15:35:58 -0000
+vti_syncofs_freedom.uwc.net\:21/%2fhome/uwcnet/html/mig:TW|29 Mar 2000 01:54:00 -0000
+vti_syncwith_freedom.uwc.net\:21/%2fhome/uwcnet/html/mig_beta:TR|12 Oct 2000 15:35:58 -0000
+vti_syncofs_freedom.uwc.net\:21/%2fhome/uwcnet/html/mig_beta:TW|10 Apr 2000 16:16:00 -0000
+vti_syncwith_www.uwc.net\:21/%2fhome/uwcnet/html/mig:TX|12 Oct 2000 15:35:58 -0000
+vti_syncofs_www.uwc.net\:21/%2fhome/uwcnet/html/mig:TW|13 May 2001 08:03:00 -0000
+vti_syncwith_130.209.241.233\:21/%2fhome/web:TR|12 Oct 2000 15:35:58 -0000
+vti_syncofs_130.209.241.233\:21/%2fhome/web:TW|07 May 2000 22:06:00 -0000
+vti_syncwith_130.209.241.233\:21/%2fhome/httpd/html/mig:TR|12 Oct 2000 15:35:58 -0000
+vti_syncofs_130.209.241.233\:21/%2fhome/httpd/html/mig:TW|10 May 2000 20:52:00 -0000
+vti_syncofs_www.uwc.net\:21/%2fhome/uwcnet/html/mig_beta:TW|24 May 2001 09:39:00 -0000
+vti_syncwith_www.uwc.net\:21/%2fhome/uwcnet/html/mig_beta:TX|12 Oct 2000 15:35:58 -0000
+vti_syncwith_10.110.0.64\:21/%2fvar/www/html/mig:TR|12 Oct 2000 15:35:58 -0000
+vti_syncofs_10.110.0.64\:21/%2fvar/www/html/mig:TW|27 Jun 2000 16:56:00 -0000
+vti_syncofs_10.110.0.64\:21/%2fhome/httpd/html/mig:TW|27 Jun 2000 19:10:00 -0000
+vti_syncwith_10.110.0.64\:21/%2fhome/httpd/html/mig:TR|12 Oct 2000 15:35:58 -0000
+vti_syncwith_10.110.0.233\:21/%2fhome/httpd/html/mig:TR|12 Oct 2000 15:35:58 -0000
+vti_syncofs_10.110.0.233\:21/%2fhome/httpd/html/mig:TW|09 Oct 2001 05:57:00 -0000
+vti_syncofs_metaosldv02\:21/%2fhome/httpd/html/mig:TW|08 Jan 2001 13:31:00 -0000
+vti_syncwith_metaosldv02\:21/%2fhome/httpd/html/mig:TR|12 Oct 2000 15:35:58 -0000
+vti_syncwith_metaoslwe03\:21/%2fhome/cchateau/mig:TR|12 Oct 2000 15:35:58 -0000
+vti_syncofs_metaoslwe03\:21/%2fhome/cchateau/mig:TW|08 Jan 2002 10:45:00 -0000
+vti_syncofs_metaoslwe04\:21/%2fhome/cchateau/mig:TW|14 Jan 2002 08:07:00 -0000
+vti_syncwith_metaoslwe04\:21/%2fhome/cchateau/mig:TR|12 Oct 2000 15:35:58 -0000
+vti_syncofs_metaoslwe04\:21/%2fwww/test/mig:TW|29 Jan 2002 16:09:00 -0000
+vti_syncwith_metaoslwe04\:21/%2fwww/test/mig:TR|12 Oct 2000 15:35:58 -0000
+vti_syncofs_metaoslwe04\:21/%2fwww/docs/mig:TW|05 Feb 2001 01:38:00 -0000
+vti_syncwith_metaoslwe04\:21/%2fwww/docs/mig:TR|12 Oct 2000 15:35:58 -0000
+vti_syncofs_support.metamerge.com\:21/%2fwww/docs/mig:TW|25 May 2001 00:23:00 -0000
+vti_syncwith_support.metamerge.com\:21/%2fwww/docs/mig:TX|12 Oct 2000 15:35:58 -0000
+vti_syncwith_freedom1.uwc.org\:21/%2fhome/uwcnet/html/mig:TX|12 Oct 2000 15:35:58 -0000
+vti_syncofs_freedom1.uwc.org\:21/%2fhome/uwcnet/html/mig:TW|09 Apr 2001 07:31:00 -0000
+vti_cacheddtm:TX|12 Oct 2000 15:35:58 -0000
+vti_filesize:IR|2008
+vti_syncwith_www.uwc.net\:21/%2fhome/uwcnet/html/mig_unity:TX|12 Oct 2000 15:35:58 -0000
+vti_syncofs_www.uwc.net\:21/%2fhome/uwcnet/html/mig_unity:TW|25 May 2001 16:38:00 -0000

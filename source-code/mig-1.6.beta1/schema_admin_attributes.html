@@ -1,0 +1,476 @@
+<script language="php">
+ require_once "php/config.php"; 
+ ## security enabler
+ $auth_file = "php/" . AUTHENTICATION_SYSTEM_TYPE . "_authenticate_manager.php";
+ require_once $auth_file;
+</script>
+
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta http-equiv="expires" content="1 Jan 2000">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title><script language="php">if (isset($mig_pagetitle)) echo $mig_pagetitle; else echo "Administration pages - Attributes";</script></title>
+<script language="JavaScript" type="text/javascript" src="js/global.js">
+</script>
+<meta name="Microsoft Border" content="b, default">
+</head>
+<script language="php">
+// Security enhancement for PHP 4.1 and higher
+// Compatibility with systems having register_globals turned off (default in PHP 4.2 and higher)
+// Compatibility for systems having variables_order equal to EGPCS and EPGCS
+
+unset ($order); if (isset ($_POST["order"])) $order = $_POST["order"]; else if (isset($_GET["order"])) $order = $_GET["order"];
+unset ($attributetodelete); if (isset ($_POST["attributetodelete"])) $attributetodelete = $_POST["attributetodelete"]; else if (isset($_GET["attributetodelete"])) $attributetodelete = $_GET["attributetodelete"];
+unset ($migattributename); if (isset ($_POST["migattributename"])) $migattributename = $_POST["migattributename"]; else if (isset($_GET["migattributename"])) $migattributename = $_GET["migattributename"];
+unset ($migattributedisplayname); if (isset ($_POST["migattributedisplayname"])) $migattributedisplayname = $_POST["migattributedisplayname"]; else if (isset($_GET["migattributedisplayname"])) $migattributedisplayname = $_GET["migattributedisplayname"];
+unset ($migdisplaytype); if (isset ($_POST["migdisplaytype"])) $migdisplaytype = $_POST["migdisplaytype"]; else if (isset($_GET["migdisplaytype"])) $migdisplaytype = $_GET["migdisplaytype"];
+unset ($migsearchtype); if (isset ($_POST["migsearchtype"])) $migsearchtype = $_POST["migsearchtype"]; else if (isset($_GET["migsearchtype"])) $migsearchtype = $_GET["migsearchtype"];
+unset ($migedittype); if (isset ($_POST["migedittype"])) $migedittype = $_POST["migedittype"]; else if (isset($_GET["migedittype"])) $migedittype = $_GET["migedittype"];
+unset ($migattributeoid); if (isset ($_POST["migattributeoid"])) $migattributeoid = $_POST["migattributeoid"]; else if (isset($_GET["migattributeoid"])) $migattributeoid = $_GET["migattributeoid"];
+unset ($migauthorizedvaluenew); if (isset ($_POST["migauthorizedvaluenew"])) $migauthorizedvaluenew = $_POST["migauthorizedvaluenew"]; else if (isset($_GET["migauthorizedvaluenew"])) $migauthorizedvaluenew = $_GET["migauthorizedvaluenew"];
+
+
+
+$core_file = "php/" . INFORMATION_SYSTEM_TYPE . "_core.php"; 
+require_once $core_file;
+require_once "php/attribute.php";
+
+$core = new core();
+
+if (($conn_id = $core->connect()) == false)
+	die($core->error_msg);
+include_once "php/quicksort.php";
+include_once "php/attribute_types.php";
+
+</script>
+
+<body><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><!--msnavigation--><td valign="top">
+<h2><script language="php">if (isset($mig_pagetitle)) echo $mig_pagetitle; else echo "Administration pages - Attributes";</script></h2>
+
+<form method="POST">
+  <center>
+  <p>
+<input type="button" value="Remove attribute(s)" 
+	onclick="page = '<?php echo $_SERVER["SCRIPT_NAME"] ?>?order=prepare_remove&<?php echo SID ?>' ;	window.open(page,'_self')">
+<input type="button" value="Add an attribute" 
+	onclick="page = '<?php echo $_SERVER["SCRIPT_NAME"] ?>?order=prepare_add&<?php echo SID ?>' ;	window.open(page,'_self')">
+<input type="button" value="Edit attributes" 
+	onclick="page = '<?php echo $_SERVER["SCRIPT_NAME"] ?>?order=prepare_edit&<?php echo SID ?>' ;	window.open(page,'_self')">		
+  </p>
+</center>
+</form>
+<script language="php">
+if (isset($order))
+{
+	if ($order == "prepare_add")
+	{
+	</script>
+
+ <center>
+ <form action="<?php echo $_SERVER["SCRIPT_NAME"] ?>" method="POST" onsubmit="return Add_Form_Validator(this)">
+  <table border="1" width="80%" cellspacing="0" cellpadding="0">
+    <tr>
+     <td width="33%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Attribute
+      Display name</b></font></td>
+      <td width="67%" bgcolor="#000066" align="center"><input type="text" name="migattributedisplayname" size="20"></td>
+    </tr>
+    <tr>
+      <td width="33%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Attribute
+        LDAP name</b></font></td>
+      <td width="67%" bgcolor="#000066" align="center"><input type="text" name="migattributename" size="20"></td>      
+    </tr>
+   <tr>
+      <td width="33%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Attribute display type</b></font></td>
+      <td width="67%" bgcolor="#000066" align="center"><select size="1" name="migdisplaytype">
+      <script language="php">
+      for (reset($types); $i = key($types); next($types))
+      		echo "<option value=\"$i\">$types[$i]</option>";
+      	</script>
+        </select></td>      
+    </tr>
+    <tr>
+      <td width="33%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Attribute searching type</b></font></td>
+      <td width="67%" bgcolor="#000066" align="center"><select size="1" name="migsearchtype">
+      <script language="php">
+      for (reset($types); $i = key($types); next($types))
+      		echo "<option value=\"$i\">$types[$i]</option>";
+      	</script>
+        </select></td>      
+    </tr>
+<tr>
+      <td width="33%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Attribute edit type</b></font></td>      <td width="67%" bgcolor="#000066" align="center"><select size="1" name="migedittype">
+      <script language="php">
+      for (reset($types); $i = key($types); next($types))
+      		echo "<option value=\"$i\">$types[$i]</option>";
+      	</script>
+        </select></td>      
+    </tr>
+<tr>
+      <td width="33%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Attribute OID</b></font></td>  
+      <td width="67%" bgcolor="#000066" align="center"><input type="text" name="migattributeoid" size="20"></td>
+    </tr>
+    
+  </table>
+  <p>
+  <input type="submit" value="Submit"> 
+  <input type="reset" value="Reset"> 
+  <input type="hidden" name="order" value="go_add">
+  </p>
+  </center>
+  
+  </form>
+
+<script language="javascript">  
+function Add_Form_Validator(theForm)
+{
+	if (theForm.migattributedisplayname.value == "")
+	{
+		alert("Please enter a value for the \"Display Name\" field.");
+		theForm.migattributedisplayname.focus();
+		return (false);
+	}
+	
+	if (theForm.migattributename.value == "")
+	{
+		alert("Please enter a value for the \"Attribute Name\" field.");
+		theForm.migattributename.focus();
+		return (false);
+	}
+	
+	if (theForm.migattributeoid.value == "")
+	{
+		alert("Please enter a value for the \"Attribute OID\" field.");
+		theForm.migattributeoid.focus();
+		return (false);
+	}
+
+	return (true);
+}
+</script>
+
+<script language="php"> 
+	}
+	elseif ($order == "go_add")
+	{
+		$new_attr = new attribute($conn_id);
+		$new_attr->migattributename = trim($migattributename);
+		$new_attr->migattributeoid = trim($migattributeoid);
+		$new_attr->migattributedisplayname = $migattributedisplayname;
+		$new_attr->migdisplaytype = $migdisplaytype;
+		$new_attr->migedittype = $migedittype;
+		$new_attr->migsearchtype = $migsearchtype;
+		if (!$new_attr->add("system"))
+		 	die($new_attr->error_msg);		
+</script>
+<h3>You need to <a href="schema_admin_server_restart.html?order=go_restart">restart</a> the
+server to apply changes.</h3>
+<script language="php"> 
+		 	
+	}
+	elseif (($order == "go_edit")  && isset($migattributename))
+	{
+		// working on system and user defaults
+		if (($attr = $core->read_attribute_list("both")) == false) die($core->error_msg);
+		// warning! All attribute properties must be retrieved because of the mod_replace() call
+		
+		$editorder = true;
+		for ($a = 0; $a < $attr->attribute_count; $a++) 
+		{
+			$curr_attr = new attribute($conn_id);
+			if (!$curr_attr->read_from_list($attr, $a)) die($curr_attr->error_msg);
+
+			// redundency checking	
+			if (($migattributedisplayname == $curr_attr->migattributedisplayname) || ($migattributename == $curr_attr->migattributename) || ($migattributeoid == $curr_attr->migattributeoid))
+			{
+				$editorder = false;
+				</script>
+				<h3>Another attribute uses the same display name, LDAP name or OID. Aborted.</h3>
+				<script language="php">
+				break;
+			}
+		}
+			
+		if ($editorder == true)
+		{
+			$curr_attr = new attribute($conn_id);
+			if (!$curr_attr->read_from_list($attr, $migattributename)) die($curr_attr->error_msg);
+
+			$updmod["migattributename"] = trim($migattributename);
+
+			if (!$curr_attr->is_userdefault_attribute())
+			{							
+				$updmod["migattributedisplayname"] = $migattributedisplayname;
+				$updmod["migattributeoid"] = $migattributeoid;
+						
+				for ($j = 0; $j < $curr_attr->count("migauthorizedvalue"); $j++)
+				{
+					$moption = "migauthorizedvalue" . $j;
+					
+					unset ($$moption); if (isset ($_POST[$moption])) $$moption = $_POST[$moption]; else if (isset($_GET[$moption])) $$moption = $_GET[$moption];
+
+					if (strcmp($$moption, $curr_attr->migauthorizedvalue[$j]) != 0)
+					{
+						if (strlen($$moption) != 0)
+							$updmod["migauthorizedvalue"][] = $$moption;
+					}
+					else 
+						$updmod["migauthorizedvalue"][] = $curr_attr->migauthorizedvalue[$j];
+				}
+						
+				if (($migauthorizedvaluenew != "") && (strcmp($migauthorizedvaluenew, "Enter new value here") != 0))
+					if	(!$curr_attr->is_migauthorizedvalue($migauthorizedvaluenew))
+						$updmod["migauthorizedvalue"][] = $migauthorizedvaluenew;								
+									
+						
+				if (!isset($updmod["migauthorizedvalue"]))
+				{
+				 	// delete if no value
+				 	for ($j = 0; $j < $curr_attr->count("migauthorizedvalue"); $j++)
+				 		$upddel["migauthorizedvalue"][] = $curr_attr->migauthorizedvalue[$j];
+					if (isset($upddel))
+						if (!$curr_attr->mod_del($upddel)) die($curr_attr->error_msg);
+				}
+			}
+	
+			if (!$curr_attr->mod_replace($updmod))
+				die($curr_attr->error_msg);	
+			$order = "prepare_edit";
+		}
+		</script>
+<h3>You need to <a href="schema_admin_server_restart.html?order=go_restart">restart</a> the
+server to apply changes.</h3>
+<script language="php"> 
+	}
+	elseif ($order == "go_remove")
+	{		
+		if (($info = $core->read_attribute_list("both")) == false) die($core->error_msg);
+
+		for ($a = 0; $a < sizeof($attributetodelete); $a++)  // all passed attributes
+		{
+			$curr_attr = new attribute($conn_id);
+			for ($i = 0; $i < $core->attribute_count; $i++) 
+			{
+				if (!$curr_attr->read_from_list($info, $i)) die($curr_attr->error_msg);
+				if ($curr_attr->migattributename == $attributetodelete[$a])
+				{
+					if (!$curr_attr->is_userdefault_attribute()) $type = "system";
+					else $type = "user";
+					
+					if (!$curr_attr->delete($type))	die($curr_attr->error_msg);		
+				}
+			}
+		}
+		$order = "prepare_remove";	
+</script>
+<h3>You need to <a href="schema_admin_server_restart.html?order=go_restart">restart</a> the
+server to apply changes.</h3>
+<script language="php"> 
+	}
+
+	if ($order == "prepare_edit") 
+	{
+		if (($info = $core->read_attribute_list("system", array("migattributename", "migattributedisplayname", "migattributeoid", "migauthorizedvalue"))) == false) die($core->error_msg);
+		quickSort($info, 0, $core->attribute_count -1, "migattributedisplayname");	
+		
+		if (isset($migattributename))
+		{
+</script>
+<script>
+	function myFocus()
+	{
+		document.edit_form.migattributedisplayname.focus();
+	}
+	
+	window.onload = myFocus;
+</script>
+<script language="php">
+		}
+</script>
+
+ 
+ <form name="edit_form" action="<?php echo $_SERVER["SCRIPT_NAME"] ?>" method="POST" onsubmit="return Form_Validator(this)">
+ <center>
+  <table border="1" width="100%" cellspacing="0" cellpadding="0">
+    <tr>
+     <td width="25%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Attribute
+      Display name</b></font></td>
+      <td width="25%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Attribute
+        LDAP name</b></font></td>
+      <td width="25%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Attribute
+        OID</b></font></td>
+     <td width="25%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Options 
+      </b></font></td>
+  
+    </tr>
+    <script language="php">
+		for ($i = 0; $i < $core->attribute_count; $i++)
+		{	
+			$curr_attr = new attribute($conn_id);
+			if (!$curr_attr->read_from_list($info, $i)) die($curr_attr->error_msg);		
+	</script>			 
+	<tr <?php if (($i % 2) == 0) echo "class=lightgrey"; ?>>
+  	    <script language="php">
+
+	  		if (isset($migattributename) && ($migattributename == $curr_attr->migattributename))
+  			{
+  		</script>
+  	<td width="25%" align="center">		
+  		<input type="text" name="migattributedisplayname" value="<?php echo $curr_attr->migattributedisplayname ?>"></td>
+   		<td width="25%" align="center"><input type="text" name="migattributename" value="<?php echo $curr_attr->migattributename ?>"></td>
+   <input type="hidden" name="oldmigattributename" value="<?php echo $curr_attr->migattributename ?>">
+     <td width="25%" align="center"><input type="text" name="migattributeoid" value="<?php echo $curr_attr->migattributeoid ?>"></td>
+   <td width="25%" align="center">
+   <script language="php">
+
+				for ($k = 0; $k < $curr_attr->count("migauthorizedvalue"); $k++)   // all values
+				{
+					$optionname = "migauthorizedvalue" . "$k"; 
+	</script>
+	<input type="text" name="<?php echo $optionname ?>" value="<?php echo $curr_attr->migauthorizedvalue[$k] ?>">
+	<br>
+	<script language="php">
+				}
+	</script>
+	<input type="text" name="migauthorizedvaluenew" value="Enter new value here"></td>
+	<script language="php"> 	
+   			}
+   			else
+   			{
+   	</script>
+	   	<td width="25%" align="center">
+   		<a href="<?php echo $_SERVER["SCRIPT_NAME"] ?>?order=prepare_edit&migattributename=<?php echo $curr_attr->migattributename ?>"><?php echo $curr_attr->migattributedisplayname ?></a></td>
+   		<td width="25%" align="center"><?php echo $curr_attr->migattributename ?></td>
+      <td width="25%" align="center"><?php echo $curr_attr->migattributeoid ?></td>
+      
+   <td width="25%" align="center">
+   <script language="php">
+
+				for ($k = 0; $k < $curr_attr->count("migauthorizedvalue"); $k++)   // all values
+				{
+					$optionname = $curr_attr->migauthorizedvalue[$k]; 
+	</script>
+	<?php echo $optionname ?>
+	<br>
+	<script language="php">
+				}
+	</script>
+	
+	</tr>
+	<script language="php"> 	
+   			}
+   	
+      	}
+	</script>
+  </table>
+  <p>
+  <input type="submit" value="Submit"> 
+  <input type="reset" value="Reset"> 
+ 
+  <input type="hidden" name="order" value="go_edit">
+  </p>
+  </center>
+
+  </form>
+   
+<script>
+function Form_Validator(theForm)
+{
+	for (index = 0; index < <?php echo $core->attribute_count ?>; index++)
+	{
+		if (theForm['migattributedisplayname[]'][index].value == "")
+		{
+			alert("Please enter a value for the \"Display Name\" field.");
+			theForm['migattributedisplayname[]'][index].focus();
+			return (false);
+		}
+
+		if (theForm['migattributename[]'][index].value == "")
+		{
+			alert("Please enter a value for the \"Attribute Name\" field.");
+			theForm['migattributename[]'][index].focus();
+			return (false);
+		}
+		
+		if (theForm['migattributeoid[]'][index].value == "")
+		{
+			alert("Please enter a value for the \"Attribute OID\" field.");
+			theForm['migattributeoid[]'][index].focus();
+			return (false);
+		}
+	}
+	return (true);
+}
+</script>
+
+<script language="php"> 
+	}
+	elseif ($order == "prepare_remove")
+	{		
+		if (($info = $core->read_attribute_list("system", array("migattributename", "migattributedisplayname"))) == false) die($core->error_msg);
+		quickSort($info, 0, $core->attribute_count -1, "migattributedisplayname");	
+
+   	
+</script>
+<form method="post" action="<?php echo $_SERVER["SCRIPT_NAME"] ?>" onsubmit="return confirm_removal()">
+  <div align="center">
+    <center>
+  <table border="1" width="80%" cellspacing="0" cellpadding="0" height="36">
+    <tr>
+      <td width="33%" bgcolor="#000066" align="center" height="34"><font color="#FFFFFF"><b>Attribute
+        Display name</b></font></td>
+      <td width="33%" bgcolor="#000066" align="center" height="34"><font color="#FFFFFF"><b>Attribute LDAP name</b></font></td>
+      <td width="34%" bgcolor="#000066" align="center" height="34"><font color="#FFFFFF"><b>Remove</b></font></td>
+         </tr>
+      <script language="php">
+	
+		for ($i = 0; $i < $core->attribute_count; $i++)  // look all possible attributes	
+   		{
+   			$curr_attr = new attribute($conn_id);
+			if (!$curr_attr->read_from_list($info, $i)) die($curr_attr->error_msg);
+		
+		</script>
+   		<tr <?php if (($i % 2) == 0) echo "class=lightgrey"; ?>>
+		<td width="33%"><b><?php echo $curr_attr->migattributedisplayname ?></b></td>
+		<td width="33%"><?php echo $curr_attr->migattributename ?></td>
+		<td width="34%" align="center"><input type="checkbox" name="attributetodelete[]" value="<?php echo $curr_attr->migattributename ?>"></td>
+		</tr>
+		<script language="php">
+
+		}
+</script>
+  </table>
+
+   
+  </div>
+  <p>
+  <input type="submit" value="Submit"> 
+  <input type="reset" value="Reset"> 
+  
+  <input type="hidden" name="order" value="go_remove"> 
+  </p>
+
+  </center>
+  </form>
+<script language="javascript">
+function confirm_removal()
+{
+	var txt = 'Confirm removal of attribute(s)';
+	if (!confirm(txt)) return false;
+	else return true;
+}
+</script>  
+
+<script language="php">
+	}	
+}
+$core->disconnect();
+</script>
+<p>&nbsp;<!--msnavigation--></td></tr><!--msnavigation--></table><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td>
+
+
+
+</td></tr><!--msnavigation--></table></body>
+</html>

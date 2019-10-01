@@ -1,0 +1,3 @@
+ This folder contains old LDAP v2 schema stuff in case anyone wants to 
+try and get it working.  It won't work with the rest of the project but might 
+be useful on it's own.

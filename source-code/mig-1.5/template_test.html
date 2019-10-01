@@ -1,0 +1,38 @@
+<?php
+  include("php/template.php");
+
+  # create Template instance called $t  
+  $t = new Template("/home/httpd/html/MIG/templates", "keep");
+
+  # define variables named page and box, referencing files
+  $t->set_file(array(
+     "page" => "page.html",
+     "box"  => "box.html"));
+
+  # extract the block named "row" from "box", creating a
+  # reference to {rows} in "box".
+  $t->set_block("box", "row", "rows");
+
+  # define the variables TITLE and PAGETITLE
+  $t->set_var(array("TITLE"     => "Testpage",
+                    "PAGETITLE" => "hugo"));
+
+  # define NUM and BIGNUM, then append "row" to "rows"...
+  for ($i=1; $i<=3; $i++) {
+    $n  = $i;
+    $nn = $i*10;
+    $t->set_var(array("NUM" => $n, "BIGNUM" => $nn));
+    $t->parse("rows", "row", true);
+  }
+
+  # build out from box, then build out from page...
+  $t->parse("OUT", array("box", "page"));
+
+  # finish out and print it.
+  $t->p("OUT");
+?>
+<hr>
+<?php
+  # report leftover variables, if any.
+  print implode(", ", $t->get_undefined("OUT"));
+ ?>

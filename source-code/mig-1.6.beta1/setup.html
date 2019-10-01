@@ -1,0 +1,192 @@
+<script language="php">
+ require_once "php/config.php"; 
+ ## security enabler
+ $auth_file = "php/" . AUTHENTICATION_SYSTEM_TYPE . "_authenticate_manager.php";
+ require_once $auth_file;
+</script>
+
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title><script language="php">if (isset($mig_pagetitle)) echo $mig_pagetitle; else echo "Administration pages - MIG Setup";</script></title>
+<script language="JavaScript" type="text/javascript" src="js/global.js">
+</script>
+<meta name="Microsoft Border" content="b, default">
+</head>
+
+<script language="php">
+if (is_defined("MIG_INSTALLATION_NAME")) $MIG_INSTALLATION_NAME = MIG_INSTALLATION_NAME; else $MIG_INSTALLATION_NAME = "MIG at your organization";
+if (is_defined("INFORMATION_SYSTEM_TYPE")) $INFORMATION_SYSTEM_TYPE = INFORMATION_SYSTEM_TYPE; else $INFORMATION_SYSTEM_TYPE = "ldap";
+if (if (is_defined("INFORMATION_SYSTEM_HOLDS_REFERENCIES")) $INFORMATION_SYSTEM_HOLDS_REFERENCIES = INFORMATION_SYSTEM_HOLDS_REFERENCIES; else $INFORMATION_SYSTEM_HOLDS_REFERENCIES = "no";
+if (is_defined("AUTHENTICATION_SYSTEM_TYPE")) $AUTHENTICATION_SYSTEM_TYPE = AUTHENTICATION_SYSTEM_TYPE; else $AUTHENTICATION_SYSTEM_TYPE = "ldap";
+if (is_defined("MIG_LDAP_SERVER_INSTALLATION_SCHEMA_INCLUDE_FILE")) $MIG_LDAP_SERVER_INSTALLATION_SCHEMA_INCLUDE_FILE = MIG_LDAP_SERVER_INSTALLATION_SCHEMA_INCLUDE_FILE; else $MIG_LDAP_SERVER_INSTALLATION_SCHEMA_INCLUDE_FILE = "/usr/local/etc/openldap/schema/mig_defined.schema";
+if (is_defined("MIG_LDAP_SERVER_INSTALLATION_FOLDER")) $MIG_LDAP_SERVER_INSTALLATION_FOLDER = MIG_LDAP_SERVER_INSTALLATION_FOLDER; else $MIG_LDAP_SERVER_INSTALLATION_FOLDER = "/usr/local/etc/openldap";
+if (is_defined("HOSTNAME")) $HOSTNAME = HOSTNAME; else $HOSTNAME = "localhost";
+if (is_defined("MANAGER_UID")) $MANAGER_UID = MANAGER_UID; else $MANAGER_UID = "cn=manager,o=uwc";      
+if (is_defined("MANAGER_PW")) $MANAGER_PW = MANAGER_PW; esle $MANAGER_PW = "worthington";
+if (is_defined("SCHEMA_BASE_DIR")) $SCHEMA_BASE_DIR = SCHEMA_BASE_DIR; else $SCHEMA_BASE_DIR = "ou=schema, o=uwc";       
+
+// USER INFORMATION
+if (is_defined("USERS_BASE_DIR")) $ =o=uwc");                   
+if (is_defined("USERS_SEARCHFILTER")) $ =uwcperson");
+if (is_defined("USERS_MIG_SEARCHCLASS")) $ =uwcNetwork");
+if (is_defined("USERS_DOMAIN")) $ =uwc.net");
+
+
+// AUTHENTICATION SYSTEM CONNECTED BY SECURITY LAYER
+// SPECIFIC TO THE TYPE OF AUTHENTICATION SYSTEM DEFINED ABOVE
+//if (is_defined("AUTH_HOSTNAME","ldaps://localhost");
+if (is_defined("AUTH_HOSTNAME")) $ =localhost");
+if (is_defined("AUTH_UID")) $ =cn=manager,o=uwc");      
+if (is_defined("AUTH_PW")) $ =worthington");
+if (is_defined("AUTH_USERS_BASE_DIR")) $ =o=uwc");                   
+if (is_defined("AUTH_USERS_SEARCHFILTER")) $ =uwcperson");     
+
+// GENERAL MIG OPTIONS
+if (is_defined("MIG_SESSION_TIMEOUT", 600);
+if (is_defined("MIG_SESSION_PATH")) $ =/tmp/session_ID");
+if (is_defined("MIG_USES_INTEGRATOR")) $ =no");   
+</script>
+<body><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><!--msnavigation--><td valign="top">
+<h2><script language="php">if (isset($mig_pagetitle)) echo $mig_pagetitle; else echo "Administration pages - MIG Setup";</script></h2>
+<form>
+<h3>General</h3>
+
+
+<table border="1" width="100%" cellspacing="0">
+  <tr>
+    <td width="50%">Installation name</td>
+    <td width="50%">
+    
+      <p><input type="text" name="MIG_INSTALLATION_NAME" size="30" value="MIG at your organization"></td>
+  </tr>
+ </table>
+<h3>Information system holding user and data records</h3>
+
+
+<table border="1" width="100%" cellspacing="0">
+  <tr>
+    <td width="50%">Type of the information system</td>
+    <td width="50%">
+    
+      <p><select size="1" name="INFORMATION_SYSTEM_TYPE">
+        <option value="ldap">LDAP</option>
+      </select></td>
+  </tr>
+  <tr>
+    <td width="50%">Does the system hold record to record referencies?</td>
+    <td width="50%">Yes <input type="radio" value="yes" name="INFORMATION_SYSTEM_HOLDS_REFERENCIES"><input type="radio" value="no" checked name="INFORMATION_SYSTEM_HOLDS_REFERENCIES">
+      No</td>
+  </tr>
+  <tr>
+    <td width="50%">&nbsp;</td>
+    <td width="50%">&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="50%" height="23">Host URL</td>
+    <td width="50%" height="23"><input type="text" name="HOSTNAME" size="30" value="ldaps://localhost"></td>
+  </tr>
+  <tr>
+    <td width="50%" height="19">Data administrator ID</td>
+    <td width="50%" height="19"><input type="text" name="MANAGER_UID" size="30" value="cn=manager, o=example"></td>
+  </tr>
+  <tr>
+    <td width="50%" height="23">Data administrator password</td>
+    <td width="50%" height="23"><input type="text" name="MANAGER_PW" size="20" value="secret"></td>
+  </tr>
+  <tr>
+    <td width="50%" height="23">Path to MIG schema repository</td>
+    <td width="50%" height="23"><input type="text" name="SCHEMA_BASE_DIR" size="30" value="ou=schema, o=example"></td>
+  </tr>
+  <tr>
+    <td width="50%" height="23"></td>
+    <td width="50%" height="23"></td>
+  </tr>
+  <tr>
+    <td width="50%">Path to user records</td>
+    <td width="50%"><input type="text" name="USERS_BASE_DIR" size="30" value="ou=users, o=example"></td>
+  </tr>
+  <tr>
+    <td width="50%">Filter for user records</td>
+    <td width="50%"><input type="text" name="USERS_SEARCHFILTER" size="30" value="(objectclass=myPerson)"></td>
+  </tr>
+  <tr>
+    <td width="50%">Name of MIG user search class</td>
+    <td width="50%"><input type="text" name="USERS_MIG_SEARCHCLASS" size="20" value="myPersons"></td>
+  </tr>
+  <tr>
+    <td width="50%">Default user's email domain</td>
+    <td width="50%"><input type="text" name="USERS_DOMAIN" size="20" value="example.com"></td>
+  </tr>
+  <tr>
+    <td width="50%">&nbsp;</td>
+    <td width="50%">&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="50%">Path to the LDAP server MIG schema include file</td>
+    <td width="50%"><input type="text" name="MIG_LDAP_SERVER_INSTALLATION_SCHEMA_INCLUDE_FILE" size="46" value="/usr/local/etc/openldap/schema/mig_defined.schema"></td>
+  </tr>
+ </table>
+<h3>Information system holding user passwords</h3>
+<table border="1" cellspacing="0" width="100%">
+
+  <tr>
+    <td width="50%" height="23">Type of the authentication system</td>
+    <td width="50%" height="23"><select size="1" name="AUTHENTICATION_SYSTEM_TYPE">
+        <option value="ldap">LDAP</option>
+      </select></td>
+  </tr>
+  <tr>
+    <td width="50%" height="18">&nbsp;</td>
+    <td width="50%" height="18">&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="50%" height="23">Host URL</td>
+    <td width="50%" height="23"><input type="text" name="AUTH_HOSTNAME" size="30" value="ldap://localhost"></td>
+  </tr>
+  <tr>
+    <td width="50%" height="19">Data administrator ID</td>
+    <td width="50%" height="23"><input type="text" name="AUTH_UID" size="30" value="cn=authenticater, o=example"></td>
+  </tr>
+  <tr>
+    <td width="50%" height="23">Data administrator password</td>
+    <td width="50%" height="23"><input type="text" name="AUTH_PW" size="20" value="secret"></td>
+  </tr>
+  <tr>
+    <td width="50%" height="23">Path to user records repository</td>
+    <td width="50%" height="23"><input type="text" name="AUTH_USERS_BASE_DIR" size="30" value="ou=users, o=example"></td>
+  </tr>
+  <tr>
+    <td width="50%" height="23">Filter for user records</td>
+    <td width="50%" height="23"><input type="text" name="AUTH_USERS_SEARCHFILTER" size="30" value="(objectclass=myPerson)"></td>
+  </tr>
+  </table>
+  <h3>
+  General MIG options</h3>
+<table border="1" cellspacing="0" width="100%">
+  <tr>
+    <td width="50%">Session timeout in seconds</td>
+    <td width="50%"><input type="text" name="MIG_SESSION_TIMEOUT" size="20" value="600"></td>
+  </tr>
+  <tr>
+    <td width="50%">Temporary folder for sessions</td>
+    <td width="50%"><input type="text" name="MIG_SESSION_PATH" size="46" value="/tmp/sessionID"></td>
+  </tr>
+  <tr>
+    <td width="50%">Master - slave model using Integrator</td>
+    <td width="50%">Yes <input type="radio" value="yes" name="MIG_USES_INTEGRATOR"><input type="radio" value="no" checked name="MIG_USES_INTEGRATOR">
+      No</td>
+  </tr>
+</table>
+</form>
+&nbsp;<!--msnavigation--></td></tr><!--msnavigation--></table><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td>
+
+
+
+</td></tr><!--msnavigation--></table></body>
+
+</html>
+</script>

@@ -1,0 +1,92 @@
+<script language="php">
+ require_once "php/config.php"; 
+</script>
+
+<html>
+
+<head>
+<meta http-equiv="Content-Language" content="no-bok">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+
+<title><script language="php">if (isset($mig_pagetitle)) echo $mig_pagetitle; else echo MIG_INSTALLATION_NAME . " - Identification";</script></title>
+<base target="_top">
+<meta name="Microsoft Border" content="none">
+<script language="JavaScript" type="text/javascript" src="js/global.js">
+</script>
+</head>
+<script language="javascript">
+if (top.location != this.location) top.location = this.location;
+</script>
+
+<body onload="document.login.uid.focus();">
+<h1><?php echo MIG_INSTALLATION_NAME ?></h1>
+<h2>Registered users</h2>
+<script language="javascript">  
+function Form_Validator(theForm)
+{
+	if (theForm.uid.value == "")
+	{
+		alert("Please enter a value for the \"UID\" field.");
+		theForm.uid.focus();
+		return (false);
+	}
+	
+	if (theForm.password.value == "")
+	{
+		alert("Please enter a value for the \"Password\" field.");
+		theForm.password.focus();
+		return (false);
+	}
+	return (true);
+}
+</script>
+
+<script language="php">
+	if (MIG_FORCE_FRAMES == "yes")
+		$action = "index.html";
+	else $action = $_SERVER["SCRIPT_NAME"]; 
+</script>
+
+<form action="<?php echo $action ?>" method="POST" name="login" onsubmit="return Form_Validator(this)">
+  <div align="center">
+    <center>
+    <table border="0" cellpadding="0" cellspacing="0" width="50%">
+      <tr>
+        <td width="34%" height="25"><b>User ID</b></td>
+        <td width="66%" height="25"><input type="text" name="uid" size="29"></td>
+      </tr>
+      <tr>
+        <td width="34%" height="25"><b>Password</b></td>
+        <td width="66%" height="25"><input type="password" name="password" size="29"></td>
+      </tr>
+      <tr>
+        <td width="100%" height="25" colspan="2">
+          <h4><a href="password_recovery.html">Forgot your password ?</a></h4>
+        </td>
+      </tr>
+      <tr>
+        <td width="100%" height="21" colspan="2">
+          <p align="center"><input type="submit" value="Submit"><input type="reset" value="Reset"></td>
+      </tr>
+    </table>
+    </center>
+  </div>
+<script language="php">
+	if (MIG_FORCE_FRAMES == "yes")
+	{
+		$link = $_SERVER["SCRIPT_NAME"];
+		if ($_SERVER["QUERY_STRING"] != "")
+			$link .= "?" . $_SERVER["QUERY_STRING"];
+</script>
+	<input type="hidden" name="target" value="<?php echo $link ?>">
+<script language="php">
+	}
+</script>
+  
+</form>
+
+
+</body>
+</html>

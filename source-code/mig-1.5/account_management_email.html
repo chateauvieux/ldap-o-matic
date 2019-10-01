@@ -1,0 +1,351 @@
+<script language="php">
+ require_once "php/config.php"; 
+ ## security enabler
+ $auth_file = "php/" . AUTHENTICATION_SYSTEM_TYPE . "_authenticate.php";
+ require_once $auth_file;
+</script>
+
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title><script language="php">if (isset($mig_pagetitle)) echo $mig_pagetitle; else echo "User pages - Email settings";</script></title>
+<script language="JavaScript" type="text/javascript" src="js/global.js">
+</script>
+<script>
+nbquery = 0;
+selectedmode = "";
+
+function errorMsg(msg, sf)
+{
+	sf.select();
+	window.alert(msg);
+	sf.focus();
+}
+
+
+// string to check, additional forbidden characters in a string
+function isThereWhiteSpace(str,addstr) 
+{
+	var wspace = "\n\t\r";
+	var c=0;
+
+	if(arguments.length==2) wspace+=addstr;
+	for(a=0;a<str.length;a++) 
+	{
+		ch=str.charAt(a);
+		for(b=0;b<wspace.length;b++) 
+		{
+			fch=wspace.charAt(b);
+			if(ch==fch) 
+			{
+				c++;
+				break;
+			}
+		}
+	}
+	return c;
+}
+
+
+function isEmail (sf) 
+{
+	if (sf.value != "")
+	{
+		stdmsg = "This field has to contain a valid e-mail address \(e.g: username@server.com\).\n\n\t";
+
+		existingdomains = new Array(".ac", ".ad", ".ae", ".af", ".ag", ".ai", ".al", ".am", ".an", ".ao", ".aq", ".ar", ".as", ".at", ".au", ".aw", ".az", ".ba", ".bb", ".bd", ".be", ".bf", ".bg", ".bh", ".bi", ".bj", ".bm", ".bn", ".bo", ".br", ".bs", ".bt", ".bv", ".bw", ".by", ".bz", ".ca", ".cc", ".cd", ".cf", ".cg", ".ch", ".ci", ".ck", ".cl", ".cm", ".cn", ".co", ".com", ".cr", ".cs", ".cu", ".cv", ".cx", ".cy", ".cz", ".de", ".dj", ".dk", ".dm", ".do", ".dz", ".ec", ".edu", ".ee", ".eg", ".eh", ".er", ".es", ".et", ".fi", ".fj", ".fk", ".fm", ".fo", ".fr", ".ga", ".gb", ".gd", ".ge", ".gf", ".gg", ".gh", ".gi", ".gl", ".gm", ".gn", ".gov", ".gp", ".gq", ".gr", ".gs", ".gt", ".gu", ".gw", ".gy", ".hk", ".hm", ".hn", ".hr", ".ht", ".hu", ".id", ".ie", ".il", ".im", ".in", ".int", ".io", ".iq", ".ir", ".is", ".it", ".je", ".jm", ".jo", ".jp", ".ke", ".kg", ".kh", ".ki", ".km", ".kn", ".kp", ".kr", ".kw", ".ky", ".kz", ".la", ".lb", ".lc", ".li", ".lk", ".lr", ".ls", ".lt", ".lu", ".lv", ".ly", ".ma", ".mc", ".md", ".mg", ".mh", ".mil", ".mk", ".ml", ".mm", ".mn", ".mo", ".mp", ".mq", ".mr", ".ms", ".mt", ".mu", ".mv", ".mw", ".mx", ".my", ".mz", ".na", ".nc", ".ne", ".net", ".nf", ".ng", ".ni", ".nl", ".no", ".np", ".nr", ".nu", ".nz", ".om", ".org", ".pa", ".pe", ".pf", ".pg", ".ph", ".pk", ".pl", ".pm", ".pn", ".pr", ".ps", ".pt", ".pw", ".py", ".qa", ".re", ".ro", ".ru", ".rw", ".sa", ".sb", ".sc", ".sd", ".se", ".sg", ".sh", ".si", ".sj", ".sk", ".sl", ".sm", ".sn", ".so", ".sr", ".st", ".su", ".sv", ".sy", ".sz", ".tc", ".td", ".tf", ".tg", ".th", ".tj", ".tk", ".tm", ".tn", ".to", ".tp", ".tr", ".tt", ".tv", ".tw", ".tz", ".ua", ".ug", ".uk", ".um", ".us", ".uy", ".uz", ".va", ".vc", ".ve", ".vg", ".vi", ".vn", ".vu", ".wf", ".ws", ".ye", ".yt", ".yu", ".za", ".zm", ".zr", ".zw");
+
+		forbchars = " '\"%&# ";
+		str = sf.value;
+		errors = isThereWhiteSpace(str, forbchars);
+
+		if (errors != 0) 
+		{
+			errorMsg(stdmsg + "The field contains whitespace characters \(line break, tab, etc...\) or one of these illegal characters: " + forbchars , sf);
+			return false;
+		}
+	
+		for (a=0, at=0; a < str.length; a++) 
+		{
+			ch=str.charAt(a);
+			if (ch=="@")
+			{
+				at++;
+				if(a==0 || a==(str.length-1)) 
+				{
+					errorMsg(stdmsg + "There must be characters before and after the '@' character!", sf);
+					return false;
+				}
+			}
+	 	}
+ 	
+	 	if (at != 1)
+	 	{
+	  		errorMsg(stdmsg + 'A valid e-mail has to contain exactly one "@" character.',sf);
+			return false;
+		}
+	
+		dot = str.lastIndexOf(".");
+	 	if (dot > -1) 
+	 	{
+			dom = str.slice(dot,str.length);
+			a = 0;
+			while(existingdomains[a] != dom && a < existingdomains.length)
+				a++;
+			
+			if (a == existingdomains.length) 
+			{
+				errorMsg(stdmsg + 'Invalid domain!', sf);
+				return false;
+			}
+			else if (str.charAt((dot-1)) == "@") 
+			{
+				errorMsg(stdmsg + 'Invalid domain!', sf);
+				return false;
+	 		}
+		}
+		if (dot == -1) 
+		{
+	   		errorMsg(stdmsg + 'A valid e-mail address must contain at least one dot', sf);
+			return false;
+		}
+	 	return true;
+	}
+}
+
+
+function control() 
+{
+	// control of  non re-submition
+	if (nbquery > 0)
+	{
+		alert("Processing... please wait or re-fresh the page");
+		return false;
+	}
+	nbquery ++;                                                                                                                                                      
+	return true;                                                                                                                                          
+}            
+</script>  
+
+
+<meta name="Microsoft Border" content="b, default">
+</head>
+
+<body><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><!--msnavigation--><td valign="top">
+<h2><script language="php">if (isset($mig_pagetitle)) echo $mig_pagetitle; else echo "User pages - Email settings";</script></h2>
+
+<script language="php">
+
+if (MIG_ACTIVATE_EMAIL != "yes")
+{
+</script>
+<h3>The Email Settings cannot be viewed/changed.</h3>
+<script language="php">
+}
+else
+{
+	$core_file = "php/" . INFORMATION_SYSTEM_TYPE . "_core.php"; 
+	require_once $core_file;
+
+	$core = new core();
+	if (($conn_id = $core->connect()) == false)
+		die($core->error_msg);
+
+	$data_core = new core();
+	if (($data_conn_id = $data_core->connect_to_datastore()) == false)
+		die($data_core->error_msg);
+
+	require_once "php/search_class.php";
+	$class = new search_class($conn_id);
+	if (!$class->read(USERS_MIG_SEARCHCLASS, array("migtimestamp", "migintegrationport"))) die($class->error_msg);
+	
+	// remote classes syntax : CLASSNAME|HOSTNAME|PARAM; CLASSNAME2, HOSTNAME2
+	$remote_classes = explode (";", REMOTE_SEARCHCLASSES);
+
+	for ($i = 0; $i < sizeof($remote_classes); $i++)
+	{
+		$remote_class = explode ("|", $remote_classes[$i]);
+		if (strcasecmp (USERS_MIG_SEARCHCLASS, trim ($remote_class[0])) == 0)
+		{
+			define ("REMOTE_HOSTNAME", trim ($remote_class[1]));
+			if (isset($remote_class[2])) define ("REMOTE_MANAGER_UID", trim ($remote_class[2]));
+			if (isset($remote_class[3])) define ("REMOTE_MANAGER_PW", trim ($remote_class[3]));
+			break;
+		}
+	}		
+	
+	
+	if ($class->migintegrationport != "")
+	{
+		include_once "php/integrator.php";
+		$as = new integrator($class->migintegrationport);
+	}
+	else
+	{
+		include_once "php/integrator_emulator.php";
+		$as = new integrator_emulator($data_conn_id);
+	}
+
+	
+
+	$dn = USER_UID;
+
+	if (isset($order) && ($order == "go_edit"))
+	{
+		# Update data from previous screen
+		include_once "php/ldap_attribute_specific.php";
+		ldap_attribute_formatting($HTTP_POST_VARS);
+		ldap_specific_attribute_formatting($HTTP_POST_VARS);
+
+		if (isset($read_mode) && ($read_mode == "local"))
+		{
+//			if (isset(${USERS_EMAILFORWARD_ATTRIBUTE}) && (${USERS_EMAILFORWARD_ATTRIBUTE} != ""))
+//				$HTTP_POST_VARS[USERS_EMAILDELIVERYMODE_ATTRIBUTE] = "both";
+//			else
+				$HTTP_POST_VARS[USERS_EMAILDELIVERYMODE_ATTRIBUTE] = "local";
+		}
+		elseif (isset($read_mode) && ($read_mode == "forward") && isset(${USERS_EMAILFORWARD_ATTRIBUTE}) && (${USERS_EMAILFORWARD_ATTRIBUTE} != ""))
+			$HTTP_POST_VARS[USERS_EMAILDELIVERYMODE_ATTRIBUTE] = "forward";
+
+		if (!$as->update_email($HTTP_POST_VARS)) die("<h3>Update Error</h3><b>" . $as->geterrmsg() . "</b>");
+		if ($as->getAttribute("exitStatus") != "OK") 
+		{
+		</script>
+			<h3>Error while updating data with Metamerge Integration Server</h3><b>'<?php echo $as->getAttribute("exitStatus") ?>'</b>
+		<script language="php">
+		}
+		$as->clearAttribute ("exitStatus");
+	}
+	
+	if (!$as->read_email($dn)) die ("<h3>Error reading $dn </h3><b>" . $as->geterrmsg() . "</b>");
+	if ($as->getAttribute("exitStatus") != "OK") die ("<h3>Error while reading data from Metamerge Integration Server</h3><b>'" . $as->getAttribute("exitStatus") . "'</b>");	
+	
+	if ($class->migtimestamp == "on")
+	{
+		$print_date = substr($as->getAttribute("migLastModifiedDate"),6,2) . "/" . substr($as->getAttribute("migLastModifiedDate"),4,2) . "/" 
+								. substr($as->getAttribute("migLastModifiedDate"),0,4) . " " . substr($as->getAttribute("migLastModifiedDate"),8,2) . ":" 
+								. substr($as->getAttribute("migLastModifiedDate"),10,2) . ":" . substr($as->getAttribute("migLastModifiedDate"),12,2) . " " 
+								. substr($as->getAttribute("migLastModifiedDate"),14);
+
+</script>
+	Last modified on <?php echo $print_date ?> by <?php echo $as->getAttribute("migLastModifiedBy")?>
+<script language="php">
+	}
+
+
+</script>
+
+<form action="<?php echo $SCRIPT_NAME ?>" method="post" onsubmit="return Form_Validator(this)" >
+<script language="php">
+	if ($class->migtimestamp == "on")
+	{
+		$date = date ("YmdHisT");
+	</script>
+		<input type="hidden" name="miglastmodifiedby" value="<?php echo USER_LOGINNAME ?>">
+		<input type="hidden" name="miglastmodifieddate" value="<?php echo $date ?>">
+	<script language="php">
+	}
+</script>
+<table cellSpacing="0" cellPadding="0" border="0">
+
+      <tr>
+        <td vAlign="top" colSpan="2"><b>The following are my @<?php echo USERS_DOMAIN ?> email
+          addresses:</b><br>
+          <br>
+        </td>
+      </tr>
+      <tr>
+        <td>Main @<?php echo USERS_DOMAIN ?> email address:<br>
+          <br>
+        </td>
+        <td align="right"><input type="hidden" name="mail" value="<?php echo USER_LOGINNAME . '@' . USERS_DOMAIN ?>">
+<?php echo USER_LOGINNAME . "@" . USERS_DOMAIN?><br>
+          <br>
+        </td>
+      </tr>
+
+<script language="php">
+	for ($i = 0; $i < USERS_MAX_EMAILALIASES_NUMBER; $i++)
+	{
+		$mailArray = $as->getAttribute(USERS_EMAILALIAS_ATTRIBUTE);
+		if (is_array($mailArray)) $mail = $mailArray[$i];
+		elseif ($i == 0) $mail = $mailArray;
+		else $mail = "";
+		
+		if (strcasecmp(substr(strrchr($mail, "@"), 1), USERS_DOMAIN) == 0)
+			$mail = substr($mail, 0, strrpos($mail, "@"));
+
+
+</script> 
+      <tr>
+        <td>Email alias:</td>
+        <td align="right"><input size="16" name="<?php echo USERS_EMAILALIAS_ATTRIBUTE ?>[]" value="<?php echo $mail ?>">@<?php echo USERS_DOMAIN ?></td>
+      </tr>
+<script language="php">
+	}
+	if ($as->getAttribute("read_mode") == "local") $local = true; else $local = false;
+	if ($as->getAttribute("read_mode") == "forward") $forward = true; else $forward = false;
+
+</script>
+      <tr>
+        <td vAlign="top" colSpan="2"><br>
+          <b>Reading my @<?php echo USERS_DOMAIN ?> email:</b><br>
+          <br>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2"><u>Option 1:</u><br>
+          <input type="radio" name="read_mode" value="forward" <?php if ($forward) echo "checked" ?> onClick="selectedmode='forward'">Forward all my email to:<input size="22" name="<?php echo USERS_EMAILFORWARD_ATTRIBUTE ?>" value="<?php echo $as->getAttribute(USERS_EMAILFORWARD_ATTRIBUTE) ?>">
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2"><br><br>.. OR ..<br><br></td>
+      </tr>
+      <tr>
+        <td colspan="2"><u>Option 2:</u><br>
+           <input type="radio" name="read_mode" value="local" <?php if ($local) echo "checked" ?> onClick="selectedmode='local'">Read email on <?php echo USERS_WEBMAIL_HOSTNAME ?> (using
+          Webmail, POP or IMAP)</td>
+      </tr>
+     <tr>
+     	 <td colspan="2">
+     	   <center>
+  <input type="hidden" name="order" value="go_edit">
+  <input type="hidden" name="dn" value="<?php echo $dn ?>">
+  <p align="center"><input type="submit" value="Update"></p>
+  </center>
+         </td> 
+   </tr>
+  </table>
+</form>
+<script>
+function Form_Validator(theForm)
+{
+	if (selectedmode == "forward")
+	{
+		if (theForm.<?php echo USERS_EMAILFORWARD_ATTRIBUTE ?>.value == "")
+		{
+			alert("Please enter a value for the \"Forwarding Address\" field.");
+			theForm.<?php echo USERS_EMAILFORWARD_ATTRIBUTE ?>.focus();
+			return (false);
+		}
+		else return isEmail(theForm.<?php echo USERS_EMAILFORWARD_ATTRIBUTE ?>);
+	}
+	return (true);
+}
+</script>
+
+
+
+<script language="php">
+	$data_core->disconnect();
+}
+</script>
+<p>&nbsp;<!--msnavigation--></td></tr><!--msnavigation--></table><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td>
+
+
+
+</td></tr><!--msnavigation--></table></body>
+</html>

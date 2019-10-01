@@ -1,0 +1,41 @@
+<script language="php">
+require_once "php/config.php"; 
+## security enabler
+$auth_file = "php/" . AUTHENTICATION_SYSTEM_TYPE . "_authenticate.php";
+require_once $auth_file;
+
+if (isset($page) && ($page != "")) 
+{
+	if (isset($host) && ($host != ""))
+		header("Location: " . $host . "/" . $page);
+	else
+	{
+		$link = "http";
+		if ($HTTP_SERVER_VARS["HTTPS"] == "on")
+			$link .= "s";
+		$link .= "://" . $HTTP_SERVER_VARS["HTTP_HOST"] . "/" . $page;
+		header("Location: " . $link);
+	}
+}  
+
+</script>
+
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>Redirect</title>
+<script language="JavaScript" type="text/javascript" src="js/global.js">
+</script>
+<meta name="Microsoft Border" content="b, default">
+</head>
+
+<body><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><!--msnavigation--><td valign="top"><!--msnavigation--></td></tr><!--msnavigation--></table><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td>
+
+
+
+</td></tr><!--msnavigation--></table></body>
+
+</html>

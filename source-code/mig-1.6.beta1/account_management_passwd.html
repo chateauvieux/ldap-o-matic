@@ -1,0 +1,216 @@
+<script language="php">
+ require_once "php/config.php"; 
+ ## security enabler
+ $auth_file = "php/" . AUTHENTICATION_SYSTEM_TYPE . "_authenticate.php";
+ require_once $auth_file;
+</script>
+
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta http-equiv="expires" content="1 Jan 2000">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title><script language="php">if (isset($mig_pagetitle)) echo $mig_pagetitle; else echo "User pages - Your password";</script></title>
+<script language="JavaScript" type="text/javascript" src="js/global.js">
+</script>
+<meta name="Microsoft Border" content="b, default">
+</head>
+
+<body><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><!--msnavigation--><td valign="top">
+<h2><script language="php">if (isset($mig_pagetitle)) echo $mig_pagetitle; else echo "User pages - Your password";</script></h2>
+
+<script language="php">
+// Security enhancement for PHP 4.1 and higher
+// Compatibility with systems having register_globals turned off (default in PHP 4.2 and higher)
+// Compatibility for systems having variables_order equal to EGPCS and EPGCS
+
+unset ($userpassword); if (isset ($_POST["userpassword"])) $userpassword = $_POST["userpassword"]; else if (isset($_GET["userpassword"])) $userpassword = $_GET["userpassword"];
+unset ($order); if (isset ($_POST["order"])) $order = $_POST["order"]; else if (isset($_GET["order"])) $order = $_GET["order"];
+unset ($current_password); if (isset ($_POST["current_password"])) $current_password = $_POST["current_password"]; else if (isset($_GET["current_password"])) $current_password = $_GET["current_password"];
+unset ($password_encrypt); if (isset ($_POST["password_encrypt"])) $password_encrypt = $_POST["password_encrypt"]; else if (isset($_GET["password_encrypt"])) $password_encrypt = $_GET["password_encrypt"];
+unset ($challenge_question); if (isset ($_POST["challenge_question"])) $challenge_question = $_POST["challenge_question"]; else if (isset($_GET["challenge_question"])) $challenge_question = $_GET["challenge_question"];
+unset ($challenge_question_answer); if (isset ($_POST["challenge_question_answer"])) $challenge_question_answer = $_POST["challenge_question_answer"]; else if (isset($_GET["challenge_question_answer"])) $challenge_question_answer = $_GET["challenge_question_answer"];
+
+$core_file = "php/" . INFORMATION_SYSTEM_TYPE . "_core.php"; 
+require_once $core_file;
+
+$core = new core();
+if (($conn_id = $core->connect()) == false)
+	die($core->error_msg);
+
+
+if (isset($order) && ($order == "go_edit"))
+{
+	if ($current_password != USER_PW)
+	{
+	</script>
+   	<h3> Your current password is invalid.</h3>
+   	<script language="php">
+	}
+	else
+	{
+		if (MIG_ENCRYPTS_PASSWORDS == "yes")
+		{
+
+			srand((double)microtime()*1000000);
+			$unique_str = md5(rand(0,9999999));
+
+			if ($password_encrypt == "md5")
+			{		
+				$salt = mhash_keygen_s2k(MHASH_MD5, $userpassword, substr(pack("h*",md5(mt_rand())),0,8),4);
+				$userpassw  = "{MD5}" . base64_encode(mhash(MHASH_MD5, $userpassword.$salt) . $salt);
+			}
+			elseif ($password_encrypt == "crypt")
+				$userpassw = "{crypt}" . crypt($userpassword);
+			elseif ($password_encrypt == "sha")
+			{		
+				$salt = mhash_keygen_s2k(MHASH_SHA1, $userpassword, substr(pack("h*",md5(mt_rand())),0,8),4);
+				$userpassw  = "{SSHA}" . base64_encode(mhash(MHASH_SHA1, $userpassword.$salt) . $salt);
+			}
+			else $userpassw = $userpassword;
+		}
+		else $userpassw = $userpassword;
+		
+		if (PASSW_SYNC_USES_INTEGRATOR != "yes")
+		{
+			# Update password
+			if (!set_password($conn_id, USER_LOGINNAME, $userpassw)) die("Unable to update your password");
+			else
+			{
+				</script>
+	   			<h3> Your password has been updated successfully.</h3>
+	   			<script language="php">
+	   		}
+	   		
+			# Update hint question & answer
+			if (isset($challenge_question) && isset($challenge_question_answer) && ($challenge_question_answer != ""))
+				if (set_hint_question_and_answer($conn_id, USER_LOGINNAME, $challenge_question, $challenge_question_answer) == FALSE) die("Unable to update your challenge password");
+				else
+				{
+					</script>
+   					<h3> Your challenge question and answer have been updated successfully.</h3>
+   					<script language="php">
+				}
+		}
+		else
+		{
+			require_once "php/search_class.php";
+			$curr_class = new search_class($conn_id);
+			if (!$curr_class->read(USERS_MIG_SEARCHCLASS, array("migintegrationport"))) die($curr_class->error_msg);
+
+			include_once "php/integrator.php";
+			$as = new integrator($curr_class->migintegrationport);
+			
+			if (MIG_ENCRYPTS_PASSWORDS != "yes") 
+				$re_hash = false;
+			else $re_hash = true;
+
+			if (isset($challenge_question) && isset($challenge_question_answer) && ($challenge_question_answer != ""))
+			{
+				if (!$as->sync_password(USER_UID, $userpassword, $re_hash, "", "{crypt}" . crypt($userpassw), $challenge_question, $challenge_question_answer)) die("<h3>Password update Error</h3><b>" . $as->geterrmsg() . "</b>");
+			}
+			elseif (!$as->sync_password(USER_UID, $userpassword, $re_hash, "", "{crypt}" . crypt($userpassw))) die("<h3>Password update Error</h3><b>" . $as->geterrmsg() . "</b>");
+			if ($as->getAttribute("exitStatus") != "OK") 
+			{
+				</script>
+				<h3>Error while updating password with Metamerge Integrator</h3><b>'<?php echo $as->getAttribute("exitStatus") ?>'</b>
+				<script language="php">
+			}
+			else
+			{
+				</script>
+	   			<h3> Your password has been updated successfully.</h3>
+	   			<script language="php">
+	   		}
+
+		}
+
+   	
+   		//global $USER_PW;	
+   		$_SESSION["USER_PW"] = $userpassword;
+   	}
+}
+else
+{
+	require_once "php/challenge_questions.php";
+</script>This page allows you to change your directory password. The password change takes effect immediately.<br>
+<form method="post" action="<?php echo $_SERVER["SCRIPT_NAME"] ?>" onsubmit="return Form_Validator(this)">
+<input type="hidden" name="order" value="go_edit">
+<table>
+   <tr><td>Current password</td><td><input type="password" size="16" name="current_password" value=""></td></tr>
+   <tr><td>New password</td><td><input type="password" size="16" name="userpassword" value=""></td></tr>
+   	<tr><td>Confirm new password</td><td><input type="password" size="16" name="conf_userpassword" value=""></td></tr>
+   	<tr><td>Password encryption</td><td><select size="1" name="password_encrypt">
+          <option value="crypt">CRYPT</option>
+          <option value="none">None</option>
+        </select></td></tr>
+
+   	 <tr><td colspan="2">Note : Length 6-14 characters, may include non-alphanumerics like $, !, %</td></tr>
+</table>
+<p>
+You can change your challenge question and answer as well.</p>
+<table>   	 
+   	<tr><td>New Challenge Question</td><td><select size="1" name="challenge_question">
+      <script language="php">
+			for ($i = 0; $i < sizeof($questions); $i++)
+				echo "<option>$questions[$i]</option>";
+		</script>
+	</select>
+      </td></tr>
+	<tr><td>New Challenge Question Answer</td><td><input type="password" name="challenge_question_answer" size="20"></td></tr>
+  
+</table>   
+<CENTER>
+
+   <p align="center"> 
+   <B><input type="submit" value="Submit"></B>
+    <input type="reset" value="Reset">
+   
+  </p>
+</CENTER>
+</form>
+
+<script>
+function Form_Validator(theForm)
+{
+	if (theForm.current_password.value == "")
+	{
+		alert("Please enter a value for the \"Current password\" field.");
+		theForm.current_password.focus();
+		return (false);
+	}
+	if (theForm.userpassword.value == "")
+	{
+		alert("Please enter a value for the \"User password\" field.");
+		theForm.userpassword.focus();
+		return (false);
+	}
+	if (theForm.conf_userpassword.value == "")
+	{
+		alert("Please enter a value for the \"Confirm User password\" field.");
+		theForm.conf_userpassword.focus();
+		return (false);
+	}
+	if (theForm.conf_userpassword.value != theForm.userpassword.value)
+	{
+		alert("\"User password\" and \"Confirm User password\" do not match.");
+		theForm.userpassword.focus();
+		return (false);
+	}
+	return (true);
+}
+</script>
+
+<script language="php">
+}
+$core->disconnect();
+</script>
+
+
+<p>&nbsp;<!--msnavigation--></td></tr><!--msnavigation--></table><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td>
+
+
+
+</td></tr><!--msnavigation--></table></body>

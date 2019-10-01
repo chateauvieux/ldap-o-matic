@@ -1,0 +1,357 @@
+<script language="php">
+ require_once "php/config.php"; 
+ ## security enabler
+ $auth_file = "php/" . AUTHENTICATION_SYSTEM_TYPE . "_authenticate.php";
+ require_once $auth_file;
+</script>
+
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta http-equiv="expires" content="1 Jan 2000">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title><script language="php">if (isset($mig_pagetitle)) echo $mig_pagetitle; else echo "Search pages - View/edit profile";</script></title>
+<script language="JavaScript" type="text/javascript" src="js/global.js">
+</script>
+<script>
+nbquery = 0;
+function control() 
+{
+	// control of  non re-submition
+	if (nbquery > 0)
+	{
+		alert("Processing... please wait or re-fresh the page");
+		return false;
+	}
+	nbquery ++;                                                                                                                                                      
+	return true;                                                                                                                                          
+}            
+</script> 
+<meta name="Microsoft Border" content="b, default">
+</head>
+<body><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><!--msnavigation--><td valign="top">
+<h2><script language="php">if (isset($mig_pagetitle)) echo $mig_pagetitle; else echo "Search pages - View/edit profile";</script></h2>
+<script language="php">
+// Security enhancement for PHP 4.1 and higher
+// Compatibility with systems having register_globals turned off (default in PHP 4.2 and higher)
+// Compatibility for systems having variables_order equal to EGPCS and EPGCS
+
+unset ($class); if (isset ($_POST["class"])) $class = $_POST["class"]; else if (isset($_GET["class"])) $class = $_GET["class"];
+unset ($dn); if (isset ($_POST["dn"])) $dn = $_POST["dn"]; else if (isset($_GET["dn"])) $dn = $_GET["dn"];
+unset ($mode); if (isset ($_POST["mode"])) $mode = $_POST["mode"]; else if (isset($_GET["mode"])) $mode = $_GET["mode"];
+unset ($order); if (isset ($_POST["order"])) $order = $_POST["order"]; else if (isset($_GET["order"])) $order = $_GET["order"];
+
+//$data_core = new core();
+
+
+// remote classes syntax : CLASSNAME|HOSTNAME|PARAM; CLASSNAME2, HOSTNAME2
+$remote_classes = explode (";", REMOTE_SEARCHCLASSES);
+
+for ($i = 0; $i < sizeof($remote_classes); $i++)
+{
+	$remote_class = explode ("|", $remote_classes[$i]);
+	if (strcasecmp ($class, trim ($remote_class[0])) == 0)
+	{
+		define ("REMOTE_HOSTNAME", trim ($remote_class[1]));
+		if (isset($remote_class[2])) define ("REMOTE_MANAGER_UID", trim ($remote_class[2]));
+		if (isset($remote_class[3])) define ("REMOTE_MANAGER_PW", trim ($remote_class[3]));
+		break;
+	}
+}		
+
+$core_file = "php/" . INFORMATION_SYSTEM_TYPE . "_core.php"; 
+require_once $core_file;
+
+$core = new core();
+if (($conn_id = $core->connect()) == false)
+	die($core->error_msg);
+
+
+$data_core = new core();
+
+// find the groups the user is able to manage
+require_once "php/group.php";
+require_once "php/search_class.php";
+require_once "php/search_engine.php";
+
+$editor = false;
+
+if (defined("ADMIN") && (ADMIN == "true"))
+{
+	$editor = true;
+	if (($data_conn_id = $data_core->connect_to_datastore()) == false) die($data_core->error_msg);
+}
+	
+
+if (!$editor)
+{
+	if (defined ("REMOTE_HOSTNAME") && defined ("REMOTE_MANAGER_UID") && defined ("REMOTE_MANAGER_PW"))
+	{
+		if (($data_conn_id = $data_core->connect_to_datastore(REMOTE_MANAGER_UID, REMOTE_MANAGER_PW)) == false) die($data_core->error_msg);
+	}
+	else if (($data_conn_id = $data_core->connect_to_datastore(MANAGER_UID, MANAGER_PW)) == false)	die($data_core->error_msg);
+
+	if (($groups = $core->read_group_list("auto")) == false) die($core->error_msg);
+	for ($i = 0; $i < $core->group_count; $i++)
+	{
+		$curr_group = new group($conn_id);
+		if (!$curr_group->read_from_list($groups, $i)) die($curr_group->error_msg);
+		
+		if ($curr_group->migusingclass == $class)
+		{
+
+			$curr_class = new search_class($conn_id);
+			if (!$curr_class->read($curr_group->migusingclass, array("migclassname", "migdatabasedn"))) die($curr_class->error_msg);
+
+			if (($curr_group->is_migdatarefresh_static()) && ($curr_group->is_migmodifieddata($dn)))
+			{
+				$editor = true;
+				break;
+			}
+			if ($curr_group->is_migdatarefresh_dynamic())
+			{
+				$search_engine = new search_engine($conn_id, $data_conn_id, $curr_class->migclassname, $curr_class->migdatabasedn, "", $curr_group->migdatasearchfilter);
+				if (isset($sortattribute))
+				{
+					if (!$search_engine->find_results($sortattribute)) die($search_engine->error_msg);
+				}
+				elseif (!$search_engine->find_results()) die($search_engine->error_msg);
+			
+				if ($search_engine->is_search_result($dn)) 
+				{
+					$editor = true;
+					break;
+				}
+			}
+		}
+	}
+	
+	if (INFORMATION_SYSTEM_COMPUTES_SETS == "yes")
+	{
+		if (!$data_core->rebind()) die($data_core->error_msg);
+	}
+}
+
+$curr_class = new search_class($conn_id);
+if (!$curr_class->read($class, array("migclassname", "migdatabasedn", "migdatafilter", "migclassdisplayname", "migtimestamp", "migintegrationport"))) die($curr_class->error_msg);
+
+</script>
+
+<h3><?php echo $curr_class->migclassdisplayname ?> record management</h3>	
+
+<script language="php">
+
+if (!isset($mode)) $mode = "readonly";
+
+if (($data = $data_core->read($dn, $curr_class->migdatafilter)) == false) die($data_core->error_msg);
+
+if ($editor)
+{	
+	if ($mode != "readonly")
+	{
+	
+		if ($curr_class->migintegrationport != "")
+		{
+			include_once "php/integrator.php";
+			$as = new integrator($curr_class->migintegrationport);
+		}
+		else
+		{
+			include_once "php/integrator_emulator.php";
+			$as = new integrator_emulator($data_conn_id);
+		}
+
+		if (isset($order) && ($order == "go_remove"))
+		{
+			if (!$as->delete($dn)) die("<h3>Delete Error</h3><b>" . $as->geterrmsg() . "</b>");
+			if ($as->getAttribute("exitStatus") != "OK") 
+			{
+				</script>
+				<h3>Error while deleting data with Metamerge Integrator</h3><b>'<?php echo $as->getAttribute("exitStatus") ?>'</b>	
+				<script language="php">
+			}
+			else
+			{
+				</script>
+				<h3>Entry succesfully deleted.</h3>
+				<script language="php">
+			}
+		}
+
+		else
+		{
+			include_once "php/account_management.php";
+			if (isset($order) && ($order == "go_edit"))
+			{
+				# Update data from previous screen
+				include_once "php/ldap_attribute_specific.php";
+				ldap_specific_attribute_formatting($_POST);
+		
+				if (!$as->update($_POST)) die("<h3>Update Error</h3><b>" . $as->geterrmsg() . "</b>");
+				if ($as->getAttribute("exitStatus") != "OK") 
+				{
+				</script>
+				<h3>Error while updating data with Metamerge Integrator</h3><b>'<?php echo $as->getAttribute("exitStatus") ?>'</b>	
+				<script language="php">
+				}
+				$as->clearAttribute ("exitStatus");
+
+				//refresh !!
+				if (($data = $data_core->read($dn, $curr_class->migdatafilter)) == false) die($data_core->error_msg);
+			}
+	
+			if (!$as->read($dn)) die ("<h3>Error reading $dn </h3><b>" . $as->geterrmsg() . "</b>");
+	
+			if ($as->getAttribute("exitStatus") != "OK") die ("<h3>Error while reading data with Metamerge Integrator</h3><b>'" . $as->getAttribute("exitStatus") . "'</b>");
+
+		</script>
+<table width="100%">
+		<tr>
+		<td align="left"><a href="<?php echo $_SERVER["SCRIPT_NAME"] ?>?dn=<?php echo urlencode($dn)?>&mode=readonly&class=<?php echo urlencode($class)?>">Switch to Read-only mode</a></td>
+		<td align="rigth">
+		
+		<script language="php">
+		
+			if (defined("ADMIN") && (ADMIN == "true"))
+			{	
+				
+			</script>
+			<form method="post" action="<?php echo $_SERVER["SCRIPT_NAME"] ?>" onsubmit="return confirm_removal()">
+   		   	  <p align="right">
+				<input type="hidden" name="dn" value="<?php echo $dn ?>">
+				<input type="hidden" name="class" value="<?php echo $class ?>">
+				<input type="hidden" name="mode" value="edit">
+				<input type="hidden" name="order" value="go_remove">
+				<input type="submit" value="Delete entry">
+				</p>
+   	     	</form>
+				<script language="php">
+			}
+				
+			if ($editor && ($curr_class->migclassname == USERS_MIG_SEARCHCLASS) && (MIG_ACTIVATE_EMAIL == "yes"))
+			{
+				</script>
+				<input type="button" value="View email settings" onclick="page = 'record_management_email.html?order=prepare_edit&dn=<?php echo urlencode($dn) ?>&<?php echo SID ?>' ;	window.open(page,'_self')">
+				<script language="php">
+			}
+			
+       </script>
+        </td>
+		</tr>
+		</table>
+		
+		<script language="javascript">
+			function confirm_removal()
+			{
+				var txt = 'Confirm removal of entry';
+				if (!confirm(txt)) return false;
+				else return true;
+			}
+		</script>  
+
+		
+		<script language="php">
+			if ($curr_class->migtimestamp == "on")
+			{
+				$print_date = substr($as->getAttribute("migLastModifiedDate"),6,2) . "/" . substr($as->getAttribute("migLastModifiedDate"),4,2) . "/" 
+								. substr($as->getAttribute("migLastModifiedDate"),0,4) . " " . substr($as->getAttribute("migLastModifiedDate"),8,2) . ":" 
+								. substr($as->getAttribute("migLastModifiedDate"),10,2) . ":" . substr($as->getAttribute("migLastModifiedDate"),12,2) . " " 
+								. substr($as->getAttribute("migLastModifiedDate"),14);
+
+
+		</script>
+
+			Last modified on <?php echo $print_date ?> by <?php echo $as->getAttribute("migLastModifiedBy")?>
+		<script language="php">
+			}
+		</script>
+
+		<form method="post" action="<?php echo $_SERVER["SCRIPT_NAME"] ?>" onsubmit="if (Form_Validator(this)) return control(); else return false">
+	
+		<input type="hidden" name="order" value="go_edit">
+
+   		 <div align="center">
+	      <center>
+
+        <table border="0" cellspacing="0" cellpadding="0">
+		    <tr>
+		      <td colspan="2" align="left">Label</td>
+		      <td align="left">Content</td>
+		      <script language="php">
+			if ($curr_class->migintegrationport != "")
+			{
+				</script>
+		      <td align="left">Shared field</td>
+		      <script language="php">
+			}
+				</script>
+		    </tr>
+		<input type="hidden" name="dn" value="<?php echo $dn ?>">
+		<input type="hidden" name="mode" value="<?php echo $mode ?>">
+		<input type="hidden" name="class" value="<?php echo $class ?>">
+		<script language="php">
+			if ($curr_class->migtimestamp == "on")
+			{
+				$date = date ("YmdHisT");
+		</script>
+			<input type="hidden" name="miglastmodifiedby" value="<?php echo USER_LOGINNAME ?>">
+			<input type="hidden" name="miglastmodifieddate" value="<?php echo $date ?>">
+		<script language="php">
+			}
+		
+			$script = print_Form($as, $data, $class);
+		</script>
+	
+		  </table>
+	      </center>
+	    </div>
+		<center>		  
+		    <B><input type="submit" value="Submit"></B>
+		    <input type="reset" value="Reset">
+		</center>
+		</form>
+
+<script>
+			// dynamically generate JavaScript
+			<?php echo $script?>
+</script>
+<script language="php">
+		}
+	}
+}
+
+if (!$editor || ($editor && ($mode == "readonly")))
+{
+	include_once "php/account_management_readonly.php";
+	if ($editor)
+	{
+	</script>
+	<p><a href="<?php echo $_SERVER["SCRIPT_NAME"] ?>?dn=<?php echo urlencode($dn) ?>&mode=edit&class=<?php echo urlencode($class)?>">Switch to Edit mode</a></p>
+	<script language="php">
+	}
+</script>
+<div align="center">
+  <center>
+    <table border="0" cellspacing="0" cellpadding="0">
+	    <tr>
+	      <td colspan="2" align="left">Label</td>
+	      <td align="left">Content</td>
+	    </tr>
+<script language="php">
+	print_result($data, $curr_class->migclassname);
+</script>
+</table>
+  </div>
+</center>
+<script language="php">
+}
+$core->disconnect();
+</script>
+&nbsp;<!--msnavigation--></td></tr><!--msnavigation--></table><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td>
+
+
+
+</td></tr><!--msnavigation--></table></body>
+</html>

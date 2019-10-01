@@ -1,0 +1,71 @@
+<script language="php">
+ require_once "php/config.php"; 
+ ## security enabler
+ $auth_file = "php/" . AUTHENTICATION_SYSTEM_TYPE . "_authenticate.php";
+ require_once $auth_file;
+</script>
+
+<html>
+
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta http-equiv="Content-Language" content="en-us">
+<title><script language="php">if (isset($mig_pagetitle)) echo $mig_pagetitle; else echo "Welcome";</script></title>
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<base target="_blank">
+<script language="JavaScript" type="text/javascript" src="js/global.js">
+</script>
+<meta name="Microsoft Border" content="b">
+</head>
+
+
+<body><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><!--msnavigation--><td valign="top">
+
+<h3><?php echo MIG_INSTALLATION_NAME ?> Home Page</h3>
+
+
+<p><br>
+Welcome to MIG!</p>
+
+
+<p>This website will allow you to search the directory, view/edit your profile, email and security settings, and will also link you to related services.
+It uses <a href="http://www.uwc.net/MIG_Project/index.htm">MIG</a> 1.5
+and is powered by <a href="http://www.apache.org">Apache</a>, <a href="http://www.openldap.org">OpenLDAP</a>
+and <a href="http://www.metamerge.com">Metamerge Integrator</a> servers.</p>
+
+
+<p>Quick links:</p>
+
+
+<ul>
+  <li><a href="search_engine.html" target="_self">Search the directory</a></li>
+  <li><a href="search_web.html" target="_self">Search the web</a></li>
+  <li><a href="account_management.html" target="_self">View/Edit your profile</a></li>
+  <li><a href="account_management_email.html" target="_self">Review your email settings</a></li>
+  <li><a href="account_management_passwd.html" target="_self">Reset your password</a></li>
+</ul>
+<p>Your session will expire after <?php echo MIG_SESSION_TIMEOUT ?> seconds of inactivity.</p>
+
+
+<p>Happy browsing!</p>
+
+
+<table border="0" width="100%" cellspacing="0" cellpadding="0">
+  <tr>
+    <td width="33%">
+      <p align="center"><a href="http://www.php.net"><img border="0" src="images/php-small-trans-light.gif" align="left" width="88" height="31"></a></td>
+    <td width="33%">
+      <p align="center"><a href="http://www.apache.org"><img border="0" src="images/apache_pb.gif" width="259" height="32"></a></p>
+    </td>
+    <td width="34%">
+      <p align="right"><a href="http://www.openldap.org"><img border="0" src="images/openldap-pwrd.gif" width="180" height="47"></a></td>
+  </tr>
+</table>&nbsp;<!--msnavigation--></td></tr><!--msnavigation--></table><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td>
+
+
+
+</td></tr><!--msnavigation--></table></body>
+
+</html>

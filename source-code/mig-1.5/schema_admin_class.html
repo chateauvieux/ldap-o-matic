@@ -1,0 +1,615 @@
+<script language="php">
+ require_once "php/config.php";
+ ## security enablerf
+ $auth_file = "php/" . AUTHENTICATION_SYSTEM_TYPE . "_authenticate_manager.php";
+ require_once $auth_file;
+</script>
+
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta http-equiv="expires" content="1 Jan 2000">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title><script language="php">if (isset($mig_pagetitle)) echo $mig_pagetitle; else echo "Administration pages - Search classes";</script></title>
+<script language="JavaScript" type="text/javascript" src="js/global.js">
+</script>
+<meta name="Microsoft Border" content="b">
+</head>
+<script language="php">
+
+$core_file = "php/" . INFORMATION_SYSTEM_TYPE . "_core.php"; 
+require_once $core_file;
+require_once "php/attribute.php";
+require_once "php/search_class.php";
+require_once "php/subsection.php";
+
+
+
+$core = new core();
+if (($conn_id = $core->connect()) == false)
+	die($core->error_msg);
+
+
+include_once "php/quicksort.php";
+if (($dm = $core->read_search_class_list("auto")) == false) die($core->error_msg);
+
+</script>
+
+<body><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><!--msnavigation--><td valign="top">
+<h2><script language="php">if (isset($mig_pagetitle)) echo $mig_pagetitle; else echo "Administration pages - Search classes";</script></h2>
+<script language="php">
+if (isset($order))
+{
+	if ($order == "prepare_add")
+	{
+		if (($info = $core->read_attribute_list("system",array("migattributename", "migattributedisplayname"))) == false) die($core->error_msg);
+
+		quicksort($info, 0, $core->attribute_count -1, "migattributedisplayname");	
+</script>
+
+ <center>
+ <form action="<?php echo $SCRIPT_NAME ?>" method="POST" onsubmit="return Form_Validator(this)">
+  <table border="1" width="100%" cellspacing="0" cellpadding="0">
+    <tr>
+     <td width="50%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>class
+        Display name</b></font></td>
+      <td width="50%" bgcolor="#000066" align="center" colspan="2"><input type="text" name="migclassdisplayname" size="20"></td>
+    </tr>
+    <tr>
+      <td width="50%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>class LDAP name</b></font></td>
+      <td width="50%" bgcolor="#000066" align="center" colspan="2"><input type="text" name="migclassname" size="20"></td>
+    </tr>
+    <tr>
+      <td width="50%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Location
+        of pointed DATA</b></font></td>
+      <td width="50%" bgcolor="#000066" align="center" colspan="2"><input type="text" name="migdatabasedn" size="20"></td>
+    </tr>
+     <tr>
+      <td width="50%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Initial filter</b></font></td>
+      <td width="50%" bgcolor="#000066" align="center" colspan="2"><input type="text" name="migdatafilter" size="20"></td>
+    </tr>
+    <tr>
+      <td width="50%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Objectclass
+        of pointed DATA</b></font></td>
+      <td width="50%" bgcolor="#000066" align="center" colspan="2"><input type="text" name="migdataobjectclass" size="20"></td>
+    </tr>
+     <tr>
+      <td width="50%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>SUP objectclass</b></font></td>
+      <td width="50%" bgcolor="#000066" align="center" colspan="2"><input type="text" name="migdatasupobjectclass" size="20"></td>
+    </tr>
+	 <tr>
+      <td width="50%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>AUXILARY objectclasses</b></font></td>
+      <td width="50%" bgcolor="#000066" align="center" colspan="2"><input type="text" name="migdataauxobjectclass" size="20"></td>
+    </tr>
+	 <tr>
+      <td width="50%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Namig Attribute</b></font></td>
+      <td width="50%" bgcolor="#000066" align="center" colspan="2"><input type="text" name="migdatanamingattribute" size="20"></td>
+    </tr>
+
+     <tr>
+      <td width="50%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Objectclass OID</b></font></td>
+      <td width="50%" bgcolor="#000066" align="center" colspan="2"><input type="text" name="migclassoid" size="20"></td>
+    </tr>
+    <tr>
+      <td width="50%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Search result icon</b></font></td>
+      <td width="50%" bgcolor="#000066" align="center" colspan="2"><input type="text" name="migdataicon" size="20"></td>
+    </tr>
+    <tr>
+      <td width="50%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Data administration page</b></font></td>
+      <td width="50%" bgcolor="#000066" align="center" colspan="2"><input type="text" name="migpointedwebpage" size="20"></td>
+    </tr>
+	<tr>
+      <td width="50%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Enable
+        Timestamping&nbsp;</b></font></td>
+      <td width="50%" bgcolor="#000066" align="center" colspan="2"><input type="checkbox" name="migtimestamp" value="on" checked></td>
+    </tr>
+	<tr>
+      <td width="50%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Enable
+        user authorization&nbsp;</b></font></td>
+      <td width="50%" bgcolor="#000066" align="center" colspan="2"><input type="checkbox" name="migaccessmode" value="private" checked></td>
+    </tr>
+	<tr>
+      <td width="50%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>TCP port for external integration&nbsp;</b></font></td>
+      <td width="50%" bgcolor="#000066" align="center" colspan="2"><input type="text" name="migintegrationport" size="20"></td>
+    </tr>
+
+    <tr>
+      <td width="50%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Attribute
+        list</b></font></td>
+      <td width="25%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Relevant
+        attribute</b></font></td>
+      <td width="25%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Required attributes</b></font></td>
+    </tr>          
+      <script language="php">
+	
+		for ($i = 0; $i < $core->attribute_count; $i++)  // look all possible attributes
+  	 	{
+   			$attr = new attribute($conn_id);
+   			if (!$attr->read_from_list($info, $i)) die($attr->error_msg);   		   		
+   	</script>	
+   	<tr>
+   	<td width="50%"><b><?php echo $attr->migattributedisplayname ?></b></td>
+   	<td width="25%" align="center">
+   	<input type="checkbox" name="relevant[]" value="<?php echo $attr->migattributename ?>">
+    </td>
+	<td width="25%" align="center">
+   	<input type="checkbox" name="required[]" value="<?php echo $attr->migattributename ?>">
+    </td>
+    </tr>
+    <script language="php">
+   		}
+   	
+   		</script>   
+  </table>
+  <p>
+  <input type="submit" value="Submit"> 
+  <input type="hidden" name="order" value="go_add">
+  </p>
+
+  </form>
+  </center>
+<script language="php"> 
+	}
+	elseif ($order == "go_add")
+	{	
+		$newclass = new search_class($conn_id);
+		$newclass->migclassname = trim($migclassname);
+		$newclass->migclassoid = trim($migclassoid);
+		$newclass->migclassdisplayname = $migclassdisplayname;
+		$newclass->migdatabasedn = $migdatabasedn;
+		$newclass->migdatafilter = $migdatafilter;
+		$newclass->migdataobjectclass = $migdataobjectclass;
+		$newclass->migdatasupobjectclass = $migdatasupobjectclass;
+		$newclass->migdataauxobjectclass = $migdataauxobjectclass;
+		$newclass->migdatanamingattribute = $migdatanamingattribute;
+		$newclass->migdataicon = $migdataicon;
+		$newclass->migpointedwebpage = $migpointedwebpage;
+		$newclass->migintegrationport = $migintegrationport;
+
+
+		if (isset($migaccessmode) && ($migaccessmode == "private"))
+			$newclass->migaccessmode = "private";		
+		else
+			$newclass->migaccessmode = "public";
+		
+		if (isset($migtimestamp) && ($migtimestamp == "on"))
+			$newclass->migtimestamp = "on";		
+		else
+			$newclass->migtimestamp = "off";
+	
+		if (isset($relevant))
+			for ($j = 0; $j < sizeof($relevant); $j++)
+				$newclass->migrelevantattribute[$j] = $relevant[$j];
+	
+		// needed for schema purpose
+		if (isset($migtimestamp) && ($migtimestamp == "on"))
+		{
+			if (!in_array("migLastModifiedBy", $newclass->migrelevantattribute))
+				$newclass->migrelevantattribute[] = "migLastModifiedBy";
+			if (!in_array("migLastModifiedDate", $newclass->migrelevantattribute))
+				$newclass->migrelevantattribute[] = "migLastModifiedDate";
+		}
+
+	
+		if (isset($required))
+			for ($j = 0; $j < sizeof($required); $j++)
+				$newclass->migrequiredattribute[$j] = $required[$j];
+	 	
+		if (!$newclass->add()) die($newclass->error_msg);	
+</script>
+<h3>You need to <a href="schema_admin_server_restart.html?order=go_restart">restart</a> the
+server to apply changes.</h3>
+<script language="php"> 
+	}
+}
+
+// the class variable is transmitted by the page herself (HTTP POST)
+if (isset($class))
+{
+	$selected_class = new search_class($conn_id);
+	if (!$selected_class->read($class)) die($selected_class->error_msg);
+	// warning! All class properties must be retrieved because of the mod_replace() call
+
+	if (isset(	$order))
+	{
+		if ($order == "go_edit")
+		{
+			$updmod["migclassname"] = trim($migclassname);		
+			$updmod["migclassoid"] = trim($migclassoid);
+			$updmod["migclassdisplayname"] = $migclassdisplayname;		
+			$updmod["migdatabasedn"] = $migdatabasedn;		
+			$updmod["migdataicon"] = $migdataicon;
+			$updmod["migpointedwebpage"] = $migpointedwebpage;	
+			$updmod["migdatafilter"] = $migdatafilter;		
+			$updmod["migdataobjectclass"] = $migdataobjectclass;
+			$updmod["migdatasupobjectclass"] = $migdatasupobjectclass;		
+			$updmod["migdataauxobjectclass"] = $migdataauxobjectclass;		
+			$updmod["migdatanamingattribute"] = $migdatanamingattribute;		
+			$updmod["migintegrationport"] = $migintegrationport;		
+
+			if ($updmod["migintegrationport"] == "")
+			{
+			 	if (!$selected_class->mod_del(array("migintegrationport" => $selected_class->migintegrationport))) die($selected_class->error_msg);
+			}
+			
+			if (isset($migaccessmode) && ($migaccessmode == "private")) $updmod["migaccessmode"] = "private";		
+			else $updmod["migaccessmode"] = "public";		
+			
+			if (isset($migtimestamp) && ($migtimestamp == "on")) $updmod["migtimestamp"] = "on";		
+			else $updmod["migtimestamp"] = "off";		
+
+//			if (isset($relevant))
+//				for ($j = 0; $j < sizeof($relevant); $j++)
+//			 		$updmod["migrelevantattribute"][] = $relevant[$j];
+
+			if (isset($relevant))
+		 		$updmod["migrelevantattribute"] = $relevant;
+
+			// needed for schema purpose
+/*			if (isset($migtimestamp) && ($migtimestamp == "on"))
+			{
+				if (!in_array("migLastModifiedBy", $updmod["migrelevantattribute"]))
+					$updmod["migrelevantattribute"][] = "migLastModifiedBy";
+				if (!in_array("migLastModifiedDate", $updmod["migrelevantattribute"]))
+					$updmod["migrelevantattribute"][] = "migLastModifiedDate";
+			}
+*/
+			 		
+		 	if (!isset($updmod["migrelevantattribute"]))
+		 	{
+			 	// delete if no value
+			 	for ($j = 0; $j < $selected_class ->count("migrelevantattribute"); $j++)
+			 		$upddel["migrelevantattribute"][] = $selected_class->migrelevantattribute[$j];
+			 	if (isset($upddel))
+				 	if (!$selected_class->mod_del($upddel)) die($selected_class->error_msg);
+			 }
+
+		 	
+//			if (isset($required))
+//				for ($j = 0; $j < sizeof($required); $j++)
+//			 		$updmod["migrequiredattribute"][] = $required[$j];
+
+			if (isset($required))
+		 		$updmod["migrequiredattribute"] = $required;
+	
+	 	
+			if (!isset($updmod["migrequiredattribute"]))
+		 	{
+			 	// delete if no value
+			 	for ($j = 0; $j < $selected_class ->count("migrequiredattribute"); $j++)
+			 		$upddel["migrequiredattribute"][] = $selected_class->migrequiredattribute[$j];
+			 	if (isset($upddel))
+				 	if (!$selected_class->mod_del($upddel)) die($selected_class->error_msg);
+			 }
+	 	
+	 	
+		 	if (!$selected_class->mod_replace($updmod))
+				die($selected_class->error_msg);
+	 		
+		 	$class = trim($migclassname);  // point to the new search_class if migclassname modified
+		 	$order = "prepare_edit";
+
+		 	//refresh
+		 	if (!$selected_class->read($class)) die($selected_class->error_msg);
+</script>
+<h3>You need to <a href="schema_admin_server_restart.html?order=go_restart">restart</a> the
+server to apply changes.</h3>
+<script language="php"> 
+
+		}	
+		if ($order == "prepare_edit")
+		{
+			if (($info = $core->read_attribute_list("system",array("migattributename", "migattributedisplayname"))) == false) die($core->error_msg);
+
+			quicksort($info, 0, $core->attribute_count -1, "migattributedisplayname");	
+		
+			$migclassdisplayname = $selected_class->migclassdisplayname;
+			$migclassname = $selected_class->migclassname;
+			$migclassoid = $selected_class->migclassoid;
+			$migdatabasedn = $selected_class->migdatabasedn;
+			$migdatafilter = $selected_class->migdatafilter;
+			$migdataobjectclass = $selected_class->migdataobjectclass;
+			$migdatasupobjectclass = $selected_class->migdatasupobjectclass;
+			$migdataauxobjectclass = $selected_class->migdataauxobjectclass;
+			$migdatanamingattribute = $selected_class->migdatanamingattribute;
+			$migdataicon = $selected_class->migdataicon;
+			$migpointedwebpage = $selected_class->migpointedwebpage;
+			$migaccessmode = $selected_class->migaccessmode;
+			$migtimestamp = $selected_class->migtimestamp;
+			$migintegrationport = $selected_class->migintegrationport;
+
+			
+</script>
+
+<form method="post" action="<?php echo $SCRIPT_NAME ?>" onsubmit="return Form_Validator(this)">
+
+  <div align="center">
+    <center>
+  <table border="1" width="100%" cellspacing="0" cellpadding="0">
+    <tr>
+      <td width="50%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>class
+        Display name</b></font></td>
+      <td width="50%" bgcolor="#000066" align="center" colspan="3"><input type="text" name="migclassdisplayname" 
+                 value="<?php echo $migclassdisplayname ?>"></td>
+    </tr>
+    <tr>
+      <td width="50%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>class LDAP name</b></font></td>
+      <td width="50%" bgcolor="#000066" align="center" colspan="3"><input type="text" name="migclassname"
+        			value="<?php echo $migclassname ?>"></td>
+    </tr>
+    <tr>
+      <td width="50%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Location
+        of pointed DATA</b></font></td>
+      <td width="50%" bgcolor="#000066" align="center" colspan="3"><input type="text" name="migdatabasedn"
+        			value="<?php echo $migdatabasedn ?>"></td>
+    </tr>
+    <tr>
+      <td width="50%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Initial filter</b></font></td>
+      <td width="50%" bgcolor="#000066" align="center" colspan="3"><input type="text" name="migdatafilter"
+        			value="<?php echo $migdatafilter ?>" size="20"></td>
+    </tr>
+    <tr>
+      <td width="50%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Objectclass
+        of pointed DATA</b></font></td>
+      <td width="50%" bgcolor="#000066" align="center" colspan="3"><input type="text" name="migdataobjectclass"
+        			value="<?php echo $migdataobjectclass ?>" size="20"></td>
+    </tr>
+ <tr>
+      <td width="50%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>SUP Objectclass</b></font></td>
+      <td width="50%" bgcolor="#000066" align="center" colspan="3"><input type="text" name="migdatasupobjectclass"
+        			value="<?php echo $migdatasupobjectclass ?>" size="20"></td>
+    </tr>
+ <tr>
+      <td width="50%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>AUXILARY Objectclass</b></font></td>
+      <td width="50%" bgcolor="#000066" align="center" colspan="3"><input type="text" name="migdataauxobjectclass"
+        			value="<?php echo $migdataauxobjectclass ?>" size="20"></td>
+    </tr>
+ <tr>
+      <td width="50%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Naming attribute</b></font></td>
+      <td width="50%" bgcolor="#000066" align="center" colspan="3"><input type="text" name="migdatanamingattribute"
+        			value="<?php echo $migdatanamingattribute ?>" size="20"></td>
+    </tr>
+
+    <tr>
+      <td width="50%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Objectclass OID</b></font></td>
+      <td width="50%" bgcolor="#000066" align="center" colspan="3"><input type="text" name="migclassoid"
+        			value="<?php echo $migclassoid ?>" size="20"></td>
+    </tr>
+	<tr>
+      <td width="50%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Search icon</b></font></td>
+      <td width="50%" bgcolor="#000066" align="center" colspan="3"><input type="text" name="migdataicon"
+        			value="<?php echo $migdataicon ?>" size="20"></td>
+    </tr>
+<tr>
+      <td width="50%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Search icon link</b></font></td>
+      <td width="50%" bgcolor="#000066" align="center" colspan="3"><input type="text" name="migpointedwebpage"
+        			value="<?php echo $migpointedwebpage ?>" size="20"></td>
+    </tr>
+
+     <tr>
+      <td width="50%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Enable
+        Timestamping</b></font></td>
+      <td width="50%" bgcolor="#000066" align="center" colspan="3">
+      <input type="checkbox" name="migtimestamp" value="on" <?php if ($migtimestamp == "on") echo "checked" ?>></td>
+    </tr>    
+    <tr>
+      <td width="50%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Enable
+        user authorization</b></font></td>
+      <td width="50%" bgcolor="#000066" align="center" colspan="3">
+      <input type="checkbox" name="migaccessmode" value="private" <?php if ($migaccessmode == "private") echo "checked" ?>></td>
+    </tr>
+    	<tr>
+      <td width="50%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>TCP port for external integration&nbsp;</b></font></td>
+      <td width="50%" bgcolor="#000066" align="center" colspan="3"><input type="text" name="migintegrationport" 
+      				value="<?php echo $migintegrationport ?>" size="20"></td>
+    </tr>
+   
+      <tr>
+      <td width="50%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Attribute
+        list</b></font></td>
+      <td width="17%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Relevant
+        attribute</b></font></td>
+      <td width="17%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>Required
+       attributes</b></font></td>
+      <td width="16%" bgcolor="#000066" align="center"><font color="#FFFFFF"><b>In
+        subsection</b></font></td>
+ 
+      </tr>
+      <script language="php">
+	
+			for ($i = 0; $i < $core->attribute_count; $i++)  // look all possible attributes	
+	   		{
+				$attr = new attribute($conn_id);
+	   			if (!$attr->read_from_list($info, $i)) die($attr->error_msg);
+   			
+				$is_relevant = false;
+				$is_required = false;
+			
+		</script>
+   	<tr <?php if (($i % 2) == 0) echo "class=lightgrey"; ?>>
+	<td width="50%"><b><?php echo $attr->migattributedisplayname ?></b></td>
+	<td width="17%" align="center">
+	<input type="checkbox" name="relevant[]" value="<?php echo $attr->migattributename ?>" <?php if ($selected_class->is_relevant($attr->migattributename)) echo "checked" ?>></td>
+	<td width="17%" align="center">
+	<input type="checkbox" name="required[]" value="<?php echo $attr->migattributename ?>" <?php if ($selected_class->is_required($attr->migattributename)) echo "checked" ?>></td>
+	<td width="16%" align="center">
+	<script language="php">
+				if (($subsctn = $core->read_subsection_list("auto")) == false) die ($core->error_msg);
+		
+				for ($j = 0; $j < $core->subsection_count; $j++) 
+				{
+					$cur_subsection = new subsection($conn_id);
+					if (!$cur_subsection->read_from_list($subsctn, $j)) die($cur_subsection->error_msg);
+					if ($cur_subsection->migincludingclass == $selected_class->migclassname)
+					{
+						if ($cur_subsection->is_migincludedattribute($attr->migattributename))
+						{
+		</script>
+							<?php echo $cur_subsection->migsubsectiondisplayname ?>
+	<script language="php">
+						}
+					}
+				}
+	</script>
+    </td>
+
+	</tr>
+    <script language="php">
+
+			}
+</script>
+  </table>
+
+    
+  </div>
+
+  <input type="hidden" value="go_edit" name="order"> 
+  <input type="submit" value="Submit"> 
+  <input type="hidden" name="class" value="<?php echo $selected_class->migclassname ?>">
+</center>
+
+</form>
+
+<script language="php">
+		}	
+		elseif ($order == "go_remove")
+		{
+		 	if (!$selected_class->delete())
+				die($selected_class->error_msg);
+
+ 			unset($class);
+</script>
+<h3>You need to <a href="schema_admin_server_restart.html?order=go_restart">restart</a> the
+server to apply changes.</h3>
+<script language="php"> 
+
+		}
+	}
+	else
+	{		
+</script>
+	<h3> Selected class : <?php echo $class ?></h3>
+
+<form method="POST">
+<center>
+<input type="button" value="Remove the class" onclick="confirm_removal()">
+<input type="button" value="Edit the class"
+	onclick="page = '<?php echo $SCRIPT_NAME ?>?class=<?php echo urlencode($class) ?>&order=prepare_edit&<?php echo SID ?>' ;	window.open(page,'_self')">
+or <input type="button" value="Add a class"
+	onclick="page = '<?php echo $SCRIPT_NAME ?>?order=prepare_add&<?php echo SID ?>' ;	window.open(page,'_self')">
+</center> 
+</form>
+<script>
+function confirm_removal()
+{
+	var txt = 'Confirm removal of domain <?php echo $selected_class->migclassdisplayname . ", pointing to " . $selected_class->migclassname . " org. unit " ?>';
+	if (confirm(txt)) 
+		document.location = '<?php echo $SCRIPT_NAME ?>?class=<?php echo $class ?>&order=go_remove&<?php echo SID ?>';
+	else document.location = '<?php echo $SCRIPT_NAME ?>?<?php echo SID ?>';
+}
+</script>
+
+<script language="php">
+	}
+}
+if (!isset($class))     // WARNING do not replace by ELSE because class is unset dynamically
+{
+	include_once "php/search_class_option_box.php";
+</script>
+<center> or <form><input type="button" value="Add a class"
+					onclick="page = '<?php echo $SCRIPT_NAME ?>?order=prepare_add&<?php echo SID ?>' ;	window.open(page,'_self')"></form>
+</center>
+<script language="php">
+}
+$core->disconnect();
+</script>
+
+
+<script language="javascript">
+function Form_Validator(theForm)
+{
+	if (theForm.migclassdisplayname.value == "")
+	{
+		alert("Please enter a value for the \"Display Name\" field.");
+		theForm.migclassdisplayname.focus();
+		return (false);
+	}
+	
+	if (theForm.migclassname.value == "")
+	{
+		alert("Please enter a value for the \"Class Name\" field.");
+		theForm.migclassname.focus();
+		return (false);
+	}
+	
+	if (theForm.migdatabasedn.value == "")
+	{
+		alert("Please enter a value for the \"Data Location\" field.");
+		theForm.migdatabasedn.focus();
+		return (false);
+	}
+
+	if (theForm.migdataobjectclass.value == "")
+	{
+		alert("Please enter a value for the \"Data Objectclass\" field.");
+		theForm.migdataobjectclass.focus();
+		return (false);
+	}
+
+	if (theForm.migdatasupobjectclass.value == "")
+	{
+		alert("Please enter a value for the \"SUP Objectclass\" field.");
+		theForm.migsupdataobjectclass.focus();
+		return (false);
+	}
+
+
+	if (theForm.migdatanamingattribute.value == "")
+	{
+		alert("Please enter a value for the \"Naming attribute\" field.");
+		theForm.migdatanamingattribute.focus();
+		return (false);
+	}
+
+
+	if (theForm.migdatafilter.value == "")
+	{
+		alert("Please enter a value for the \"Data Filter\" field.");
+		theForm.migdatafilter.focus();
+		return (false);
+	}
+
+	if (theForm.migclassoid.value == "")
+	{
+		alert("Please enter a value for the \"Objectclass OID\" field.");
+		theForm.migclassoid.focus();
+		return (false);
+	}
+
+	
+	if (theForm.migdataicon.value == "")
+	{
+		alert("Please enter a value for the \"Data Icon\" field.");
+		theForm.migdataicon.focus();
+		return (false);
+	}
+	
+	if (theForm.migpointedwebpage.value == "")
+	{
+		alert("Please enter a value for the \"Data Admin Page\" field.");
+		theForm.migpointedwebpage.focus();
+		return (false);
+	}
+
+
+	return (true);
+}
+</script>
+<p>&nbsp;<!--msnavigation--></td></tr><!--msnavigation--></table><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td>
+
+
+
+</td></tr><!--msnavigation--></table></body>
+</html>

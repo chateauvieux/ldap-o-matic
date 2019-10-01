@@ -1,0 +1,75 @@
+<script language="php">
+ require_once "php/config.php"; 
+ ## security enabler
+ $auth_file = "php/" . AUTHENTICATION_SYSTEM_TYPE . "_authenticate.php";
+ require_once $auth_file;
+</script>
+
+
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta http-equiv="expires" content="1 Jan 2000">
+<title></title>
+<SCRIPT LANGUAGE="php">
+
+$core_file = "php/" . INFORMATION_SYSTEM_TYPE . "_core.php"; 
+require_once $core_file;
+
+$core = new core();
+
+if (($conn_id = $core->connect()) == false)
+	die($core->error_msg);
+</script>
+
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<script language="JavaScript" type="text/javascript" src="js/global.js">
+</script>
+<meta name="Microsoft Border" content="b, default">
+</head>
+
+<body><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><!--msnavigation--><td valign="top">
+<script language="php">
+require_once "php/search_class.php";
+include_once "php/search_class_option_box.php";
+
+include "menu/menu.txt";
+require "menu/menu.php"; 
+
+$core->disconnect();
+</script>
+
+<script language="php">  
+  
+/* require("menu/nodeclass/nodeclass.inc.php");  
+  $menu = new nodeclass;
+  $menu->addnode("url","label","type");                         
+  $menu->addsubnode("url","label","type");
+  $menu->addchild("url","label","","type"); 
+  $menu->makejs();
+  $menu->showtree(); */
+</script>
+<p>&nbsp;<!--msnavigation--></td></tr><!--msnavigation--></table><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td>
+
+
+
+</td></tr><!--msnavigation--></table></body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
