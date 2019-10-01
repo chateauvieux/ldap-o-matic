@@ -1,0 +1,22 @@
+3.0.0.507
+1020
+1000,index.htm,0,Home,0,972504555,1
+vti_globalpage:BW|true
+1001,overview.htm,0,Overview,1000,972507192,0
+1013,dowload.htm,0,Download,1000,980957400,0
+1004,installation.htm,0,Installation,1000,980957596,0
+1014,userguide.htm,0,User guide,1000,980957711,0
+1005,develzone.htm,0,Devel Zone,1000,980957828,0
+1002,objects.htm,0,Objects,1001,992809135,0
+1003,tools.htm,0,Tools,1001,980957163,0
+1012,config.htm,0,Configuration,1004,980957163,0
+1017,userguide/files.htm,0,Include files,1014,987531584,0
+1015,userguide/authentication.htm,0,Authentication,1014,980957953,0
+1018,userguide/connect.htm,0,Connection,1014,987531163,0
+1019,userguide/search_class_option_box.htm,0,Displaying available classes,1014,987532075,0
+1011,develzone/security.htm,0,Security,1005,980957514,0
+1007,develzone/attribute.htm,0,Attribute object,1005,992809037,0
+1008,develzone/search_class.htm,0,Search class object,1005,992809063,0
+1009,develzone/user.htm,0,User object,1005,992809072,0
+1016,develzone/group.htm,0,Group object,1005,992809055,0
+1010,develzone/core.htm,0,Core object,1005,992809045,0

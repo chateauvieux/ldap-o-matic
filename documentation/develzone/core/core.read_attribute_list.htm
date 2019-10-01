@@ -1,0 +1,110 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>read</title>
+<meta name="Microsoft Theme" content="krist 111, default">
+<meta name="Microsoft Border" content="tlb, default">
+</head>
+
+<body background="../../_themes/krist/radbkgnd.jpg" bgcolor="#FFFFFF" text="#000000" link="#336699" vlink="#999999" alink="#CC9966"><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td><!--mstheme--><font face="Verdana, Arial, Helvetica">
+
+<p align="center"><font size="6"><strong></strong></font><br>
+</p>
+<p align="center">&nbsp;</p>
+
+<!--mstheme--></font></td></tr><!--msnavigation--></table><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td valign="top" width="1%"><!--mstheme--><font face="Verdana, Arial, Helvetica">
+
+
+
+<!--mstheme--></font></td><td valign="top" width="24"></td><!--msnavigation--><td valign="top"><!--mstheme--><font face="Verdana, Arial, Helvetica">
+
+<p><font face="Arial" size="3"><b>read</b><b>_attribute_list</b> - reads a bunch of
+attributes on&nbsp; the information system</font></p>
+<!--mstheme--></font><!--msthemelist--><table border="0" cellpadding="0" cellspacing="0" width="100%">
+  <!--msthemelist--><tr><td valign="baseline" width="42"><img src="../../_themes/krist/aradbul1.gif" width="15" height="15" hspace="13"></td><td valign="top" width="100%"><!--mstheme--><font face="Verdana, Arial, Helvetica"><font face="Arial" size="3">array read_attribute_list(string cmd, array [result_array],
+    string [string])</font><!--mstheme--></font><!--msthemelist--></td></tr>
+<!--msthemelist--></table msthemelist><!--mstheme--><font face="Verdana, Arial, Helvetica">
+<p><font face="Arial" size="3">Many different responses are obtained depending
+on the choice of specific or not parameters in the function call :</font></p>
+<!--mstheme--></font><table border="1" cellpadding="0" cellspacing="0" width="100%" bordercolordark="#336699" bordercolorlight="#999999">
+  <tr>
+    <td width="6%" bgcolor="#C0C0C0"><!--mstheme--><font face="Verdana, Arial, Helvetica">&nbsp;<!--mstheme--></font></td>
+    <td width="20%" bgcolor="#C0C0C0"><!--mstheme--><font face="Verdana, Arial, Helvetica"><i>cmd</i><!--mstheme--></font></td>
+    <td width="23%" bgcolor="#C0C0C0"><!--mstheme--><font face="Verdana, Arial, Helvetica"><i>result_array</i><!--mstheme--></font></td>
+    <td width="23%" bgcolor="#C0C0C0"><!--mstheme--><font face="Verdana, Arial, Helvetica"><i>string</i><!--mstheme--></font></td>
+    <td width="42%" bgcolor="#C0C0C0"><!--mstheme--><font face="Verdana, Arial, Helvetica"><i><b>function</b></i><!--mstheme--></font></td>
+  </tr>
+  <tr>
+    <td width="6%" bgcolor="#C0C0C0"><!--mstheme--><font face="Verdana, Arial, Helvetica">1<!--mstheme--></font></td>
+    <td width="20%"><!--mstheme--><font face="Verdana, Arial, Helvetica">user<!--mstheme--></font></td>
+    <td width="23%"><!--mstheme--><font face="Verdana, Arial, Helvetica">[array]<!--mstheme--></font></td>
+    <td width="23%"><!--mstheme--><font face="Verdana, Arial, Helvetica">&lt; none &gt;<!--mstheme--></font></td>
+    <td width="42%"><!--mstheme--><font face="Verdana, Arial, Helvetica">returns current user's search preferences. If <i>array</i>
+      is specified, restricts result to settings listed in array<!--mstheme--></font></td>
+  </tr>
+  <tr>
+    <td width="6%" bgcolor="#C0C0C0"><!--mstheme--><font face="Verdana, Arial, Helvetica">2<!--mstheme--></font></td>
+    <td width="20%"><!--mstheme--><font face="Verdana, Arial, Helvetica">system<!--mstheme--></font></td>
+    <td width="23%"><!--mstheme--><font face="Verdana, Arial, Helvetica">[array]<!--mstheme--></font></td>
+    <td width="23%"><!--mstheme--><font face="Verdana, Arial, Helvetica">&lt; none &gt;<!--mstheme--></font></td>
+    <td width="42%"><!--mstheme--><font face="Verdana, Arial, Helvetica">returns system search preferences. If <i>array</i> is
+      specified, restricts result to settings listed in array<!--mstheme--></font></td>
+  </tr>
+  <tr>
+    <td width="6%" bgcolor="#C0C0C0"><!--mstheme--><font face="Verdana, Arial, Helvetica">3<!--mstheme--></font></td>
+    <td width="20%"><!--mstheme--><font face="Verdana, Arial, Helvetica">both<!--mstheme--></font></td>
+    <td width="23%"><!--mstheme--><font face="Verdana, Arial, Helvetica">[array]<!--mstheme--></font></td>
+    <td width="23%"><!--mstheme--><font face="Verdana, Arial, Helvetica">&lt; none &gt;<!--mstheme--></font></td>
+    <td width="42%"><!--mstheme--><font face="Verdana, Arial, Helvetica">returns (2) + (3)<!--mstheme--></font></td>
+  </tr>
+  <tr>
+    <td width="6%" bgcolor="#C0C0C0"><!--mstheme--><font face="Verdana, Arial, Helvetica">4<!--mstheme--></font></td>
+    <td width="20%"><!--mstheme--><font face="Verdana, Arial, Helvetica">system<!--mstheme--></font></td>
+    <td width="23%"><!--mstheme--><font face="Verdana, Arial, Helvetica">array<!--mstheme--></font></td>
+    <td width="23%"><!--mstheme--><font face="Verdana, Arial, Helvetica">class<!--mstheme--></font></td>
+    <td width="42%"><!--mstheme--><font face="Verdana, Arial, Helvetica">returns system search preferences for <i>class </i>search
+      class. Limits
+      results to <i>array </i>settings.<!--mstheme--></font></td>
+  </tr>
+  <tr>
+    <td width="6%" bgcolor="#C0C0C0"><!--mstheme--><font face="Verdana, Arial, Helvetica">5<!--mstheme--></font></td>
+    <td width="20%"><!--mstheme--><font face="Verdana, Arial, Helvetica">user<!--mstheme--></font></td>
+    <td width="23%"><!--mstheme--><font face="Verdana, Arial, Helvetica">array<!--mstheme--></font></td>
+    <td width="23%"><!--mstheme--><font face="Verdana, Arial, Helvetica">class<!--mstheme--></font></td>
+    <td width="42%"><!--mstheme--><font face="Verdana, Arial, Helvetica">returns current user's search preferences for <i>class </i>search
+      class.
+      Limits results to <i>array </i>settings.<!--mstheme--></font></td>
+  </tr>
+  <tr>
+    <td width="6%" bgcolor="#C0C0C0"><!--mstheme--><font face="Verdana, Arial, Helvetica">6<!--mstheme--></font></td>
+    <td width="20%"><!--mstheme--><font face="Verdana, Arial, Helvetica">referencies<!--mstheme--></font></td>
+    <td width="23%"><!--mstheme--><font face="Verdana, Arial, Helvetica">array<!--mstheme--></font></td>
+    <td width="23%"><!--mstheme--><font face="Verdana, Arial, Helvetica">class<!--mstheme--></font></td>
+    <td width="42%"><!--mstheme--><font face="Verdana, Arial, Helvetica">Retrieve the list of attributes that are linked to a search class.<!--mstheme--></font></td>
+  </tr>
+  <tr>
+    <td width="6%" bgcolor="#C0C0C0"><!--mstheme--><font face="Verdana, Arial, Helvetica">7<!--mstheme--></font></td>
+    <td width="20%"><!--mstheme--><font face="Verdana, Arial, Helvetica">combinations<!--mstheme--></font></td>
+    <td width="23%"><!--mstheme--><font face="Verdana, Arial, Helvetica">array<!--mstheme--></font></td>
+    <td width="23%"><!--mstheme--><font face="Verdana, Arial, Helvetica">attribute<!--mstheme--></font></td>
+    <td width="42%"><!--mstheme--><font face="Verdana, Arial, Helvetica">Retrieve the list of attributes that are pointing to the one
+      specified.<!--mstheme--></font></td>
+  </tr>
+</table><!--mstheme--><font face="Verdana, Arial, Helvetica">
+<p>The sixth scenario is useful if the information system does not hold
+referencies between attributes and search classes, such as that an attribute is a
+relevant attribute for a search class, or a default search criteria for this search class.</p>
+<p>The seventh scenario is also useful if the information system does not hold
+referencies between attributes.&nbsp;</p>
+<p>This function returns the<i> attributes array</i> on success, <i>false</i> otherwise. In the
+later, more information can be displayed using the <a href="../objectmodel/objectmodel.error_msg.htm">error_msg</a>
+information.<!--mstheme--></font><!--msnavigation--></td></tr><!--msnavigation--></table><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td><!--mstheme--><font face="Verdana, Arial, Helvetica">
+
+
+
+<!--mstheme--></font></td></tr><!--msnavigation--></table></body>
+
+</html>

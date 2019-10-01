@@ -1,0 +1,94 @@
+.mstheme
+{
+	separator-image: url(radrule.gif);
+	list-image-1: url(radbul1.gif);
+	list-image-2: url(radbul2.gif);
+	list-image-3: url(radbul3.gif);
+	nav-banner-image: url(radbanr.gif);
+	navbutton-horiz-normal: url(radhbtn.gif);
+	navbutton-horiz-hovered: url(radhbtn.gif);
+	navbutton-horiz-pushed: url(radhsel.gif);
+	navbutton-vert-normal: url(radvbtn.gif);
+	navbutton-vert-hovered: url(radvbtn.gif);
+	navbutton-vert-pushed: url(radvsel.gif);
+	navbutton-home-normal: url(radhom.gif);
+	navbutton-home-hovered: url(radhom.gif);
+	navbutton-home-pushed: url(radhom.gif);
+	navbutton-next-normal: url(radnxt.gif);
+	navbutton-next-hovered: url(radnxt.gif);
+	navbutton-next-pushed: url(radnxt.gif);
+	navbutton-prev-normal: url(radbck.gif);
+	navbutton-prev-hovered: url(radbck.gif);
+	navbutton-prev-pushed: url(radbck.gif);
+	navbutton-up-normal: url(radup.gif);
+	navbutton-up-hovered: url(radup.gif);
+	navbutton-up-pushed: url(radup.gif);
+}
+.mstheme-bannertxt
+{
+	font-family: Garamond, Times New Roman, Times;
+	color: rgb(0, 0, 0);
+	font-size: 6;
+	font-style: normal;
+	font-weight: normal;
+}
+.mstheme-horiz-navtxt
+{
+	font-family: Verdana, Arial, Helvetica;
+	color: rgb(0, 0, 0);
+	font-size: 2;
+	font-style: normal;
+	font-weight: normal;
+}
+.mstheme-vert-navtxt
+{
+	font-family: Verdana, Arial, Helvetica;
+	color: rgb(0, 0, 0);
+	font-size: 2;
+	font-style: normal;
+	font-weight: normal;
+}
+.mstheme-navtxthome
+{
+	font-family: Verdana, Arial, Helvetica;
+	color: rgb(0, 0, 0);
+	font-size: 1;
+	font-style: normal;
+	font-weight: normal;
+}
+.mstheme-navtxtnext
+{
+	font-family: Verdana, Arial, Helvetica;
+	color: rgb(0, 0, 0);
+	font-size: 1;
+	font-style: normal;
+	font-weight: normal;
+}
+.mstheme-navtxtprev
+{
+	font-family: Verdana, Arial, Helvetica;
+	color: rgb(0, 0, 0);
+	font-size: 1;
+	font-style: normal;
+	font-weight: normal;
+}
+.mstheme-navtxtup
+{
+	font-family: Verdana, Arial, Helvetica;
+	color: rgb(0, 0, 0);
+	font-size: 1;
+	font-style: normal;
+	font-weight: normal;
+}
+ul
+{
+	list-style-image: url(radbul1.gif);
+}
+ul ul
+{
+	list-style-image: url(radbul2.gif);
+}
+ul ul ul
+{
+	list-style-image: url(radbul3.gif);
+}

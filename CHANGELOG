@@ -1,0 +1,44 @@
+Current version : 1.6  (dev) - 1.5 (stable)
+
+We need developers and graphic designers ! Interested people please send email to Christian Châteauvieux. Current work consists of putting a coat of paint on the HTML pages and developing a core layer on top of mySQL / PHP4. Because MIG is not meant to be only a directory-enabling application...
+
+March 2002 version 1.6 (dev)
+	changelog
+
+December 2001
+	version 1.5 - Support for password encryption. changelog
+
+November 2001
+	version 1.4 - new features, improved GUI, new error handling scheme. changelog
+
+October 2001
+	version 1.3 - MIG can now run without Metamerge Integrator. It can be pure PHP but then misses the synchronisation and provisioning capabilities offered by the Java tool. Moreover it will only be able to modify one server at a time. Fixed bugs, other new features.
+
+August 2001
+	version 1.2 - New feature: subsections allows now to control the order in which the attributes of a search class would be displayed in the entry view/edit window. changelog
+
+July 2001
+	version 1.1 - New feature: LDAP schema reconfiguration (RFC 2252 compliant) for OpenLDAP. changelog
+
+March 2001
+	version 1.00 released !!
+
+This version fixes plenty of bugs and clarifies the core internal structure. LDAP core rewriten.
+
+February 2001
+	version 1.00 in pre-release - New features such as SSL support and attribute type recognition. Bug fixes. Configuration file change. changelog
+
+December 2000
+	version 0.99 - New features such as PHP sessions support, for PHP 4.0.4 and above. changelog
+
+November 2000
+	version 0.98b - Patchy version that copes with PHP 4.0.2 bugs - changelog
+	version 0.98 - Bug fix release - changelog
+	version 0.97 - Code rewriting - object methodology - changelog
+
+October 2000
+	UWC becomes the first user of MIG (LDAP interface) - version 0.83
+
+September 2000
+	Initial release for Metamerge internal use - version 0.45
+	Specifications on top of LDAP directory service

@@ -1,0 +1,58 @@
+
+<html>
+
+<head>
+<meta http-equiv="Content-Language" content="no-bok">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<meta name="Microsoft Theme" content="krist 111, default">
+<meta name="Microsoft Border" content="tlb, default">
+</head>
+
+<body background="../_themes/krist/radbkgnd.jpg" bgcolor="#FFFFFF" text="#000000" link="#336699" vlink="#999999" alink="#CC9966"><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td><!--mstheme--><font face="Verdana, Arial, Helvetica">
+
+<p align="center"><font size="6"><strong><img src="_derived/connect.htm_cmp_krist110_bnr.gif" width="600" height="60" border="0" alt="Connection"></strong></font><br>
+<script language="JavaScript"><!--
+MSFPhover = 
+  (((navigator.appName == "Netscape") && 
+  (parseInt(navigator.appVersion) >= 3 )) || 
+  ((navigator.appName == "Microsoft Internet Explorer") && 
+  (parseInt(navigator.appVersion) >= 4 ))); 
+function MSFPpreload(img) 
+{
+  var a=new Image(); a.src=img; return a; 
+}
+// --></script><script language="JavaScript"><!--
+if(MSFPhover) { MSFPnav1n=MSFPpreload("../_derived/home_cmp_krist110_hbtn.gif"); MSFPnav1h=MSFPpreload("../_derived/home_cmp_krist110_hbtn_a.gif"); }
+// --></script><a href="../index.htm" language="JavaScript" onmouseover="if(MSFPhover) document['MSFPnav1'].src=MSFPnav1h.src" onmouseout="if(MSFPhover) document['MSFPnav1'].src=MSFPnav1n.src"><img src="../_derived/home_cmp_krist110_hbtn.gif" width="140" height="40" border="0" alt="Home" align="middle" name="MSFPnav1"></a> <script language="JavaScript"><!--
+if(MSFPhover) { MSFPnav2n=MSFPpreload("../_derived/up_cmp_krist110_hbtn.gif"); MSFPnav2h=MSFPpreload("../_derived/up_cmp_krist110_hbtn_a.gif"); }
+// --></script><a href="../userguide.htm" language="JavaScript" onmouseover="if(MSFPhover) document['MSFPnav2'].src=MSFPnav2h.src" onmouseout="if(MSFPhover) document['MSFPnav2'].src=MSFPnav2n.src"><img src="../_derived/up_cmp_krist110_hbtn.gif" width="140" height="40" border="0" alt="Up" align="middle" name="MSFPnav2"></a> <script language="JavaScript"><!--
+if(MSFPhover) { MSFPnav3n=MSFPpreload("_derived/files.htm_cmp_krist110_hbtn.gif"); MSFPnav3h=MSFPpreload("_derived/files.htm_cmp_krist110_hbtn_a.gif"); }
+// --></script><a href="files.htm" language="JavaScript" onmouseover="if(MSFPhover) document['MSFPnav3'].src=MSFPnav3h.src" onmouseout="if(MSFPhover) document['MSFPnav3'].src=MSFPnav3n.src"><img src="_derived/files.htm_cmp_krist110_hbtn.gif" width="140" height="40" border="0" alt="Include files" align="middle" name="MSFPnav3"></a> <script language="JavaScript"><!--
+if(MSFPhover) { MSFPnav4n=MSFPpreload("_derived/authentication.htm_cmp_krist110_hbtn.gif"); MSFPnav4h=MSFPpreload("_derived/authentication.htm_cmp_krist110_hbtn_a.gif"); }
+// --></script><a href="authentication.htm" language="JavaScript" onmouseover="if(MSFPhover) document['MSFPnav4'].src=MSFPnav4h.src" onmouseout="if(MSFPhover) document['MSFPnav4'].src=MSFPnav4n.src"><img src="_derived/authentication.htm_cmp_krist110_hbtn.gif" width="140" height="40" border="0" alt="Authentication" align="middle" name="MSFPnav4"></a> <img src="_derived/connect.htm_cmp_krist110_hbtn_p.gif" width="140" height="40" border="0" alt="Connection" align="middle"> <script language="JavaScript"><!--
+if(MSFPhover) { MSFPnav5n=MSFPpreload("_derived/search_class_option_box.htm_cmp_krist110_hbtn.gif"); MSFPnav5h=MSFPpreload("_derived/search_class_option_box.htm_cmp_krist110_hbtn_a.gif"); }
+// --></script><a href="search_class_option_box.htm" language="JavaScript" onmouseover="if(MSFPhover) document['MSFPnav5'].src=MSFPnav5h.src" onmouseout="if(MSFPhover) document['MSFPnav5'].src=MSFPnav5n.src"><img src="_derived/search_class_option_box.htm_cmp_krist110_hbtn.gif" width="140" height="40" border="0" alt="Displaying available classes" align="middle" name="MSFPnav5"></a></p>
+<p align="center">&nbsp;</p>
+
+<!--mstheme--></font></td></tr><!--msnavigation--></table><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td valign="top" width="1%"><!--mstheme--><font face="Verdana, Arial, Helvetica">
+
+
+
+<!--mstheme--></font></td><td valign="top" width="24"></td><!--msnavigation--><td valign="top"><!--mstheme--><font face="Verdana, Arial, Helvetica">
+<p>Once the user/administrator is authenticated, a connection must be initiated
+with the core layer. To achieve this, simply insert the following code:</p>
+<!--mstheme--></font><pre><font color="#800000">$core = new core();
+if (($conn_id = $core-&gt;connect()) == FALSE)</font> <font color="#800000">die($core-&gt;error_msg);</font></pre><!--mstheme--><font face="Verdana, Arial, Helvetica">
+<p>If an error occurs, the execution is aborted and an error message is
+displayed on the client's browser.</p>
+<p>This requires that the core layer object has been already loaded. (see <a href="files.htm">MIG's
+files</a> section)<font color="#800000"><br>
+</font><!--mstheme--></font><!--msnavigation--></td></tr><!--msnavigation--></table><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td><!--mstheme--><font face="Verdana, Arial, Helvetica">
+
+
+
+<!--mstheme--></font></td></tr><!--msnavigation--></table></body>
+
+</html>

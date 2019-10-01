@@ -1,0 +1,33 @@
+.mstheme     { navbutton-background-color: rgb(255,255,255); top-bar-button: 
+               url(radglobl.gif) }
+.mstheme-topbar-font { color: rgb(0,0,0); font-family: Verdana, Arial, Helvetica; font-size: 8pt }
+body         { background-image: url('radbkgnd.jpg'); font-family: Verdana, Arial, Helvetica }
+button       { font-size: 8pt; font-style: bold; font-family: Verdana, Arial, Helvetica; 
+               border-style: solid; border-width: 1pt }
+caption      { font-size: 14pt; font-style: normal; font-family: 
+               Garamond, 'Times New Roman', Times }
+fieldset     { font-family: Verdana, Arial, Helvetica; font-size: 8pt; font-style: normal; 
+               border-style: solid; border-width: 1pt }
+h1           { vertical-align: none; font-weight: normal; font-style: normal; font-size: 24pt; 
+               font-family: Arial; text-align: none }
+h2           { font-family: Arial; font-style: normal; font-size: 18pt; font-weight: normal; 
+               vertical-align: none; text-align: none }
+h3           { font-family: Arial; text-align: none; font-size: 14pt; vertical-align: none; 
+               font-weight: normal; font-style: normal }
+h4           { font-weight: normal; font-size: 12pt; font-style: normal; text-align: none; 
+               font-family: Arial; vertical-align: none }
+h5           { font-size: 10pt; font-style: normal; text-align: none; font-weight: normal; 
+               font-family: Arial; vertical-align: none }
+h6           { text-align: none; vertical-align: none; font-family: Arial; font-size: 8pt; 
+               font-style: normal; font-weight: normal }
+label        { font-family: Verdana, Arial, Helvetica; font-size: 8pt; font-style: bold }
+label, .mstheme-label { font-size: 8pt; font-family: Verdana, Arial, Helvetica; font-style: bold }
+legend       { font-style: normal; font-size: 8pt; font-family: 
+               Garamond, 'Times New Roman', Times }
+marquee      { font-family: Verdana, Arial, Helvetica; font-size: 14pt }
+select       { font-style: normal; font-family: Verdana, Arial, Helvetica; font-size: 8pt; 
+               border-style: solid; border-width: 1pt }
+table        { font-family: Verdana, Arial, Helvetica; font-style: normal }
+textarea     { font-style: normal; font-size: 8pt; font-family: Verdana, Arial, Helvetica; 
+               border-style: solid; border-width: 1pt }
+th           { font-family: Verdana, Arial, Helvetica; font-style: normal }

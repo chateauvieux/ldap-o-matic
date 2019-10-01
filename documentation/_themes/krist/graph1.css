@@ -1,0 +1,94 @@
+.mstheme
+{
+	separator-image: url(aradrule.gif);
+	list-image-1: url(aradbul1.gif);
+	list-image-2: url(aradbul2.gif);
+	list-image-3: url(aradbul3.gif);
+	nav-banner-image: url(aradbanr.gif);
+	navbutton-horiz-normal: url(aradhbtn.gif);
+	navbutton-horiz-hovered: url(aradhhov.gif);
+	navbutton-horiz-pushed: url(aradhsel.gif);
+	navbutton-vert-normal: url(aradvbtn.gif);
+	navbutton-vert-hovered: url(aradvhov.gif);
+	navbutton-vert-pushed: url(aradvsel.gif);
+	navbutton-home-normal: url(aradhom.gif);
+	navbutton-home-hovered: url(aradhomh.gif);
+	navbutton-home-pushed: url(aradhom.gif);
+	navbutton-next-normal: url(aradnxt.gif);
+	navbutton-next-hovered: url(aradnxth.gif);
+	navbutton-next-pushed: url(aradnxt.gif);
+	navbutton-prev-normal: url(aradbck.gif);
+	navbutton-prev-hovered: url(aradbckh.gif);
+	navbutton-prev-pushed: url(aradbck.gif);
+	navbutton-up-normal: url(aradup.gif);
+	navbutton-up-hovered: url(araduph.gif);
+	navbutton-up-pushed: url(aradup.gif);
+}
+.mstheme-bannertxt
+{
+	font-family: Garamond, Times New Roman, Times;
+	color: rgb(0, 0, 0);
+	font-size: 6;
+	font-style: normal;
+	font-weight: normal;
+}
+.mstheme-horiz-navtxt
+{
+	font-family: Verdana, Arial, Helvetica;
+	color: rgb(0, 0, 0);
+	font-size: 2;
+	font-style: normal;
+	font-weight: normal;
+}
+.mstheme-vert-navtxt
+{
+	font-family: Verdana, Arial, Helvetica;
+	color: rgb(0, 0, 0);
+	font-size: 2;
+	font-style: normal;
+	font-weight: normal;
+}
+.mstheme-navtxthome
+{
+	font-family: Verdana, Arial, Helvetica;
+	color: rgb(0, 0, 0);
+	font-size: 1;
+	font-style: normal;
+	font-weight: normal;
+}
+.mstheme-navtxtnext
+{
+	font-family: Verdana, Arial, Helvetica;
+	color: rgb(0, 0, 0);
+	font-size: 1;
+	font-style: normal;
+	font-weight: normal;
+}
+.mstheme-navtxtprev
+{
+	font-family: Verdana, Arial, Helvetica;
+	color: rgb(0, 0, 0);
+	font-size: 1;
+	font-style: normal;
+	font-weight: normal;
+}
+.mstheme-navtxtup
+{
+	font-family: Verdana, Arial, Helvetica;
+	color: rgb(0, 0, 0);
+	font-size: 1;
+	font-style: normal;
+	font-weight: normal;
+}
+ul
+{
+	list-style-image: url(aradbul1.gif);
+}
+ul ul
+{
+	list-style-image: url(aradbul2.gif);
+}
+ul ul ul
+{
+	list-style-image: url(aradbul3.gif);
+}

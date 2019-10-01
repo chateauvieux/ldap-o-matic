@@ -1,0 +1,85 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>listing</title>
+<meta name="Microsoft Theme" content="krist 111, default">
+<meta name="Microsoft Border" content="tlb, default">
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000" link="#336699" vlink="#999999" alink="#CC9966" background="../../_themes/krist/radbkgnd.jpg"><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td><!--mstheme--><font face="Verdana, Arial, Helvetica">
+
+<p align="center"><font size="6"><strong></strong></font><br>
+</p>
+<p align="center">&nbsp;</p>
+
+<!--mstheme--></font></td></tr><!--msnavigation--></table><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td valign="top" width="1%"><!--mstheme--><font face="Verdana, Arial, Helvetica">
+
+
+
+<!--mstheme--></font></td><td valign="top" width="24"></td><!--msnavigation--><td valign="top"><!--mstheme--><font face="Verdana, Arial, Helvetica">
+
+<font FACE="Arial" SIZE="3">
+<p><b>listing</b> - list information in a location of the information system</p>
+<!--mstheme--></font><!--msthemelist--><table border="0" cellpadding="0" cellspacing="0" width="100%">
+  <!--msthemelist--><tr><td valign="baseline" width="42"><img src="../../_themes/krist/aradbul1.gif" width="15" height="15" hspace="13"></td><td valign="top" width="100%"><!--mstheme--><font face="Verdana, Arial, Helvetica">array listing(string from, string filter, array [result_array])<!--mstheme--></font><!--msthemelist--></td></tr>
+<!--msthemelist--></table><!--mstheme--><font face="Verdana, Arial, Helvetica">
+<p>This function performs the search for a specified filter on the directory
+with the scope LDAP_SCOPE_ONELEVEL.</p>
+<p>LDAP_SCOPE_ONELEVEL means that the search should only return information that
+is at the level immediately below the base dn given in the call. (Equivalent to
+typing &quot;ls&quot; and getting a list of files and folders in the current
+working directory.)</p>
+<p>An empty filter is not allowed. If you want to retrieve absolutely all
+information for this entry, use a filter of &quot;objectClass=*&quot;. If you
+know which entry types are used on the directory server, you might use an
+appropriate filter such as &quot;objectClass=inetOrgPerson&quot;.</p>
+<p>There is a optional third parameter, that can be added to restrict the
+attributes and values returned by the server to just those required. This is
+much more efficient than the default action (which is to return all attributes
+and their associated values). The use of this parameter should therefore be
+considered good practice.</p>
+<p>The third parameter is a standard PHP string array of the required
+attributes, eg array(&quot;mail&quot;,&quot;sn&quot;,&quot;cn&quot;) Note that
+the &quot;dn&quot; is always returned irrespective of which attributes types are
+requested.</p>
+<p>Note too that some directory server hosts will be configured to return no
+more than a preset number of entries. If this occurs, the server will indicate
+that it has only returned a partial results set.</p>
+<p>The function returns a complete result information in a multi-dimensional
+array on success and false on error.</font>
+
+<font FACE="Arial" SIZE="3">
+In the
+later, more information can be displayed using the <a href="file:///C:/My%20Documents/My%20Webs/AIS%20Project/develzone/objectmodel/objectmodel_error_msg.htm">error_msg</a>
+information.</font><font FACE="Arial" SIZE="3">&nbsp;</font>
+
+</p>
+<p><font FACE="Arial" SIZE="3">The attribute index is converted to lowercase.
+(Attributes are case-insensitive for directory servers, but not when used as
+array indices)</p>
+<div class="informalexample">
+  <p class="literallayout">return_value[&quot;count&quot;]&nbsp;=&nbsp;number&nbsp;of&nbsp;entries&nbsp;in&nbsp;the&nbsp;result<br>
+  return_value[0]&nbsp;:&nbsp;refers&nbsp;to&nbsp;the&nbsp;details&nbsp;of&nbsp;first&nbsp;entry<br>
+  <br>
+  return_value[i][&quot;dn&quot;]&nbsp;=&nbsp;&nbsp;DN&nbsp;of&nbsp;the&nbsp;ith&nbsp;entry&nbsp;in&nbsp;the&nbsp;result<br>
+  <br>
+  return_value[i][&quot;count&quot;]&nbsp;=&nbsp;number&nbsp;of&nbsp;attributes&nbsp;in&nbsp;ith&nbsp;entry<br>
+  return_value[i][j]&nbsp;=&nbsp;jth&nbsp;attribute&nbsp;in&nbsp;the&nbsp;ith&nbsp;entry&nbsp;in&nbsp;the&nbsp;result<br>
+  <br>
+  return_value[i][&quot;attribute&quot;][&quot;count&quot;]&nbsp;=&nbsp;number&nbsp;of&nbsp;values&nbsp;for&nbsp;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;attribute&nbsp;in&nbsp;ith&nbsp;entry<br>
+  return_value[i][&quot;attribute&quot;][j]&nbsp;=&nbsp;jth&nbsp;value&nbsp;of&nbsp;attribute&nbsp;in&nbsp;ith&nbsp;entry<br>
+  </p>
+</div>
+</font>
+
+<p>&nbsp;<!--mstheme--></font><!--msnavigation--></td></tr><!--msnavigation--></table><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td><!--mstheme--><font face="Verdana, Arial, Helvetica">
+
+
+
+<!--mstheme--></font></td></tr><!--msnavigation--></table></body>
+
+</html>

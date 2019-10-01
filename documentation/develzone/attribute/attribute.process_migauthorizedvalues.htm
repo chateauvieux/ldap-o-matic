@@ -1,0 +1,93 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>process</title>
+<meta name="Microsoft Theme" content="krist 111, default">
+<meta name="Microsoft Border" content="tlb, default">
+</head>
+
+<body background="../../_themes/krist/radbkgnd.jpg" bgcolor="#FFFFFF" text="#000000" link="#336699" vlink="#999999" alink="#CC9966"><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td><!--mstheme--><font face="Verdana, Arial, Helvetica">
+
+<p align="center"><font size="6"><strong></strong></font><br>
+</p>
+<p align="center">&nbsp;</p>
+
+<!--mstheme--></font></td></tr><!--msnavigation--></table><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td valign="top" width="1%"><!--mstheme--><font face="Verdana, Arial, Helvetica">
+
+
+
+<!--mstheme--></font></td><td valign="top" width="24"></td><!--msnavigation--><td valign="top"><!--mstheme--><font face="Verdana, Arial, Helvetica">
+
+<p><font FACE="Arial" SIZE="3"><b>process_migauthorizedvalues</b> - process attribute's
+migauthorizedvalues</font></p>
+<!--mstheme--></font><!--msthemelist--><table border="0" cellpadding="0" cellspacing="0" width="100%">
+  <!--msthemelist--><tr><td valign="baseline" width="42"><img src="../../_themes/krist/aradbul1.gif" width="15" height="15" hspace="13"></td><td valign="top" width="100%"><!--mstheme--><font face="Verdana, Arial, Helvetica"><font face="Arial" size="3">boolean process_migauthorizedvalues()</font><!--mstheme--></font><!--msthemelist--></td></tr>
+<!--msthemelist--></table><!--mstheme--><font face="Verdana, Arial, Helvetica">
+&nbsp;
+<p>Process attribute migauthorizedvalue values in the following way :</p>
+<!--mstheme--></font><!--msthemelist--><table border="0" cellpadding="0" cellspacing="0" width="100%">
+  <!--msthemelist--><tr><td valign="baseline" width="42"><img src="../../_themes/krist/aradbul1.gif" width="15" height="15" hspace="13"></td><td valign="top" width="100%"><!--mstheme--><font face="Verdana, Arial, Helvetica">split the value into two pieces, &quot;name&quot; and &quot;value&quot;,
+    in the migauthorizedvalue_couples attribute property. If a value contains the '='
+    (equal) symbol, the left part will be copied in&nbsp; migauthorizedvalue_couples[i][&quot;name&quot;] and the right part in the
+    migauthorizedvalue_couples[i][&quot;value&quot;]. Otherwise the value is copied as is in
+    migauthorizedvalue_couples[i][&quot;name&quot;] and&nbsp; migauthorizedvalue_couples[i][&quot;value&quot;].<!--mstheme--></font><!--msthemelist--></td></tr>
+  <!--msthemelist--><tr><td valign="baseline" width="42"><img src="../../_themes/krist/aradbul1.gif" width="15" height="15" hspace="13"></td><td valign="top" width="100%"><!--mstheme--><font face="Verdana, Arial, Helvetica">if a value begins by the '#' symbol, then :
+    <!--mstheme--></font><!--msthemelist--><table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <!--msthemelist--><tr><td valign="baseline" width="42"><img src="../../_themes/krist/aradbul2.gif" width="12" height="12" hspace="15"></td><td valign="top" width="100%"><!--mstheme--><font face="Verdana, Arial, Helvetica">if this value is #INCLUDE, the function will import the file whose
+        path is given after this keyword, and process them. The internal migauthorizedvalue
+        counter is increased by the number of processed lines. Not that this
+        keyword is not recursive, so a file cannot contain a #INCLUDE keyword.
+        In the other hand, a file can contain &lt;XXXX=YYYY&gt; lines which will
+        be processed automatically.<!--mstheme--></font><!--msthemelist--></td></tr>
+      <!--msthemelist--><tr><td valign="baseline" width="42"><img src="../../_themes/krist/aradbul2.gif" width="12" height="12" hspace="15"></td><td valign="top" width="100%"><!--mstheme--><font face="Verdana, Arial, Helvetica">if this value if #STRING, then function will copy the value given after
+        this keyword.<!--mstheme--></font><!--msthemelist--></td></tr>
+    <!--msthemelist--></table><!--mstheme--><font face="Verdana, Arial, Helvetica">
+  <!--mstheme--></font><!--msthemelist--></td></tr>
+<!--msthemelist--></table><!--mstheme--><font face="Verdana, Arial, Helvetica">
+<p>Example : let us consider the following attribute having these four migauthorizedvalues
+:&nbsp;</p>
+<!--mstheme--></font><pre>My First Value
+Second=My Second Value
+#STRING My Third Value
+#INCLUDE &quot;php/my_include_file.inc&quot;</pre><!--mstheme--><font face="Verdana, Arial, Helvetica">
+<p>and the php/my_include_file.inc containing the following :</p>
+<!--mstheme--></font><pre>A value
+2=Other value</pre><!--mstheme--><font face="Verdana, Arial, Helvetica"><p>A call of the process_migauthorizedvalues will :</p>
+<!--mstheme--></font><!--msthemelist--><table border="0" cellpadding="0" cellspacing="0" width="100%">
+  <!--msthemelist--><tr><td valign="baseline" width="42"><img src="../../_themes/krist/aradbul1.gif" width="15" height="15" hspace="13"></td><td valign="top" width="100%"><!--mstheme--><font face="Verdana, Arial, Helvetica">set the migauthorizedvalue property to :<!--mstheme--></font><!--msthemelist--></td></tr>
+<!--msthemelist--></table><!--mstheme--><font face="Verdana, Arial, Helvetica">
+<blockquote>
+  <!--mstheme--></font><pre>migauthorizedvalue[0] = My First Value
+migauthorizedvalue[1] = Second=My Second Value
+migauthorizedvalue[2] = My Third Value
+migauthorizedvalue[3] = A value
+migauthorizedvalue[4] = 2=Other value</pre><!--mstheme--><font face="Verdana, Arial, Helvetica">
+</blockquote>
+<!--mstheme--></font><!--msthemelist--><table border="0" cellpadding="0" cellspacing="0" width="100%">
+  <!--msthemelist--><tr><td valign="baseline" width="42"><img src="../../_themes/krist/aradbul1.gif" width="15" height="15" hspace="13"></td><td valign="top" width="100%"><!--mstheme--><font face="Verdana, Arial, Helvetica">set the migauthorizedvalue_couples property to :<!--mstheme--></font><!--msthemelist--></td></tr>
+<!--msthemelist--></table><!--mstheme--><font face="Verdana, Arial, Helvetica">
+<blockquote>
+  <!--mstheme--></font><pre>migauthorizedvalue_couples[0][&quot;name&quot;] = My First Value
+migauthorizedvalue_couples[0][&quot;value&quot;] = My First Value
+migauthorizedvalue_couples[1][&quot;name&quot;] = Second
+migauthorizedvalue_couples[1][&quot;value&quot;] = My Second Value
+migauthorizedvalue_couples[2][&quot;name&quot;] = My Third Value
+migauthorizedvalue_couples[2][&quot;value&quot;] = My Third Value
+migauthorizedvalue_couples[3][&quot;name&quot;] = A value
+migauthorizedvalue_couples[3][&quot;value&quot;] = A value
+migauthorizedvalue_couples[4][&quot;name&quot;] = 2
+migauthorizedvalue_couples[4][&quot;value&quot;] = Other value
+</pre><!--mstheme--><font face="Verdana, Arial, Helvetica">
+</blockquote>
+<p>Note that the migauthorizedvalue counter was increased to 5.</p>
+<p>This function returns <i>false</i> if an error was encountered (bad include
+file name or bad keyword), <i>true</i> otherwise.<!--mstheme--></font><!--msnavigation--></td></tr><!--msnavigation--></table><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td><!--mstheme--><font face="Verdana, Arial, Helvetica">
+
+
+
+<!--mstheme--></font></td></tr><!--msnavigation--></table></body>
+
+</html>

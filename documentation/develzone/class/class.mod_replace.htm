@@ -1,0 +1,48 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>mod</title>
+<meta name="Microsoft Theme" content="krist 111, default">
+<meta name="Microsoft Border" content="tlb, default">
+</head>
+
+<body background="../../_themes/krist/radbkgnd.jpg" bgcolor="#FFFFFF" text="#000000" link="#336699" vlink="#999999" alink="#CC9966"><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td><!--mstheme--><font face="Verdana, Arial, Helvetica">
+
+<p align="center"><font size="6"><strong></strong></font><br>
+</p>
+<p align="center">&nbsp;</p>
+
+<!--mstheme--></font></td></tr><!--msnavigation--></table><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td valign="top" width="1%"><!--mstheme--><font face="Verdana, Arial, Helvetica">
+
+
+
+<!--mstheme--></font></td><td valign="top" width="24"></td><!--msnavigation--><td valign="top"><!--mstheme--><font face="Verdana, Arial, Helvetica">
+
+<p><font FACE="Arial" SIZE="3"><b>mod_replace</b> - Replaces search class properties by new ones</font></p>
+<!--mstheme--></font><!--msthemelist--><table border="0" cellpadding="0" cellspacing="0" width="100%">
+  <!--msthemelist--><tr><td valign="baseline" width="42"><img src="../../_themes/krist/aradbul1.gif" width="15" height="15" hspace="13"></td><td valign="top" width="100%"><!--mstheme--><font face="Verdana, Arial, Helvetica"><font face="Arial" size="3">boolean mod_replace(array </font>how<font face="Arial" size="3">) </font><!--mstheme--></font><!--msthemelist--></td></tr>
+<!--msthemelist--></table><!--mstheme--><font face="Verdana, Arial, Helvetica">
+&nbsp;<p>The array <i>how</i> specifies the search class' properties to be
+updated. The values of the properties are indexed by individual names. In case of multiple values,
+properties are indexed using integers starting with 0.</p>
+<p>how[&quot;property1&quot;]&nbsp;=&nbsp;value<br>
+how[&quot;property2&quot;][0]&nbsp;=&nbsp;value1<br>
+how[&quot;property2&quot;][1]&nbsp;=&nbsp;value2</p>
+<p>A property having its only value equal to an empty string (&quot;&quot;)&nbsp;
+will be removed from the array.</p>
+<p>In the case that the class's name is to be changed (that is to say, how[&quot;classname&quot;] is different from the current name), then a
+referency checking will occur if the information system does not natively
+support it.
+<p>This function returns <i>true</i> on success, <i>false</i> otherwise. In the
+later, more information can be displayed using the <a href="file:///C:/My%20Documents/My%20Webs/AIS%20Project/develzone/objectmodel/objectmodel_error_msg.htm">error_msg</a>
+information.</p>
+<!--mstheme--></font><!--msnavigation--></td></tr><!--msnavigation--></table><!--msnavigation--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td><!--mstheme--><font face="Verdana, Arial, Helvetica">
+
+
+
+<!--mstheme--></font></td></tr><!--msnavigation--></table></body>
+
+</html>
